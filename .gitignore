@@ -1,0 +1,49 @@
+# Exclude virtual environment directories (must be first for performance)
+/bin/
+/include/
+/lib/
+/lib64/
+/share/
+/pyvenv.cfg
+lib64/*
+bin/*
+lib/*
+include/*
+share/*
+
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+workingEnvironment/*
+
+# Whitelist approach for top level - ignore everything
+# /*
+# !.gitignore
+# !/workingEnvironment/
+
+# For workingEnvironment, only include specific file extensions
+# Ignore everything first
+#workingEnvironment/**/*
+
+# Then include what we want (order matters!)
+#!workingEnvironment/**/
+!workingEnvironment/*.py
+!workingEnvironment/*.r
+!workingEnvironment/*.R
+!workingEnvironment/*.sh
+!workingEnvironment/*.bash
+!workingEnvironment/*.md
+#!workingEnvironment/*.txt
+#!workingEnvironment/*.tsv
+#!workingEnvironment/*.csv
+#!workingEnvironment/*.graphml
+#!workingEnvironment/*.mtx
+#!workingEnvironment/*.rds
+!workingEnvironment/*.err
+!workingEnvironment/*.out
+
+
+
