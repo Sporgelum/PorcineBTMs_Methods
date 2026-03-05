@@ -31,20 +31,20 @@ workingEnvironment/*
 
 # Then include what we want (order matters!)
 #!workingEnvironment/**/
-!workingEnvironment/*.py
-!workingEnvironment/*.r
-!workingEnvironment/*.R
-!workingEnvironment/*.sh
-!workingEnvironment/*.bash
-!workingEnvironment/*.md
-#!workingEnvironment/*.txt
-#!workingEnvironment/*.tsv
-#!workingEnvironment/*.csv
-#!workingEnvironment/*.graphml
-#!workingEnvironment/*.mtx
-#!workingEnvironment/*.rds
-!workingEnvironment/*.err
-!workingEnvironment/*.out
+!workingEnvironment/*/*.py
+!workingEnvironment/*/*.r
+!workingEnvironment/*/*.R
+!workingEnvironment/*/*.sh
+!workingEnvironment/*/*.bash
+!workingEnvironment/*/*.md
+#!workingEnvironment/*/*.txt
+#!workingEnvironment/*/*.tsv
+#!workingEnvironment/*/*.csv
+#!workingEnvironment/*/*.graphml
+#!workingEnvironment/*/*.mtx
+#!workingEnvironment/*/*.rds
+!workingEnvironment/*/*.err
+!workingEnvironment/*/*.out
 
 
 
