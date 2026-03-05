@@ -142,7 +142,7 @@ library("FNN")
 # Compute kNN graph on GENES (rows = genes, columns = samples)
 # Do NOT transpose: knn.index expects observations x features,
 # so we pass logcpm_counts directly (genes x samples → each gene is an observation)
-k <- 20  # number of neighbors, can be optimized
+k <- 15  # number of neighbors, can be optimized
 knn_result <- knn.index(logcpm_counts, k = k)  # genes x samples, no transpose
 # Create adjacency matrix from kNN result (gene x gene)
 n_genes <- nrow(logcpm_counts)
@@ -161,6 +161,11 @@ V(g_knn)$name <- rownames(logcpm_counts)  # gene IDs as vertex names
 cl_louvain <- igraph::cluster_louvain(g_knn)
 modules_louvain <- split(V(g_knn)$name, membership(cl_louvain)) 
 # %% revise from here...
+module_sizes <- sapply(modules_louvain, length)
+large_modules <- names(module_sizes[module_sizes > 100])
+
+head(sort(module_sizes, decreasing = TRUE))
+length(modules_louvain[[which.max(module_sizes)]])
 
 
 
