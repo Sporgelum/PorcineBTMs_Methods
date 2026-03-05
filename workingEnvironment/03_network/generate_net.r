@@ -136,6 +136,37 @@ node_attr <- data.frame(gene = names(membership(cl)),
 #write.table(node_attr, paste0(output_dir, "node_modules_spearman.txt"),sep="\t", quote=FALSE, row.names=FALSE)
 write.table(table(node_attr$module), paste0(output_dir, "node_modules_mi_mm.txt"),sep="\t", quote=FALSE, row.names=FALSE)
 
+# %% alternative use -kNN into 10-30 neighbors and then cluster with Leiden, this is more robust to noise and can capture more complex structures in the data. We can use the knn function from the FNN package to compute the k-nearest neighbors and then create a graph based on these neighbors before applying the Leiden algorithm for clustering.
+#BiocManager::install("FNN")
+library("FNN")
+# Compute kNN graph on GENES (rows = genes, columns = samples)
+# Do NOT transpose: knn.index expects observations x features,
+# so we pass logcpm_counts directly (genes x samples → each gene is an observation)
+k <- 20  # number of neighbors, can be optimized
+knn_result <- knn.index(logcpm_counts, k = k)  # genes x samples, no transpose
+# Create adjacency matrix from kNN result (gene x gene)
+n_genes <- nrow(logcpm_counts)
+knn_adj <- matrix(0, nrow = n_genes, ncol = n_genes)
+for (i in 1:n_genes) {
+  knn_adj[i, knn_result[i, ]] <- 1
+}
+knn_adj <- knn_adj + t(knn_adj)  # make symmetric
+knn_adj[knn_adj > 1] <- 1  # ensure binary
+diag(knn_adj) <- 0  # remove self-loops
+# Create graph from kNN adjacency matrix (one vertex per gene)
+g_knn <- graph_from_adjacency_matrix(knn_adj, mode = "undirected", diag = FALSE)
+V(g_knn)$name <- rownames(logcpm_counts)  # gene IDs as vertex names
+# Cluster with Leiden
+#cl_leiden <- igraph::cluster_leiden(g_knn)
+cl_louvain <- igraph::cluster_louvain(g_knn)
+modules_louvain <- split(V(g_knn)$name, membership(cl_louvain)) 
+# %% revise from here...
+
+
+
+
+
+
 # %% check the size of the modules
 module_sizes <- sapply(modules, length)
 large_modules <- names(module_sizes[module_sizes > 100])

@@ -7,7 +7,6 @@ Equivalent to generate_net.r but with parallel processing and GRNBoost2 comparis
 import numpy as np
 import pandas as pd
 import networkx as nx
-from sklearn.feature_selection import mutual_info_classif
 from sklearn.preprocessing import KBinsDiscretizer
 from scipy.sparse import csr_matrix, save_npz
 from scipy.io import mmwrite
@@ -25,9 +24,12 @@ from pathlib import Path
 # ============================================================================
 
 BASE_DIR = "/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment"
-OUTPUT_DIR = os.path.join(BASE_DIR, "03_network")
+OUTPUT_DIR = os.path.join(BASE_DIR, "03_network/NETS_MI_CLR_GRNBoost2")
 COUNTS_PATH = os.path.join(BASE_DIR, "02_counts/logCPM_matrix_filtered_samples.csv")
 METADATA_PATH = os.path.join(BASE_DIR, "02_counts/metadata_with_sample_annotations.csv")
+
+# Ensure output directory exists
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Network parameters
 N_BINS = 5  # Number of bins for discretization (matching R code)
@@ -35,10 +37,8 @@ DISC_STRATEGY = 'quantile'  # 'quantile' = 'equalfreq' in R
 THRESHOLD_PERCENTILE = 95  # Top 5% of edges
 N_JOBS = -1  # Use all available CPU cores (-1 = all cores)
 
-# MI matrix caching (saves 2-4 hours on re-runs)
-MI_MATRIX_PATH = os.path.join(OUTPUT_DIR, "mi_matrix_cache.npy")  # Path to save/load cached MI matrix
-MI_MATRIX_RELOAD = True   # If True and file exists, load instead of recomputing
-MI_MATRIX_SAVE   = True   # If True, save MI matrix after computation
+# MI matrix output path
+MI_MATRIX_PATH = os.path.join(OUTPUT_DIR, "mi_matrix_cache.npy")
 
 # Logging configuration
 LOG_FILE = os.path.join(OUTPUT_DIR, f"network_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
@@ -223,9 +223,49 @@ def discretize_expression(expr_data, n_bins=5, strategy='quantile'):
     return expr_discrete.astype(int)
 
 
-def compute_mi_row(i, expr_discrete, gene_names):
+def compute_mi_histogram(x, y, n_bins):
     """
-    Compute mutual information for one gene against all others
+    Fast MI computation using 2D histogram (50-100x faster than mutual_info_classif)
+    
+    For discrete data, this is exact and much faster than sklearn's implementation.
+    MI(X,Y) = sum P(x,y) * log(P(x,y) / (P(x)*P(y)))
+    
+    Parameters:
+    -----------
+    x, y : np.ndarray
+        Discretized gene expression vectors
+    n_bins : int
+        Number of bins used for discretization
+    
+    Returns:
+    --------
+    mi : float
+        Mutual information score
+    """
+    # Compute 2D histogram (joint distribution)
+    # For discrete data with values 0 to n_bins-1, specify explicit range
+    hist_2d, _, _ = np.histogram2d(x, y, bins=n_bins, range=[[0, n_bins], [0, n_bins]])
+    
+    # Normalize to get probabilities
+    pxy = hist_2d / float(np.sum(hist_2d))
+    
+    # Marginal probabilities
+    px = np.sum(pxy, axis=1)  # sum over y
+    py = np.sum(pxy, axis=0)  # sum over x
+    
+    # Compute MI (avoid log(0) with masking)
+    px_py = px[:, None] * py[None, :]
+    
+    # Only compute for non-zero entries
+    nzs = pxy > 0
+    mi = np.sum(pxy[nzs] * np.log(pxy[nzs] / px_py[nzs]))
+    
+    return mi
+
+
+def compute_mi_row(i, expr_discrete, n_bins):
+    """
+    Compute mutual information for one gene against all others using fast histogram method
     
     Parameters:
     -----------
@@ -233,8 +273,8 @@ def compute_mi_row(i, expr_discrete, gene_names):
         Index of target gene
     expr_discrete : np.ndarray (genes x samples)
         Discretized expression matrix
-    gene_names : list
-        List of gene names
+    n_bins : int
+        Number of bins used for discretization
     
     Returns:
     --------
@@ -247,27 +287,20 @@ def compute_mi_row(i, expr_discrete, gene_names):
     
     for j in range(n_genes):
         if i != j:
-            predictor = expr_discrete[j, :].reshape(-1, 1)
-            # mutual_info_classif includes bias correction (similar to mi.mm)
-            mi = mutual_info_classif(
-                predictor, 
-                target, 
-                discrete_features=True,
-                random_state=42
-            )[0]
-            mi_scores[j] = mi
+            predictor = expr_discrete[j, :]
+            mi_scores[j] = compute_mi_histogram(target, predictor, n_bins)
         else:
             mi_scores[j] = 0
     
-    if (i + 1) % 100 == 0:
+    if (i + 1) % 500 == 0:
         print(f"[INFO] Processed {i+1}/{n_genes} genes for MI calculation")
     
     return mi_scores
 
 
-def compute_mi_matrix_parallel(expr_data, n_bins=5, strategy='quantile', n_jobs=-1):
+def compute_mi_matrix_parallel(expr_data, n_bins=5, strategy='quantile', n_jobs=-1, save_path=None):
     """
-    Compute mutual information matrix with parallel processing
+    Compute mutual information matrix with parallel processing and automatic saving
     
     Parameters:
     -----------
@@ -276,6 +309,8 @@ def compute_mi_matrix_parallel(expr_data, n_bins=5, strategy='quantile', n_jobs=
     strategy : str
     n_jobs : int
         Number of parallel jobs (-1 = all cores)
+    save_path : str, optional
+        Path to save MI matrix immediately after computation
     
     Returns:
     --------
@@ -283,22 +318,23 @@ def compute_mi_matrix_parallel(expr_data, n_bins=5, strategy='quantile', n_jobs=
         Mutual information matrix
     """
     print("\n" + "-"*80)
-    print("METHOD 1: MUTUAL INFORMATION + CLR")
+    print("METHOD 1: MUTUAL INFORMATION + CLR (Fast histogram-based)")
     print("-"*80)
     
     start_time = time.time()
     
     # Step 1: Discretize
+    print(f"[INFO] Discretizing {expr_data.shape[0]} genes with {n_bins} bins ({strategy})...")
     expr_discrete = discretize_expression(expr_data.values, n_bins, strategy)
     n_genes = expr_data.shape[0]
-    gene_names = expr_data.index.tolist()
     
     print(f"[INFO] Computing MI matrix for {n_genes} genes using {n_jobs} cores...")
+    print(f"[INFO] Using fast histogram-based MI (50-100x faster than sklearn)...")
     
-    # Step 2: Parallel MI computation
+    # Step 2: Parallel MI computation with fast histogram method
     mi_matrix = np.array(
         Parallel(n_jobs=n_jobs, verbose=0)(
-            delayed(compute_mi_row)(i, expr_discrete, gene_names)
+            delayed(compute_mi_row)(i, expr_discrete, n_bins)
             for i in range(n_genes)
         )
     )
@@ -307,9 +343,16 @@ def compute_mi_matrix_parallel(expr_data, n_bins=5, strategy='quantile', n_jobs=
     mi_matrix = (mi_matrix + mi_matrix.T) / 2.0
     
     elapsed = time.time() - start_time
-    print(f"[INFO] MI matrix computed in {elapsed:.2f} seconds")
+    print(f"[INFO] MI matrix computed in {elapsed:.2f} seconds ({elapsed/60:.2f} minutes)")
     print(f"[INFO] MI matrix shape: {mi_matrix.shape}")
     print(f"[INFO] MI range: [{mi_matrix[mi_matrix > 0].min():.4f}, {mi_matrix.max():.4f}]")
+    
+    # Save immediately if path provided
+    if save_path:
+        print(f"[INFO] Saving MI matrix to: {save_path}")
+        np.save(save_path, mi_matrix.astype(np.float32))
+        file_size_gb = os.path.getsize(save_path) / 1e9
+        print(f"[INFO] ✓ MI matrix saved ({file_size_gb:.2f} GB, float32)")
     
     return mi_matrix
 
@@ -534,25 +577,68 @@ def run_grnboost2(expr_data, n_jobs=-1):
     
     try:
         from arboreto.algo import grnboost2
-    except ImportError:
-        print("[ERROR] arboreto not installed. Install with: pip install arboreto")
+    except ImportError as e:
+        print(f"[ERROR] Could not import arboreto: {e}")
+        print("[ERROR] If arboreto is installed, a dependency (e.g. dask/distributed) may have a version conflict.")
+        print("[ERROR] Try: pip install --upgrade arboreto dask[complete] distributed")
+        print("[INFO] Skipping GRNBoost2 analysis")
+        return None
+    except Exception as e:
+        print(f"[ERROR] Unexpected error importing arboreto: {type(e).__name__}: {e}")
         print("[INFO] Skipping GRNBoost2 analysis")
         return None
     
     start_time = time.time()
     
-    print(f"[INFO] Running GRNBoost2 with {n_jobs} cores...")
+    n_workers = os.cpu_count() if n_jobs == -1 else max(1, n_jobs)
+    print(f"[INFO] Running GRNBoost2 with {n_workers} workers...")
     print(f"[INFO] This may take several minutes for large datasets...")
     
-    # GRNBoost2 expects samples x genes (transpose)
-    network_df = grnboost2(
-        expression_data=expr_data.T,
-        gene_names=expr_data.index.tolist(),
-        tf_names='all',  # All genes can be regulators
-        client_or_address=None,
-        seed=42,
-        verbose=True
-    )
+    # Build a clean worker environment:
+    # GRNBoost2 uses dask LocalCluster which spawns new Python sub-processes.
+    # Those workers must NOT inherit the module-system PYTHONPATH (which contains
+    # a NumPy-1.x-compiled numexpr that crashes with the venv's NumPy 2.x).
+    # We patch os.environ BEFORE creating the cluster so all spawned workers
+    # inherit the clean environment (dask does not have an 'env' kwarg in 2024.x).
+    venv_site = "/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages"
+    original_pythonpath = os.environ.get('PYTHONPATH', '')
+    os.environ['PYTHONPATH'] = venv_site
+    os.environ['NUMEXPR_DISABLED'] = '1'  # prevent pandas loading the system numexpr
+    print(f"[INFO] Worker PYTHONPATH set to venv only (avoids NumPy 1.x/2.x conflicts)")
+    print(f"[INFO] NUMEXPR_DISABLED=1 (prevents system numexpr from crashing workers)")
+    
+    client = None
+    cluster = None
+    try:
+        from distributed import Client, LocalCluster
+        cluster = LocalCluster(
+            n_workers=n_workers,
+            threads_per_worker=1,
+            silence_logs=False,
+        )
+        client = Client(cluster)
+        print(f"[INFO] Dask dashboard: {client.dashboard_link}")
+        
+        # GRNBoost2 expects samples x genes (transpose)
+        network_df = grnboost2(
+            expression_data=expr_data.T,
+            gene_names=expr_data.index.tolist(),
+            tf_names='all',  # All genes can be regulators
+            client_or_address=client,
+            seed=42,
+            verbose=True
+        )
+    finally:
+        if client is not None:
+            client.close()
+        if cluster is not None:
+            cluster.close()
+        # Restore original PYTHONPATH so nothing else in the pipeline is affected
+        if original_pythonpath:
+            os.environ['PYTHONPATH'] = original_pythonpath
+        else:
+            os.environ.pop('PYTHONPATH', None)
+        os.environ.pop('NUMEXPR_DISABLED', None)
     
     elapsed = time.time() - start_time
     print(f"[INFO] GRNBoost2 completed in {elapsed:.2f} seconds")
@@ -626,7 +712,11 @@ def cluster_louvain(adj_matrix, gene_names):
         {gene: module_id}
     """
     print("[INFO] Performing Louvain clustering...")
-    
+
+    # Enforce strict symmetry — CLR float operations can introduce tiny asymmetries
+    # np.maximum takes element-wise max of adj[i,j] and adj[j,i], guaranteeing symmetry
+    adj_matrix = np.maximum(adj_matrix, adj_matrix.T)
+
     # Create igraph object
     g = ig.Graph.Adjacency((adj_matrix > 0).tolist(), mode='undirected')
     g.vs['name'] = gene_names
@@ -674,44 +764,40 @@ def save_results(mi_matrix, clr_matrix, adj_clr, modules_clr, membership_clr, ge
     print(f"\n[INFO] Saving {method_suffix} results...")
     print(f"[INFO] Output directory: {OUTPUT_DIR}")
 
-    # 0. Save MI matrix (if provided)
-    if mi_matrix is not None:
-        mi_file = os.path.join(OUTPUT_DIR, f"MI_matrix_{method_suffix}.npy")
-        np.save(mi_file, mi_matrix.astype(np.float32))
-        print(f"[SAVED] {mi_file} ({os.path.getsize(mi_file)/1e9:.2f} GB)")
-    
+    # Note: MI matrix already saved during computation
+    # (no need to save again here to avoid duplication)
+
+    # Get upper-triangle edge indices (vectorized - avoids O(n²) Python loops)
+    gene_names_arr = np.array(gene_names)
+    rows, cols = np.where(np.triu(adj_clr, k=1) == 1)
+    sources = gene_names_arr[rows]
+    targets = gene_names_arr[cols]
+    n_edges = len(rows)
+    print(f"[INFO] Vectorized edge extraction: {n_edges:,} edges")
+
     # 1. Save adjacency matrix (Matrix Market format)
     adj_sparse = csr_matrix(adj_clr)
     mtx_file = os.path.join(OUTPUT_DIR, f"CLR_adjacency_matrix_{method_suffix}.mtx")
     mmwrite(mtx_file, adj_sparse)
     print(f"[SAVED] {mtx_file}")
-    
+
     # 2. Save edgelist (binary)
-    edgelist = []
-    for i in range(len(gene_names)):
-        for j in range(i+1, len(gene_names)):
-            if adj_clr[i, j] == 1:
-                edgelist.append([gene_names[i], gene_names[j]])
-    
-    edgelist_df = pd.DataFrame(edgelist, columns=['source', 'target'])
+    edgelist_df = pd.DataFrame({'source': sources, 'target': targets})
     edgelist_file = os.path.join(OUTPUT_DIR, f"CLR_network_edgelist_{method_suffix}.txt")
     edgelist_df.to_csv(edgelist_file, sep="\t", index=False)
     print(f"[SAVED] {edgelist_file}")
-    
+
     # 3. Save weighted edgelist
-    weighted_edges = []
-    for i in range(len(gene_names)):
-        for j in range(i+1, len(gene_names)):
-            if adj_clr[i, j] == 1:
-                weighted_edges.append([gene_names[i], gene_names[j], clr_matrix[i, j]])
-    
-    weighted_df = pd.DataFrame(weighted_edges, columns=['source', 'target', 'weight'])
+    weights = clr_matrix[rows, cols]
+    weighted_df = pd.DataFrame({'source': sources, 'target': targets, 'weight': weights})
     weighted_file = os.path.join(OUTPUT_DIR, f"CLR_network_weighted_{method_suffix}.txt")
     weighted_df.to_csv(weighted_file, sep="\t", index=False)
     print(f"[SAVED] {weighted_file}")
     
     # 4. Save GraphML for Cytoscape
-    g = ig.Graph.Adjacency((adj_clr > 0).tolist(), mode='undirected')
+    # Enforce symmetry before igraph (same CLR float asymmetry issue as in cluster_louvain)
+    adj_clr_sym = np.maximum(adj_clr, adj_clr.T)
+    g = ig.Graph.Adjacency((adj_clr_sym > 0).tolist(), mode='undirected')
     g.vs['name'] = gene_names
     graphml_file = os.path.join(OUTPUT_DIR, f"CLR_network_{method_suffix}.graphml")
     g.write_graphml(graphml_file)
@@ -822,18 +908,22 @@ def main():
     print(f"Start time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("="*80)
     
-    # Check for GPU
-    try:
-        from clr_gpu import clr_transform_pytorch, print_gpu_info
-        gpu_info = print_gpu_info()
-        if gpu_info and gpu_info['cuda_available']:
-            results_info['GPU_INFO'] = f"Using GPU: {gpu_info['gpu_devices'][0]['name'] if gpu_info['gpu_devices'] else 'Unknown'}\nGPU Memory: {gpu_info['gpu_devices'][0]['memory_gb']:.1f} GB" if gpu_info['gpu_devices'] else "GPU available"
-            use_gpu = True
-        else:
-            use_gpu = False
-    except ImportError:
-        print("[INFO] GPU acceleration not available (clr_gpu.py not found)")
-        use_gpu = False
+    # NOTE: GPU CLR is disabled — the CLR matrix for 32,763 genes requires ~21 GB of VRAM
+    # (5 full float32 copies of a 4.3 GB matrix held simultaneously), exceeding the RTX 2080 Ti
+    # (11.5 GB). CPU vectorized CLR runs in ~40s and is fast enough. Re-enable below if a
+    # larger GPU (≥24 GB VRAM) is available in a future run.
+    #
+    # try:
+    #     from clr_gpu import clr_transform_pytorch, print_gpu_info
+    #     gpu_info = print_gpu_info()
+    #     if gpu_info and gpu_info['cuda_available']:
+    #         results_info['GPU_INFO'] = f"Using GPU: {gpu_info['gpu_devices'][0]['name'] if gpu_info['gpu_devices'] else 'Unknown'}\nGPU Memory: {gpu_info['gpu_devices'][0]['memory_gb']:.1f} GB" if gpu_info['gpu_devices'] else "GPU available"
+    #         use_gpu = True
+    #     else:
+    #         use_gpu = False
+    # except ImportError:
+    #     print("[INFO] GPU acceleration not available (clr_gpu.py not found)")
+    #     use_gpu = False
     
     # Load data
     with Timer("Data Loading", timings):
@@ -850,40 +940,29 @@ def main():
     print("METHOD 1: MUTUAL INFORMATION + CLR")
     print("="*80)
     
-    # Compute MI matrix
-    with Timer("MI Matrix Computation (CPU parallelized)", timings):
-        if MI_MATRIX_RELOAD and os.path.exists(MI_MATRIX_PATH):
-            print(f"[INFO] Cached MI matrix found — loading from: {MI_MATRIX_PATH}")
+    # Load MI matrix from cache if available, otherwise compute and save it
+    with Timer("MI Matrix Computation (Fast histogram-based)", timings):
+        if os.path.exists(MI_MATRIX_PATH):
+            print(f"[INFO] Cache found — loading MI matrix from: {MI_MATRIX_PATH}")
             mi_matrix = np.load(MI_MATRIX_PATH)
-            print(f"[INFO] Loaded MI matrix: shape={mi_matrix.shape}, "
-                  f"size={os.path.getsize(MI_MATRIX_PATH)/1e9:.2f} GB")
+            file_size_gb = os.path.getsize(MI_MATRIX_PATH) / 1e9
+            print(f"[INFO] ✓ Loaded MI matrix: shape={mi_matrix.shape}, size={file_size_gb:.2f} GB")
         else:
+            print(f"[INFO] No cache found — computing MI matrix...")
             mi_matrix = compute_mi_matrix_parallel(
                 expr_data,
                 n_bins=N_BINS,
                 strategy=DISC_STRATEGY,
-                n_jobs=N_JOBS
+                n_jobs=N_JOBS,
+                save_path=MI_MATRIX_PATH
             )
-            if MI_MATRIX_SAVE:
-                print(f"[INFO] Saving MI matrix to: {MI_MATRIX_PATH}")
-                np.save(MI_MATRIX_PATH, mi_matrix.astype(np.float32))
-                print(f"[INFO] MI matrix saved ({os.path.getsize(MI_MATRIX_PATH)/1e9:.2f} GB, float32)")
         results_info['MI Matrix Size'] = f"{mi_matrix.shape[0]} × {mi_matrix.shape[1]}"
         results_info['MI Range'] = f"{mi_matrix.min():.4f} to {mi_matrix.max():.4f}"
-        results_info['MI Matrix Cache'] = MI_MATRIX_PATH if MI_MATRIX_SAVE else 'disabled'
+        results_info['MI Matrix Path'] = MI_MATRIX_PATH
     
-    # Apply CLR transformation
-    with Timer("CLR Transformation" + (" (GPU accelerated)" if use_gpu else " (CPU vectorized)"), timings):
-        if use_gpu:
-            try:
-                clr_matrix = clr_transform_pytorch(mi_matrix, dtype='float32', device='cuda')
-                print("[INFO] Used GPU acceleration for CLR")
-            except Exception as e:
-                print(f"[WARNING] GPU CLR failed: {e}")
-                print("[INFO] Falling back to CPU CLR")
-                clr_matrix = clr_transform(mi_matrix)
-        else:
-            clr_matrix = clr_transform(mi_matrix)
+    # Apply CLR transformation (CPU vectorized - fast enough at ~40s, GPU needs >25 GB VRAM)
+    with Timer("CLR Transformation (CPU vectorized)", timings):
+        clr_matrix = clr_transform(mi_matrix)
         results_info['CLR Matrix Range'] = f"{clr_matrix.min():.4f} to {clr_matrix.max():.4f}"
     
     # Threshold network
@@ -897,9 +976,9 @@ def main():
         modules_clr, membership_clr = cluster_louvain(adj_clr, gene_names)
         results_info['CLR Number of Modules'] = len(modules_clr)
     
-    # Save MI+CLR results
+    # Save MI+CLR results (mi_matrix=None since already saved during computation)
     with Timer("Saving MI+CLR Results", timings):
-        save_results(mi_matrix, clr_matrix, adj_clr, modules_clr, membership_clr, gene_names, "mi_clr_python")
+        save_results(None, clr_matrix, adj_clr, modules_clr, membership_clr, gene_names, "mi_clr_python")
         results_info['OUTPUT_CLR'] = "  - MI+CLR results saved with prefix: mi_clr_python"
     
     # ========================================================================

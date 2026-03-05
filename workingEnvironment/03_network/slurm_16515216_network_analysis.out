@@ -1,0 +1,305 @@
+============================================================================
+Gene Network Inference: MI+CLR vs GRNBoost2
+SLURM Job ID: 16515216
+Node: binfservas30
+Started: Thu Mar  5 10:49:45 CET 2026
+============================================================================
+
+[INFO] Activating Python environment...
+[INFO] Using Python: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/python
+[INFO] Python version: Python 3.9.5
+
+[INFO] Setting up temporary directory...
+[INFO] Temporary directory: /scratch/mbotos/network_tmp_1656905
+
+[INFO] Cleaning pip cache...
+Files removed: 20 (72.1 MB)
+Directories removed: 0
+
+[INFO] System Information:
+  CPU cores: 64
+  Memory: 1.0Ti
+  Disk space (home): 904G
+  Disk space (scratch): 3.5T
+
+[INFO] GPU Information:
+NVIDIA GeForce RTX 2080 Ti, 11264 MiB
+NVIDIA GeForce RTX 2080 Ti, 11264 MiB
+
+[INFO] Loading PyTorch module for GPU acceleration...
+
+The following have been reloaded with a version change:
+  1) ncurses/6.2 => ncurses/6.2-GCCcore-10.3.0
+
+[INFO] ✓ PyTorch module loaded successfully
+ 67) PyTorch/1.10.0-foss-2021a-CUDA-11.3.1
+
+[INFO] Verifying PyTorch import...
+✓ PyTorch 1.10.0 - CUDA available: True
+[INFO] ✓ PyTorch verification successful
+
+============================================================================
+Starting Network Inference Analysis
+============================================================================
+
+[INFO] Using all available CPU cores for parallel processing
+[INFO] Configuration: nbins=5, disc_strategy=quantile
+[INFO] Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/network_analysis_20260305_104953.log
+[INFO] Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/analysis_report_20260305_104953.txt
+
+================================================================================
+GENE NETWORK INFERENCE: MI+CLR vs GRNBoost2
+================================================================================
+Start time: 2026-03-05 10:49:53
+================================================================================
+
+============================================================
+GPU ACCELERATION STATUS
+============================================================
+CuPy available: False
+PyTorch available: True
+CUDA available: True
+
+Detected 1 GPU(s):
+  [0] NVIDIA GeForce RTX 2080 Ti
+      Memory: 11.5 GB
+      Compute Capability: 7.5
+============================================================
+
+
+[2026-03-05 10:49:55] Starting: Data Loading
+--------------------------------------------------------------------------------
+
+================================================================================
+LOADING DATA
+================================================================================
+[INFO] Loading expression data from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/logCPM_matrix_filtered_samples.csv
+[INFO] Expression matrix shape: (32763, 613) (genes x samples)
+[INFO] Loading metadata from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/metadata_with_sample_annotations.csv
+[INFO] Metadata shape: (1198, 18)
+--------------------------------------------------------------------------------
+[2026-03-05 10:49:58] Completed: Data Loading
+[TIMING] Duration: 2.58 seconds
+
+================================================================================
+METHOD 1: MUTUAL INFORMATION + CLR
+================================================================================
+
+[2026-03-05 10:49:58] Starting: MI Matrix Computation (Fast histogram-based)
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+METHOD 1: MUTUAL INFORMATION + CLR (Fast histogram-based)
+--------------------------------------------------------------------------------
+[INFO] Discretizing 32763 genes with 5 bins (quantile)...
+[INFO] Discretizing expression data: 5 bins, strategy=quantile
+[INFO] Computing MI matrix for 32763 genes using -1 cores...
+[INFO] Using fast histogram-based MI (50-100x faster than sklearn)...
+[INFO] Processed 500/32763 genes for MI calculation
+[INFO] Processed 1000/32763 genes for MI calculation
+[INFO] Processed 1500/32763 genes for MI calculation
+[INFO] Processed 2000/32763 genes for MI calculation
+[INFO] Processed 2500/32763 genes for MI calculation
+[INFO] Processed 3000/32763 genes for MI calculation
+[INFO] Processed 3500/32763 genes for MI calculation
+[INFO] Processed 4000/32763 genes for MI calculation
+[INFO] Processed 4500/32763 genes for MI calculation
+[INFO] Processed 5000/32763 genes for MI calculation
+[INFO] Processed 5500/32763 genes for MI calculation
+[INFO] Processed 6000/32763 genes for MI calculation
+[INFO] Processed 6500/32763 genes for MI calculation
+[INFO] Processed 7000/32763 genes for MI calculation
+[INFO] Processed 7500/32763 genes for MI calculation
+[INFO] Processed 8000/32763 genes for MI calculation
+[INFO] Processed 8500/32763 genes for MI calculation
+[INFO] Processed 9000/32763 genes for MI calculation
+[INFO] Processed 9500/32763 genes for MI calculation
+[INFO] Processed 10000/32763 genes for MI calculation
+[INFO] Processed 10500/32763 genes for MI calculation
+[INFO] Processed 11000/32763 genes for MI calculation
+[INFO] Processed 11500/32763 genes for MI calculation
+[INFO] Processed 12000/32763 genes for MI calculation
+[INFO] Processed 12500/32763 genes for MI calculation
+[INFO] Processed 13000/32763 genes for MI calculation
+[INFO] Processed 13500/32763 genes for MI calculation
+[INFO] Processed 14000/32763 genes for MI calculation
+[INFO] Processed 14500/32763 genes for MI calculation
+[INFO] Processed 15000/32763 genes for MI calculation
+[INFO] Processed 15500/32763 genes for MI calculation
+[INFO] Processed 16000/32763 genes for MI calculation
+[INFO] Processed 16500/32763 genes for MI calculation
+[INFO] Processed 17000/32763 genes for MI calculation
+[INFO] Processed 17500/32763 genes for MI calculation
+[INFO] Processed 18000/32763 genes for MI calculation
+[INFO] Processed 18500/32763 genes for MI calculation
+[INFO] Processed 19000/32763 genes for MI calculation
+[INFO] Processed 19500/32763 genes for MI calculation
+[INFO] Processed 20000/32763 genes for MI calculation
+[INFO] Processed 20500/32763 genes for MI calculation
+[INFO] Processed 21000/32763 genes for MI calculation
+[INFO] Processed 21500/32763 genes for MI calculation
+[INFO] Processed 22000/32763 genes for MI calculation
+[INFO] Processed 22500/32763 genes for MI calculation
+[INFO] Processed 23000/32763 genes for MI calculation
+[INFO] Processed 23500/32763 genes for MI calculation
+[INFO] Processed 24000/32763 genes for MI calculation
+[INFO] Processed 24500/32763 genes for MI calculation
+[INFO] Processed 25000/32763 genes for MI calculation
+[INFO] Processed 25500/32763 genes for MI calculation
+[INFO] Processed 26000/32763 genes for MI calculation
+[INFO] Processed 26500/32763 genes for MI calculation
+[INFO] Processed 27000/32763 genes for MI calculation
+[INFO] Processed 27500/32763 genes for MI calculation
+[INFO] Processed 28000/32763 genes for MI calculation
+[INFO] Processed 28500/32763 genes for MI calculation
+[INFO] Processed 29000/32763 genes for MI calculation
+[INFO] Processed 29500/32763 genes for MI calculation
+[INFO] Processed 30000/32763 genes for MI calculation
+[INFO] Processed 30500/32763 genes for MI calculation
+[INFO] Processed 31000/32763 genes for MI calculation
+[INFO] Processed 31500/32763 genes for MI calculation
+[INFO] Processed 32000/32763 genes for MI calculation
+[INFO] Processed 32500/32763 genes for MI calculation
+[INFO] MI matrix computed in 4304.07 seconds (71.73 minutes)
+[INFO] MI matrix shape: (32763, 32763)
+[INFO] MI range: [0.0015, 1.6094]
+[INFO] Saving MI matrix to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/mi_matrix_cache.npy
+[INFO] ✓ MI matrix saved (4.29 GB, float32)
+--------------------------------------------------------------------------------
+[2026-03-05 12:01:50] Completed: MI Matrix Computation (Fast histogram-based)
+[TIMING] Duration: 1.20 hours (11.9m)
+
+[2026-03-05 12:01:50] Starting: CLR Transformation (GPU accelerated)
+--------------------------------------------------------------------------------
+Transferring MI matrix to CUDA...
+Computing statistics on GPU...
+[WARNING] GPU CLR failed: CUDA out of memory. Tried to allocate 8.00 GiB (GPU 0; 10.75 GiB total capacity; 10.00 GiB already allocated; 97.56 MiB free; 10.00 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+[INFO] Falling back to CPU CLR
+[INFO] Applying CLR transformation (CPU vectorized)...
+[INFO] CLR range: [0.0001, 27.5224]
+--------------------------------------------------------------------------------
+[2026-03-05 12:02:29] Completed: CLR Transformation (GPU accelerated)
+[TIMING] Duration: 39.09 seconds
+
+[2026-03-05 12:02:29] Starting: Network Thresholding
+--------------------------------------------------------------------------------
+[INFO] Threshold (top 5%): 1.5310
+[INFO] Number of edges after thresholding: 26834536
+--------------------------------------------------------------------------------
+[2026-03-05 12:02:45] Completed: Network Thresholding
+[TIMING] Duration: 15.89 seconds
+
+[2026-03-05 12:02:45] Starting: Louvain Clustering (MI+CLR)
+--------------------------------------------------------------------------------
+[INFO] Performing Louvain clustering...
+[INFO] Number of modules: 2367
+[INFO] Module sizes: [13423, 3766, 4971, 5324, 2834, 2, 1, 1, 1, 32, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 1, 1, 1, 3, 1, 4, 3, 2, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+--------------------------------------------------------------------------------
+[2026-03-05 12:03:46] Completed: Louvain Clustering (MI+CLR)
+[TIMING] Duration: 1.03 minutes (61.6s)
+
+[2026-03-05 12:03:46] Starting: Saving MI+CLR Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving mi_clr_python results...
+[INFO] Output directory: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/CLR_adjacency_matrix_mi_clr_python.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/CLR_network_edgelist_mi_clr_python.txt
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/CLR_network_weighted_mi_clr_python.txt
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/CLR_network_mi_clr_python.graphml
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/node_modules_mi_clr_python.txt
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/BTM_modules_mi_clr_python.tsv
+--------------------------------------------------------------------------------
+[2026-03-05 12:22:37] Completed: Saving MI+CLR Results
+[TIMING] Duration: 18.84 minutes (1130.5s)
+
+================================================================================
+METHOD 2: GRNBoost2
+================================================================================
+
+[2026-03-05 12:22:37] Starting: GRNBoost2 Inference
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+METHOD 2: GRNBoost2
+--------------------------------------------------------------------------------
+[ERROR] arboreto not installed. Install with: pip install arboreto
+[INFO] Skipping GRNBoost2 analysis
+--------------------------------------------------------------------------------
+[2026-03-05 12:22:37] Completed: GRNBoost2 Inference
+[TIMING] Duration: 0.01 seconds
+
+================================================================================
+PIPELINE COMPLETE
+================================================================================
+End time: 2026-03-05 12:22:37
+Total runtime: 1.54 hours (32.7m)
+================================================================================
+
+TIMING SUMMARY:
+--------------------------------------------------------------------------------
+MI Matrix Computation (Fast histogram-based)      :   1.20 hours (11.9m) ( 77.5%)
+Saving MI+CLR Results                             : 18.84 minutes (1130.5s) ( 20.3%)
+Louvain Clustering (MI+CLR)                       : 1.03 minutes (61.6s) (  1.1%)
+CLR Transformation (GPU accelerated)              :        39.09 seconds (  0.7%)
+Network Thresholding                              :        15.89 seconds (  0.3%)
+Data Loading                                      :         2.58 seconds (  0.0%)
+GRNBoost2 Inference                               :         0.01 seconds (  0.0%)
+--------------------------------------------------------------------------------
+TOTAL                                             :   1.54 hours (32.7m)
+
+All results saved to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2
+
+Output files:
+  - CLR_adjacency_matrix_mi_clr_python.mtx
+  - CLR_network_edgelist_mi_clr_python.txt
+  - CLR_network_weighted_mi_clr_python.txt
+  - CLR_network_mi_clr_python.graphml
+  - BTM_modules_mi_clr_python.tsv
+
+[INFO] Analysis report saved to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/analysis_report_20260305_104953.txt
+
+================================================================================
+Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/network_analysis_20260305_104953.log
+Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/analysis_report_20260305_104953.txt
+================================================================================
+
+
+============================================================================
+Job Complete!
+============================================================================
+Ended: Thu Mar  5 12:22:39 CET 2026
+Total runtime: 1h 32m 47s
+============================================================================
+
+[INFO] Cleaning up temporary files...
+[INFO] Cleanup complete
+
+Output files generated:
+-rw-rw-r--. 1 mbotos mbotos  18M Mar  4 16:44 submodule_M.4_1.graphml
+-rw-rw-r--. 1 mbotos mbotos  50M Mar  4 16:44 submodule_M.4_2.graphml
+-rw-rw-r--. 1 mbotos mbotos  63M Mar  4 16:44 submodule_M.4_3.graphml
+-rw-rw-r--. 1 mbotos mbotos  28M Mar  4 16:44 submodule_M.4_4.graphml
+-rw-rw-r--. 1 mbotos mbotos  31M Mar  4 16:44 submodule_M.5_1.graphml
+-rw-rw-r--. 1 mbotos mbotos 105M Mar  4 16:44 submodule_M.5_2.graphml
+-rw-rw-r--. 1 mbotos mbotos 6.4M Mar  4 16:44 submodule_M.5_3.graphml
+-rw-rw-r--. 1 mbotos mbotos 5.8M Mar  4 16:44 submodule_M.5_4.graphml
+-rw-rw-r--. 1 mbotos mbotos  659 Mar  4 16:44 submodule_M.5_5.graphml
+-rw-rw-r--. 1 mbotos mbotos 1.1K Mar  4 16:44 submodule_M.5_6.graphml
+-rw-rw-r--. 1 mbotos mbotos  659 Mar  4 16:44 submodule_M.5_7.graphml
+-rw-rw-r--. 1 mbotos mbotos  23M Mar  4 16:44 submodule_M.6_1.graphml
+-rw-rw-r--. 1 mbotos mbotos  26M Mar  4 16:44 submodule_M.6_2.graphml
+-rw-rw-r--. 1 mbotos mbotos 6.5M Mar  4 16:44 submodule_M.6_3.graphml
+-rw-rw-r--. 1 mbotos mbotos  33K Mar  4 16:44 submodule_M.6_4.graphml
+-rw-rw-r--. 1 mbotos mbotos  964 Mar  4 16:44 submodule_M.6_5.graphml
+-rw-rw-r--. 1 mbotos mbotos 1.2K Mar  4 16:44 submodule_M.6_6.graphml
+-rw-rw-r--. 1 mbotos mbotos  659 Mar  4 16:44 submodule_M.6_7.graphml
+-rw-rw-r--. 1 mbotos mbotos  659 Mar  4 16:44 submodule_M.6_8.graphml
+-rw-rw-r--. 1 mbotos mbotos 711K Mar  4 15:31 submodules_spearman_louvain_leiden.tsv
+
+============================================================================
+Check the following files for results:
+  - network_analysis_*.log     : Complete execution log
+  - analysis_report_*.txt      : Summary report with timings
+  - slurm_16515216_*.out/err : SLURM job output
+============================================================================

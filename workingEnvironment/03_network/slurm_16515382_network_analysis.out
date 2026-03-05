@@ -1,0 +1,193 @@
+============================================================================
+Gene Network Inference: MI+CLR vs GRNBoost2
+SLURM Job ID: 16515382
+Node: binfservas30
+Started: Thu Mar  5 14:25:08 CET 2026
+============================================================================
+
+[INFO] Activating Python environment...
+[INFO] Using Python: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/python
+[INFO] Python version: Python 3.9.5
+
+[INFO] Setting up temporary directory...
+[INFO] Temporary directory: /scratch/mbotos/network_tmp_1725284
+
+[INFO] Cleaning pip cache...
+Files removed: 0 (0 bytes)
+Directories removed: 0
+
+[INFO] System Information:
+  CPU cores: 64
+  Memory: 1.0Ti
+  Disk space (home): 903G
+  Disk space (scratch): 3.5T
+
+[INFO] GPU Information:
+NVIDIA GeForce RTX 2080 Ti, 11264 MiB
+NVIDIA GeForce RTX 2080 Ti, 11264 MiB
+
+[INFO] Loading PyTorch module for GPU acceleration...
+
+The following have been reloaded with a version change:
+  1) ncurses/6.2 => ncurses/6.2-GCCcore-10.3.0
+
+[INFO] ✓ PyTorch module loaded successfully
+ 67) PyTorch/1.10.0-foss-2021a-CUDA-11.3.1
+
+[INFO] Re-activating virtualenv to restore package priority after module load...
+[INFO] Using Python: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/python
+[INFO] PYTHONPATH: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages:/srv/ss/sib/ibu/rocky8/2023072800/software/PyTorch/1.10.0-foss-2021a-CUDA-11.3.1/lib/python3.9/site-packages:/srv/ss/sib/ibu/rocky8/2023072800/software/expecttest/0.1.3-GCCcore-10.3.0/lib/python3.9/site-packages:/srv/ss/sib/ibu/rocky8/2023072800/software/Pillow/8.2.0-GCCcore-10.3.0/lib/python3.9/site-packages:/srv/ss/sib/ibu/rocky8/2023072800/software/PyYAML/5.4.1-GCCcore-10.3.0/lib/python3.9/site-packages:/srv/ss/sib/ibu/rocky8/2023072800/software/typing-extensions/3.10.0.0-GCCcore-10.3.0/lib/python3.9/site-packages:/srv/ss/sib/ibu/rocky8/2023072800/software/SciPy-bundle/2021.05-foss-2021a/lib/python3.9/site-packages:/srv/ss/sib/ibu/rocky8/2023072800/software/pybind11/2.6.2-GCCcore-10.3.0/lib/python3.9/site-packages:/srv/ss/sib/ibu/rocky8/2023072800/software/protobuf-python/3.17.3-GCCcore-10.3.0/lib/python3.9/site-packages:/srv/ss/sib/ibu/rocky8/2023072800/software/Python/3.9.5-GCCcore-10.3.0/easybuild/python
+
+[INFO] Verifying PyTorch import...
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/srv/ss/sib/ibu/rocky8/2023072800/software/PyTorch/1.10.0-foss-2021a-CUDA-11.3.1/lib/python3.9/site-packages/torch/__init__.py", line 29, in <module>
+    from .torch_version import __version__ as __version__
+  File "/srv/ss/sib/ibu/rocky8/2023072800/software/PyTorch/1.10.0-foss-2021a-CUDA-11.3.1/lib/python3.9/site-packages/torch/torch_version.py", line 3, in <module>
+    from pkg_resources import packaging  # type: ignore[attr-defined]
+ModuleNotFoundError: No module named 'pkg_resources'
+[WARNING] PyTorch import failed - installing pkg_resources compatibility...
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/srv/ss/sib/ibu/rocky8/2023072800/software/PyTorch/1.10.0-foss-2021a-CUDA-11.3.1/lib/python3.9/site-packages/torch/__init__.py", line 29, in <module>
+    from .torch_version import __version__ as __version__
+  File "/srv/ss/sib/ibu/rocky8/2023072800/software/PyTorch/1.10.0-foss-2021a-CUDA-11.3.1/lib/python3.9/site-packages/torch/torch_version.py", line 3, in <module>
+    from pkg_resources import packaging  # type: ignore[attr-defined]
+ModuleNotFoundError: No module named 'pkg_resources'
+[WARNING] PyTorch still not working - GPU acceleration may not be available
+[INFO] Analysis will continue with CPU-only CLR
+
+============================================================================
+Starting Network Inference Analysis
+============================================================================
+
+[INFO] Using all available CPU cores for parallel processing
+[INFO] Configuration: nbins=5, disc_strategy=quantile
+[INFO] Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/network_analysis_20260305_142519.log
+[INFO] Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/analysis_report_20260305_142519.txt
+
+================================================================================
+GENE NETWORK INFERENCE: MI+CLR vs GRNBoost2
+================================================================================
+Start time: 2026-03-05 14:25:19
+================================================================================
+
+[2026-03-05 14:25:19] Starting: Data Loading
+--------------------------------------------------------------------------------
+
+================================================================================
+LOADING DATA
+================================================================================
+[INFO] Loading expression data from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/logCPM_matrix_filtered_samples.csv
+[INFO] Expression matrix shape: (32763, 613) (genes x samples)
+[INFO] Loading metadata from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/metadata_with_sample_annotations.csv
+[INFO] Metadata shape: (1198, 18)
+--------------------------------------------------------------------------------
+[2026-03-05 14:25:21] Completed: Data Loading
+[TIMING] Duration: 2.65 seconds
+
+================================================================================
+METHOD 1: MUTUAL INFORMATION + CLR
+================================================================================
+
+[2026-03-05 14:25:21] Starting: MI Matrix Computation (Fast histogram-based)
+--------------------------------------------------------------------------------
+[INFO] Cache found — loading MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/mi_matrix_cache.npy
+[INFO] ✓ Loaded MI matrix: shape=(32763, 32763), size=4.29 GB
+--------------------------------------------------------------------------------
+[2026-03-05 14:25:23] Completed: MI Matrix Computation (Fast histogram-based)
+[TIMING] Duration: 1.03 seconds
+
+[2026-03-05 14:25:23] Starting: CLR Transformation (CPU vectorized)
+--------------------------------------------------------------------------------
+[INFO] Applying CLR transformation (CPU vectorized)...
+[INFO] CLR range: [0.0001, 27.5224]
+--------------------------------------------------------------------------------
+[2026-03-05 14:25:48] Completed: CLR Transformation (CPU vectorized)
+[TIMING] Duration: 25.55 seconds
+
+[2026-03-05 14:25:48] Starting: Network Thresholding
+--------------------------------------------------------------------------------
+[INFO] Threshold (top 5%): 1.5310
+[INFO] Number of edges after thresholding: 26834539
+--------------------------------------------------------------------------------
+[2026-03-05 14:26:02] Completed: Network Thresholding
+[TIMING] Duration: 14.28 seconds
+
+[2026-03-05 14:26:02] Starting: Louvain Clustering (MI+CLR)
+--------------------------------------------------------------------------------
+[INFO] Performing Louvain clustering...
+[INFO] Number of modules: 2367
+[INFO] Module sizes: [13418, 3763, 4971, 5340, 2838, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 11, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 15, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 1, 1, 1, 3, 1, 4, 3, 2, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+--------------------------------------------------------------------------------
+[2026-03-05 14:27:11] Completed: Louvain Clustering (MI+CLR)
+[TIMING] Duration: 1.15 minutes (69.0s)
+
+[2026-03-05 14:27:11] Starting: Saving MI+CLR Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving mi_clr_python results...
+[INFO] Output directory: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2
+[INFO] Vectorized edge extraction: 26,834,548 edges
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/CLR_adjacency_matrix_mi_clr_python.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/CLR_network_edgelist_mi_clr_python.txt
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/CLR_network_weighted_mi_clr_python.txt
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/CLR_network_mi_clr_python.graphml
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/node_modules_mi_clr_python.txt
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/BTM_modules_mi_clr_python.tsv
+--------------------------------------------------------------------------------
+[2026-03-05 14:29:59] Completed: Saving MI+CLR Results
+[TIMING] Duration: 2.79 minutes (167.7s)
+
+================================================================================
+METHOD 2: GRNBoost2
+================================================================================
+
+[2026-03-05 14:29:59] Starting: GRNBoost2 Inference
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+METHOD 2: GRNBoost2
+--------------------------------------------------------------------------------
+[INFO] Running GRNBoost2 with -1 cores...
+[INFO] This may take several minutes for large datasets...
+preparing dask client
+[INFO] Using all available CPU cores for parallel processing
+[INFO] Configuration: nbins=5, disc_strategy=quantile
+[INFO] Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/network_analysis_20260305_143006.log
+[INFO] Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/analysis_report_20260305_143006.txt
+[INFO] Using all available CPU cores for parallel processing
+[INFO] Configuration: nbins=5, disc_strategy=quantile
+[INFO] Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/network_analysis_20260305_143006.log
+[INFO] Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/analysis_report_20260305_143006.txt
+[INFO] Using all available CPU cores for parallel processing
+[INFO] Configuration: nbins=5, disc_strategy=quantile
+[INFO] Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/network_analysis_20260305_143006.log
+[INFO] Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/analysis_report_20260305_143006.txt
+[INFO] Using all available CPU cores for parallel processing
+[INFO] Configuration: nbins=5, disc_strategy=quantile
+[INFO] Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/network_analysis_20260305_143006.log
+[INFO] Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/analysis_report_20260305_143006.txt
+[INFO] Using all available CPU cores for parallel processing
+[INFO] Configuration: nbins=5, disc_strategy=quantile
+[INFO] Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/network_analysis_20260305_143006.log
+[INFO] Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/analysis_report_20260305_143006.txt
+[INFO] Using all available CPU cores for parallel processing
+[INFO] Configuration: nbins=5, disc_strategy=quantile
+[INFO] Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/network_analysis_20260305_143006.log
+[INFO] Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/analysis_report_20260305_143006.txt
+[INFO] Using all available CPU cores for parallel processing
+[INFO] Configuration: nbins=5, disc_strategy=quantile
+[INFO] Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/network_analysis_20260305_143006.log
+[INFO] Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/analysis_report_20260305_143006.txt
+[INFO] Using all available CPU cores for parallel processing
+[INFO] Configuration: nbins=5, disc_strategy=quantile
+[INFO] Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/network_analysis_20260305_143006.log
+[INFO] Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/analysis_report_20260305_143006.txt
+parsing input
+creating dask graph
+shutting down client and local cluster
+finished
+--------------------------------------------------------------------------------
+[2026-03-05 14:34:49] Completed: GRNBoost2 Inference
+[TIMING] Duration: 4.83 minutes (290.0s)

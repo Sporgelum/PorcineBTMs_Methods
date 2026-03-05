@@ -1,0 +1,103 @@
+============================================================================
+Gene Network Inference: MI+CLR vs GRNBoost2
+SLURM Job ID: 16515364
+Node: binfservas30
+Started: Thu Mar  5 13:42:03 CET 2026
+============================================================================
+
+[INFO] Activating Python environment...
+[INFO] Using Python: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/python
+[INFO] Python version: Python 3.9.5
+
+[INFO] Setting up temporary directory...
+[INFO] Temporary directory: /scratch/mbotos/network_tmp_1710470
+
+[INFO] Cleaning pip cache...
+Files removed: 0 (0 bytes)
+Directories removed: 0
+
+[INFO] System Information:
+  CPU cores: 64
+  Memory: 1.0Ti
+  Disk space (home): 903G
+  Disk space (scratch): 3.5T
+
+[INFO] GPU Information:
+NVIDIA GeForce RTX 2080 Ti, 11264 MiB
+NVIDIA GeForce RTX 2080 Ti, 11264 MiB
+
+[INFO] Loading PyTorch module for GPU acceleration...
+
+The following have been reloaded with a version change:
+  1) ncurses/6.2 => ncurses/6.2-GCCcore-10.3.0
+
+[INFO] ✓ PyTorch module loaded successfully
+ 67) PyTorch/1.10.0-foss-2021a-CUDA-11.3.1
+
+[INFO] Verifying PyTorch import...
+✓ PyTorch 1.10.0 - CUDA available: True
+[INFO] ✓ PyTorch verification successful
+
+============================================================================
+Starting Network Inference Analysis
+============================================================================
+
+[INFO] Using all available CPU cores for parallel processing
+[INFO] Configuration: nbins=5, disc_strategy=quantile
+[INFO] Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/network_analysis_20260305_134210.log
+[INFO] Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/analysis_report_20260305_134210.txt
+
+================================================================================
+GENE NETWORK INFERENCE: MI+CLR vs GRNBoost2
+================================================================================
+Start time: 2026-03-05 13:42:10
+================================================================================
+
+[2026-03-05 13:42:10] Starting: Data Loading
+--------------------------------------------------------------------------------
+
+================================================================================
+LOADING DATA
+================================================================================
+[INFO] Loading expression data from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/logCPM_matrix_filtered_samples.csv
+[INFO] Expression matrix shape: (32763, 613) (genes x samples)
+[INFO] Loading metadata from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/metadata_with_sample_annotations.csv
+[INFO] Metadata shape: (1198, 18)
+--------------------------------------------------------------------------------
+[2026-03-05 13:42:12] Completed: Data Loading
+[TIMING] Duration: 2.60 seconds
+
+================================================================================
+METHOD 1: MUTUAL INFORMATION + CLR
+================================================================================
+
+[2026-03-05 13:42:12] Starting: MI Matrix Computation (Fast histogram-based)
+--------------------------------------------------------------------------------
+[INFO] Cache found — loading MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_CLR_GRNBoost2/mi_matrix_cache.npy
+[INFO] ✓ Loaded MI matrix: shape=(32763, 32763), size=4.29 GB
+--------------------------------------------------------------------------------
+[2026-03-05 13:42:14] Completed: MI Matrix Computation (Fast histogram-based)
+[TIMING] Duration: 1.61 seconds
+
+[2026-03-05 13:42:14] Starting: CLR Transformation (CPU vectorized)
+--------------------------------------------------------------------------------
+[INFO] Applying CLR transformation (CPU vectorized)...
+[INFO] CLR range: [0.0001, 27.5224]
+--------------------------------------------------------------------------------
+[2026-03-05 13:42:37] Completed: CLR Transformation (CPU vectorized)
+[TIMING] Duration: 23.04 seconds
+
+[2026-03-05 13:42:37] Starting: Network Thresholding
+--------------------------------------------------------------------------------
+[INFO] Threshold (top 5%): 1.5310
+[INFO] Number of edges after thresholding: 26834539
+--------------------------------------------------------------------------------
+[2026-03-05 13:42:53] Completed: Network Thresholding
+[TIMING] Duration: 15.99 seconds
+
+[2026-03-05 13:42:53] Starting: Louvain Clustering (MI+CLR)
+--------------------------------------------------------------------------------
+[INFO] Performing Louvain clustering...
+--------------------------------------------------------------------------------
+[2026-03-05 13:43:23] Completed: Louvain Clustering (MI+CLR)
+[TIMING] Duration: 29.84 seconds

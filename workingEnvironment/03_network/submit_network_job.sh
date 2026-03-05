@@ -75,6 +75,22 @@ else
 fi
 echo ""
 
+# Re-activate the virtualenv AFTER module loads to ensure its packages take priority.
+# 'module load PyTorch' contaminates PYTHONPATH with system packages compiled against
+# NumPy 1.x (e.g. numexpr in SciPy-bundle). When dask spawns worker sub-processes
+# for GRNBoost2 those workers inherit PYTHONPATH and crash with NumPy 2.x in the venv.
+# Solution: reset PYTHONPATH to ONLY the venv site-packages.
+echo "[INFO] Re-activating virtualenv and resetting PYTHONPATH to venv only..."
+source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate
+VENV_SITE="/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages"
+export PYTHONPATH="${VENV_SITE}"
+# Disable numexpr as an extra safety net (pandas treats it as optional anyway)
+export NUMEXPR_DISABLED=1
+echo "[INFO] Using Python: $(which python)"
+echo "[INFO] PYTHONPATH: $PYTHONPATH"
+echo "[INFO] NUMEXPR_DISABLED: $NUMEXPR_DISABLED"
+echo ""
+
 # Verify PyTorch is importable from Python
 echo "[INFO] Verifying PyTorch import..."
 if python -c "import torch; print(f'✓ PyTorch {torch.__version__} - CUDA available: {torch.cuda.is_available()}')" 2>&1; then
