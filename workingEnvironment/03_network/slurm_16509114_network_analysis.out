@@ -1,0 +1,562 @@
+============================================================================
+Gene Network Inference: MI+CLR vs GRNBoost2
+SLURM Job ID: 16509114
+Node: binfservas30
+Started: Wed Mar  4 12:42:29 CET 2026
+============================================================================
+
+[INFO] Activating Python environment...
+[INFO] Using Python: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/python
+[INFO] Python version: Python 3.9.5
+
+[INFO] Setting up temporary directory...
+[INFO] Temporary directory: /scratch/mbotos/network_tmp_1452127
+
+[INFO] Cleaning pip cache...
+Files removed: 0 (0 bytes)
+Directories removed: 0
+
+[INFO] System Information:
+  CPU cores: 64
+  Memory: 1.0Ti
+  Disk space (home): 909G
+  Disk space (scratch): 3.5T
+
+[INFO] GPU Information:
+NVIDIA GeForce RTX 2080 Ti, 11264 MiB
+NVIDIA GeForce RTX 2080 Ti, 11264 MiB
+
+[INFO] Loading PyTorch module for GPU acceleration...
+
+The following have been reloaded with a version change:
+  1) ncurses/6.2 => ncurses/6.2-GCCcore-10.3.0
+
+[INFO] ✓ PyTorch module loaded successfully
+ 67) PyTorch/1.10.0-foss-2021a-CUDA-11.3.1
+
+[INFO] Verifying PyTorch import...
+✓ PyTorch 1.10.0 - CUDA available: True
+[INFO] ✓ PyTorch verification successful
+
+============================================================================
+Starting Network Inference Analysis
+============================================================================
+
+[INFO] Using all available CPU cores for parallel processing
+[INFO] Configuration: nbins=5, disc_strategy=quantile
+[INFO] Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/network_analysis_20260304_124236.log
+[INFO] Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/analysis_report_20260304_124236.txt
+
+================================================================================
+GENE NETWORK INFERENCE: MI+CLR vs GRNBoost2
+================================================================================
+Start time: 2026-03-04 12:42:36
+================================================================================
+
+============================================================
+GPU ACCELERATION STATUS
+============================================================
+CuPy available: False
+PyTorch available: True
+CUDA available: True
+
+Detected 1 GPU(s):
+  [0] NVIDIA GeForce RTX 2080 Ti
+      Memory: 11.5 GB
+      Compute Capability: 7.5
+============================================================
+
+
+[2026-03-04 12:42:38] Starting: Data Loading
+--------------------------------------------------------------------------------
+
+================================================================================
+LOADING DATA
+================================================================================
+[INFO] Loading expression data from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/logCPM_matrix_filtered_samples.csv
+[INFO] Expression matrix shape: (32763, 613) (genes x samples)
+[INFO] Loading metadata from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/metadata_with_sample_annotations.csv
+[INFO] Metadata shape: (1198, 18)
+--------------------------------------------------------------------------------
+[2026-03-04 12:42:40] Completed: Data Loading
+[TIMING] Duration: 2.61 seconds
+
+================================================================================
+METHOD 1: MUTUAL INFORMATION + CLR
+================================================================================
+
+[2026-03-04 12:42:40] Starting: MI Matrix Computation (CPU parallelized)
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+METHOD 1: MUTUAL INFORMATION + CLR
+--------------------------------------------------------------------------------
+[INFO] Discretizing expression data: 5 bins, strategy=quantile
+[INFO] Computing MI matrix for 32763 genes using -1 cores...
+[INFO] Processed 100/32763 genes for MI calculation
+[INFO] Processed 200/32763 genes for MI calculation
+[INFO] Processed 300/32763 genes for MI calculation
+[INFO] Processed 400/32763 genes for MI calculation
+[INFO] Processed 500/32763 genes for MI calculation
+[INFO] Processed 600/32763 genes for MI calculation
+[INFO] Processed 700/32763 genes for MI calculation
+[INFO] Processed 800/32763 genes for MI calculation
+[INFO] Processed 900/32763 genes for MI calculation
+[INFO] Processed 1000/32763 genes for MI calculation
+[INFO] Processed 1100/32763 genes for MI calculation
+[INFO] Processed 1200/32763 genes for MI calculation
+[INFO] Processed 1300/32763 genes for MI calculation
+[INFO] Processed 1400/32763 genes for MI calculation
+[INFO] Processed 1500/32763 genes for MI calculation
+[INFO] Processed 1600/32763 genes for MI calculation
+[INFO] Processed 1700/32763 genes for MI calculation
+[INFO] Processed 1800/32763 genes for MI calculation
+[INFO] Processed 1900/32763 genes for MI calculation
+[INFO] Processed 2000/32763 genes for MI calculation
+[INFO] Processed 2100/32763 genes for MI calculation
+[INFO] Processed 2200/32763 genes for MI calculation
+[INFO] Processed 2300/32763 genes for MI calculation
+[INFO] Processed 2400/32763 genes for MI calculation
+[INFO] Processed 2500/32763 genes for MI calculation
+[INFO] Processed 2600/32763 genes for MI calculation
+[INFO] Processed 2700/32763 genes for MI calculation
+[INFO] Processed 2800/32763 genes for MI calculation
+[INFO] Processed 2900/32763 genes for MI calculation
+[INFO] Processed 3000/32763 genes for MI calculation
+[INFO] Processed 3100/32763 genes for MI calculation
+[INFO] Processed 3200/32763 genes for MI calculation
+[INFO] Processed 3300/32763 genes for MI calculation
+[INFO] Processed 3400/32763 genes for MI calculation
+[INFO] Processed 3500/32763 genes for MI calculation
+[INFO] Processed 3600/32763 genes for MI calculation
+[INFO] Processed 3700/32763 genes for MI calculation
+[INFO] Processed 3800/32763 genes for MI calculation
+[INFO] Processed 3900/32763 genes for MI calculation
+[INFO] Processed 4000/32763 genes for MI calculation
+[INFO] Processed 4100/32763 genes for MI calculation
+[INFO] Processed 4200/32763 genes for MI calculation
+[INFO] Processed 4300/32763 genes for MI calculation
+[INFO] Processed 4400/32763 genes for MI calculation
+[INFO] Processed 4500/32763 genes for MI calculation
+[INFO] Processed 4600/32763 genes for MI calculation
+[INFO] Processed 4700/32763 genes for MI calculation
+[INFO] Processed 4800/32763 genes for MI calculation
+[INFO] Processed 4900/32763 genes for MI calculation
+[INFO] Processed 5000/32763 genes for MI calculation
+[INFO] Processed 5100/32763 genes for MI calculation
+[INFO] Processed 5200/32763 genes for MI calculation
+[INFO] Processed 5300/32763 genes for MI calculation
+[INFO] Processed 5400/32763 genes for MI calculation
+[INFO] Processed 5500/32763 genes for MI calculation
+[INFO] Processed 5600/32763 genes for MI calculation
+[INFO] Processed 5700/32763 genes for MI calculation
+[INFO] Processed 5800/32763 genes for MI calculation
+[INFO] Processed 5900/32763 genes for MI calculation
+[INFO] Processed 6000/32763 genes for MI calculation
+[INFO] Processed 6100/32763 genes for MI calculation
+[INFO] Processed 6200/32763 genes for MI calculation
+[INFO] Processed 6300/32763 genes for MI calculation
+[INFO] Processed 6400/32763 genes for MI calculation
+[INFO] Processed 6500/32763 genes for MI calculation
+[INFO] Processed 6600/32763 genes for MI calculation
+[INFO] Processed 6700/32763 genes for MI calculation
+[INFO] Processed 6800/32763 genes for MI calculation
+[INFO] Processed 6900/32763 genes for MI calculation
+[INFO] Processed 7000/32763 genes for MI calculation
+[INFO] Processed 7100/32763 genes for MI calculation
+[INFO] Processed 7200/32763 genes for MI calculation
+[INFO] Processed 7300/32763 genes for MI calculation
+[INFO] Processed 7400/32763 genes for MI calculation
+[INFO] Processed 7500/32763 genes for MI calculation
+[INFO] Processed 7600/32763 genes for MI calculation
+[INFO] Processed 7700/32763 genes for MI calculation
+[INFO] Processed 7800/32763 genes for MI calculation
+[INFO] Processed 7900/32763 genes for MI calculation
+[INFO] Processed 8000/32763 genes for MI calculation
+[INFO] Processed 8100/32763 genes for MI calculation
+[INFO] Processed 8200/32763 genes for MI calculation
+[INFO] Processed 8300/32763 genes for MI calculation
+[INFO] Processed 8400/32763 genes for MI calculation
+[INFO] Processed 8500/32763 genes for MI calculation
+[INFO] Processed 8600/32763 genes for MI calculation
+[INFO] Processed 8700/32763 genes for MI calculation
+[INFO] Processed 8800/32763 genes for MI calculation
+[INFO] Processed 8900/32763 genes for MI calculation
+[INFO] Processed 9000/32763 genes for MI calculation
+[INFO] Processed 9100/32763 genes for MI calculation
+[INFO] Processed 9200/32763 genes for MI calculation
+[INFO] Processed 9300/32763 genes for MI calculation
+[INFO] Processed 9400/32763 genes for MI calculation
+[INFO] Processed 9500/32763 genes for MI calculation
+[INFO] Processed 9600/32763 genes for MI calculation
+[INFO] Processed 9700/32763 genes for MI calculation
+[INFO] Processed 9800/32763 genes for MI calculation
+[INFO] Processed 9900/32763 genes for MI calculation
+[INFO] Processed 10000/32763 genes for MI calculation
+[INFO] Processed 10100/32763 genes for MI calculation
+[INFO] Processed 10200/32763 genes for MI calculation
+[INFO] Processed 10300/32763 genes for MI calculation
+[INFO] Processed 10400/32763 genes for MI calculation
+[INFO] Processed 10500/32763 genes for MI calculation
+[INFO] Processed 10600/32763 genes for MI calculation
+[INFO] Processed 10700/32763 genes for MI calculation
+[INFO] Processed 10800/32763 genes for MI calculation
+[INFO] Processed 10900/32763 genes for MI calculation
+[INFO] Processed 11000/32763 genes for MI calculation
+[INFO] Processed 11100/32763 genes for MI calculation
+[INFO] Processed 11200/32763 genes for MI calculation
+[INFO] Processed 11300/32763 genes for MI calculation
+[INFO] Processed 11400/32763 genes for MI calculation
+[INFO] Processed 11500/32763 genes for MI calculation
+[INFO] Processed 11600/32763 genes for MI calculation
+[INFO] Processed 11700/32763 genes for MI calculation
+[INFO] Processed 11800/32763 genes for MI calculation
+[INFO] Processed 11900/32763 genes for MI calculation
+[INFO] Processed 12000/32763 genes for MI calculation
+[INFO] Processed 12100/32763 genes for MI calculation
+[INFO] Processed 12200/32763 genes for MI calculation
+[INFO] Processed 12300/32763 genes for MI calculation
+[INFO] Processed 12400/32763 genes for MI calculation
+[INFO] Processed 12500/32763 genes for MI calculation
+[INFO] Processed 12600/32763 genes for MI calculation
+[INFO] Processed 12700/32763 genes for MI calculation
+[INFO] Processed 12800/32763 genes for MI calculation
+[INFO] Processed 12900/32763 genes for MI calculation
+[INFO] Processed 13000/32763 genes for MI calculation
+[INFO] Processed 13100/32763 genes for MI calculation
+[INFO] Processed 13200/32763 genes for MI calculation
+[INFO] Processed 13300/32763 genes for MI calculation
+[INFO] Processed 13400/32763 genes for MI calculation
+[INFO] Processed 13500/32763 genes for MI calculation
+[INFO] Processed 13600/32763 genes for MI calculation
+[INFO] Processed 13700/32763 genes for MI calculation
+[INFO] Processed 13800/32763 genes for MI calculation
+[INFO] Processed 13900/32763 genes for MI calculation
+[INFO] Processed 14000/32763 genes for MI calculation
+[INFO] Processed 14100/32763 genes for MI calculation
+[INFO] Processed 14200/32763 genes for MI calculation
+[INFO] Processed 14300/32763 genes for MI calculation
+[INFO] Processed 14400/32763 genes for MI calculation
+[INFO] Processed 14500/32763 genes for MI calculation
+[INFO] Processed 14600/32763 genes for MI calculation
+[INFO] Processed 14700/32763 genes for MI calculation
+[INFO] Processed 14800/32763 genes for MI calculation
+[INFO] Processed 14900/32763 genes for MI calculation
+[INFO] Processed 15000/32763 genes for MI calculation
+[INFO] Processed 15100/32763 genes for MI calculation
+[INFO] Processed 15200/32763 genes for MI calculation
+[INFO] Processed 15300/32763 genes for MI calculation
+[INFO] Processed 15400/32763 genes for MI calculation
+[INFO] Processed 15500/32763 genes for MI calculation
+[INFO] Processed 15600/32763 genes for MI calculation
+[INFO] Processed 15700/32763 genes for MI calculation
+[INFO] Processed 15800/32763 genes for MI calculation
+[INFO] Processed 15900/32763 genes for MI calculation
+[INFO] Processed 16000/32763 genes for MI calculation
+[INFO] Processed 16100/32763 genes for MI calculation
+[INFO] Processed 16200/32763 genes for MI calculation
+[INFO] Processed 16300/32763 genes for MI calculation
+[INFO] Processed 16400/32763 genes for MI calculation
+[INFO] Processed 16500/32763 genes for MI calculation
+[INFO] Processed 16600/32763 genes for MI calculation
+[INFO] Processed 16700/32763 genes for MI calculation
+[INFO] Processed 16800/32763 genes for MI calculation
+[INFO] Processed 16900/32763 genes for MI calculation
+[INFO] Processed 17000/32763 genes for MI calculation
+[INFO] Processed 17100/32763 genes for MI calculation
+[INFO] Processed 17200/32763 genes for MI calculation
+[INFO] Processed 17300/32763 genes for MI calculation
+[INFO] Processed 17400/32763 genes for MI calculation
+[INFO] Processed 17500/32763 genes for MI calculation
+[INFO] Processed 17600/32763 genes for MI calculation
+[INFO] Processed 17700/32763 genes for MI calculation
+[INFO] Processed 17800/32763 genes for MI calculation
+[INFO] Processed 17900/32763 genes for MI calculation
+[INFO] Processed 18000/32763 genes for MI calculation
+[INFO] Processed 18100/32763 genes for MI calculation
+[INFO] Processed 18200/32763 genes for MI calculation
+[INFO] Processed 18300/32763 genes for MI calculation
+[INFO] Processed 18400/32763 genes for MI calculation
+[INFO] Processed 18500/32763 genes for MI calculation
+[INFO] Processed 18600/32763 genes for MI calculation
+[INFO] Processed 18700/32763 genes for MI calculation
+[INFO] Processed 18800/32763 genes for MI calculation
+[INFO] Processed 18900/32763 genes for MI calculation
+[INFO] Processed 19000/32763 genes for MI calculation
+[INFO] Processed 19100/32763 genes for MI calculation
+[INFO] Processed 19200/32763 genes for MI calculation
+[INFO] Processed 19300/32763 genes for MI calculation
+[INFO] Processed 19400/32763 genes for MI calculation
+[INFO] Processed 19500/32763 genes for MI calculation
+[INFO] Processed 19600/32763 genes for MI calculation
+[INFO] Processed 19700/32763 genes for MI calculation
+[INFO] Processed 19800/32763 genes for MI calculation
+[INFO] Processed 19900/32763 genes for MI calculation
+[INFO] Processed 20000/32763 genes for MI calculation
+[INFO] Processed 20100/32763 genes for MI calculation
+[INFO] Processed 20200/32763 genes for MI calculation
+[INFO] Processed 20300/32763 genes for MI calculation
+[INFO] Processed 20400/32763 genes for MI calculation
+[INFO] Processed 20500/32763 genes for MI calculation
+[INFO] Processed 20600/32763 genes for MI calculation
+[INFO] Processed 20700/32763 genes for MI calculation
+[INFO] Processed 20800/32763 genes for MI calculation
+[INFO] Processed 20900/32763 genes for MI calculation
+[INFO] Processed 21000/32763 genes for MI calculation
+[INFO] Processed 21100/32763 genes for MI calculation
+[INFO] Processed 21200/32763 genes for MI calculation
+[INFO] Processed 21300/32763 genes for MI calculation
+[INFO] Processed 21400/32763 genes for MI calculation
+[INFO] Processed 21500/32763 genes for MI calculation
+[INFO] Processed 21600/32763 genes for MI calculation
+[INFO] Processed 21700/32763 genes for MI calculation
+[INFO] Processed 21800/32763 genes for MI calculation
+[INFO] Processed 21900/32763 genes for MI calculation
+[INFO] Processed 22000/32763 genes for MI calculation
+[INFO] Processed 22100/32763 genes for MI calculation
+[INFO] Processed 22200/32763 genes for MI calculation
+[INFO] Processed 22300/32763 genes for MI calculation
+[INFO] Processed 22400/32763 genes for MI calculation
+[INFO] Processed 22500/32763 genes for MI calculation
+[INFO] Processed 22600/32763 genes for MI calculation
+[INFO] Processed 22700/32763 genes for MI calculation
+[INFO] Processed 22800/32763 genes for MI calculation
+[INFO] Processed 22900/32763 genes for MI calculation
+[INFO] Processed 23000/32763 genes for MI calculation
+[INFO] Processed 23100/32763 genes for MI calculation
+[INFO] Processed 23200/32763 genes for MI calculation
+[INFO] Processed 23300/32763 genes for MI calculation
+[INFO] Processed 23400/32763 genes for MI calculation
+[INFO] Processed 23500/32763 genes for MI calculation
+[INFO] Processed 23600/32763 genes for MI calculation
+[INFO] Processed 23700/32763 genes for MI calculation
+[INFO] Processed 23800/32763 genes for MI calculation
+[INFO] Processed 23900/32763 genes for MI calculation
+[INFO] Processed 24000/32763 genes for MI calculation
+[INFO] Processed 24100/32763 genes for MI calculation
+[INFO] Processed 24200/32763 genes for MI calculation
+[INFO] Processed 24300/32763 genes for MI calculation
+[INFO] Processed 24400/32763 genes for MI calculation
+[INFO] Processed 24500/32763 genes for MI calculation
+[INFO] Processed 24600/32763 genes for MI calculation
+[INFO] Processed 24700/32763 genes for MI calculation
+[INFO] Processed 24800/32763 genes for MI calculation
+[INFO] Processed 24900/32763 genes for MI calculation
+[INFO] Processed 25000/32763 genes for MI calculation
+[INFO] Processed 25100/32763 genes for MI calculation
+[INFO] Processed 25200/32763 genes for MI calculation
+[INFO] Processed 25300/32763 genes for MI calculation
+[INFO] Processed 25400/32763 genes for MI calculation
+[INFO] Processed 25500/32763 genes for MI calculation
+[INFO] Processed 25600/32763 genes for MI calculation
+[INFO] Processed 25700/32763 genes for MI calculation
+[INFO] Processed 25800/32763 genes for MI calculation
+[INFO] Processed 25900/32763 genes for MI calculation
+[INFO] Processed 26000/32763 genes for MI calculation
+[INFO] Processed 26100/32763 genes for MI calculation
+[INFO] Processed 26200/32763 genes for MI calculation
+[INFO] Processed 26300/32763 genes for MI calculation
+[INFO] Processed 26400/32763 genes for MI calculation
+[INFO] Processed 26500/32763 genes for MI calculation
+[INFO] Processed 26600/32763 genes for MI calculation
+[INFO] Processed 26700/32763 genes for MI calculation
+[INFO] Processed 26800/32763 genes for MI calculation
+[INFO] Processed 26900/32763 genes for MI calculation
+[INFO] Processed 27000/32763 genes for MI calculation
+[INFO] Processed 27100/32763 genes for MI calculation
+[INFO] Processed 27200/32763 genes for MI calculation
+[INFO] Processed 27300/32763 genes for MI calculation
+[INFO] Processed 27400/32763 genes for MI calculation
+[INFO] Processed 27500/32763 genes for MI calculation
+[INFO] Processed 27600/32763 genes for MI calculation
+[INFO] Processed 27700/32763 genes for MI calculation
+[INFO] Processed 27800/32763 genes for MI calculation
+[INFO] Processed 27900/32763 genes for MI calculation
+[INFO] Processed 28000/32763 genes for MI calculation
+[INFO] Processed 28100/32763 genes for MI calculation
+[INFO] Processed 28200/32763 genes for MI calculation
+[INFO] Processed 28300/32763 genes for MI calculation
+[INFO] Processed 28400/32763 genes for MI calculation
+[INFO] Processed 28500/32763 genes for MI calculation
+[INFO] Processed 28600/32763 genes for MI calculation
+[INFO] Processed 28700/32763 genes for MI calculation
+[INFO] Processed 28800/32763 genes for MI calculation
+[INFO] Processed 28900/32763 genes for MI calculation
+[INFO] Processed 29000/32763 genes for MI calculation
+[INFO] Processed 29100/32763 genes for MI calculation
+[INFO] Processed 29200/32763 genes for MI calculation
+[INFO] Processed 29300/32763 genes for MI calculation
+[INFO] Processed 29400/32763 genes for MI calculation
+[INFO] Processed 29500/32763 genes for MI calculation
+[INFO] Processed 29600/32763 genes for MI calculation
+[INFO] Processed 29700/32763 genes for MI calculation
+[INFO] Processed 29800/32763 genes for MI calculation
+[INFO] Processed 29900/32763 genes for MI calculation
+[INFO] Processed 30000/32763 genes for MI calculation
+[INFO] Processed 30100/32763 genes for MI calculation
+[INFO] Processed 30200/32763 genes for MI calculation
+[INFO] Processed 30300/32763 genes for MI calculation
+[INFO] Processed 30400/32763 genes for MI calculation
+[INFO] Processed 30500/32763 genes for MI calculation
+[INFO] Processed 30600/32763 genes for MI calculation
+[INFO] Processed 30700/32763 genes for MI calculation
+[INFO] Processed 30800/32763 genes for MI calculation
+[INFO] Processed 30900/32763 genes for MI calculation
+[INFO] Processed 31000/32763 genes for MI calculation
+[INFO] Processed 31100/32763 genes for MI calculation
+[INFO] Processed 31200/32763 genes for MI calculation
+[INFO] Processed 31300/32763 genes for MI calculation
+[INFO] Processed 31400/32763 genes for MI calculation
+[INFO] Processed 31500/32763 genes for MI calculation
+[INFO] Processed 31600/32763 genes for MI calculation
+[INFO] Processed 31700/32763 genes for MI calculation
+[INFO] Processed 31800/32763 genes for MI calculation
+[INFO] Processed 31900/32763 genes for MI calculation
+[INFO] Processed 32000/32763 genes for MI calculation
+[INFO] Processed 32100/32763 genes for MI calculation
+[INFO] Processed 32200/32763 genes for MI calculation
+[INFO] Processed 32300/32763 genes for MI calculation
+[INFO] Processed 32400/32763 genes for MI calculation
+[INFO] Processed 32500/32763 genes for MI calculation
+[INFO] Processed 32600/32763 genes for MI calculation
+[INFO] Processed 32700/32763 genes for MI calculation
+[INFO] MI matrix computed in 28297.16 seconds
+[INFO] MI matrix shape: (32763, 32763)
+[INFO] MI range: [0.0015, 1.6094]
+--------------------------------------------------------------------------------
+[2026-03-04 20:34:23] Completed: MI Matrix Computation (CPU parallelized)
+[TIMING] Duration: 7.86 hours (51.7m)
+
+[2026-03-04 20:34:23] Starting: CLR Transformation (GPU accelerated)
+--------------------------------------------------------------------------------
+Transferring MI matrix to CUDA...
+Computing statistics on GPU...
+[WARNING] GPU CLR failed: CUDA out of memory. Tried to allocate 8.00 GiB (GPU 0; 10.75 GiB total capacity; 10.00 GiB already allocated; 97.56 MiB free; 10.00 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+[INFO] Falling back to CPU CLR
+[INFO] Applying CLR transformation (CPU vectorized)...
+[INFO] CLR range: [0.0001, 27.5224]
+--------------------------------------------------------------------------------
+[2026-03-04 20:35:02] Completed: CLR Transformation (GPU accelerated)
+[TIMING] Duration: 39.46 seconds
+
+[2026-03-04 20:35:02] Starting: Network Thresholding
+--------------------------------------------------------------------------------
+[INFO] Threshold (top 5%): 1.5310
+[INFO] Number of edges after thresholding: 26834536
+--------------------------------------------------------------------------------
+[2026-03-04 20:35:18] Completed: Network Thresholding
+[TIMING] Duration: 15.75 seconds
+
+[2026-03-04 20:35:18] Starting: Louvain Clustering (MI+CLR)
+--------------------------------------------------------------------------------
+[INFO] Performing Louvain clustering...
+[INFO] Number of modules: 2367
+[INFO] Module sizes: [13428, 3755, 4960, 5331, 2838, 2, 1, 1, 1, 32, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 12, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 1, 1, 1, 3, 1, 4, 3, 2, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+--------------------------------------------------------------------------------
+[2026-03-04 20:36:25] Completed: Louvain Clustering (MI+CLR)
+[TIMING] Duration: 1.13 minutes (67.7s)
+
+[2026-03-04 20:36:25] Starting: Saving MI+CLR Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving mi_clr_python results...
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/CLR_adjacency_matrix_mi_clr_python.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/CLR_network_edgelist_mi_clr_python.txt
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/CLR_network_weighted_mi_clr_python.txt
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/CLR_network_mi_clr_python.graphml
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/node_modules_mi_clr_python.txt
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/BTM_modules_mi_clr_python.tsv
+--------------------------------------------------------------------------------
+[2026-03-04 20:55:10] Completed: Saving MI+CLR Results
+[TIMING] Duration: 18.74 minutes (1124.6s)
+
+================================================================================
+METHOD 2: GRNBoost2
+================================================================================
+
+[2026-03-04 20:55:10] Starting: GRNBoost2 Inference
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+METHOD 2: GRNBoost2
+--------------------------------------------------------------------------------
+[ERROR] arboreto not installed. Install with: pip install arboreto
+[INFO] Skipping GRNBoost2 analysis
+--------------------------------------------------------------------------------
+[2026-03-04 20:55:10] Completed: GRNBoost2 Inference
+[TIMING] Duration: 0.03 seconds
+
+================================================================================
+PIPELINE COMPLETE
+================================================================================
+End time: 2026-03-04 20:55:10
+Total runtime: 8.21 hours (12.5m)
+================================================================================
+
+TIMING SUMMARY:
+--------------------------------------------------------------------------------
+MI Matrix Computation (CPU parallelized)          :   7.86 hours (51.7m) ( 95.8%)
+Saving MI+CLR Results                             : 18.74 minutes (1124.6s) (  3.8%)
+Louvain Clustering (MI+CLR)                       : 1.13 minutes (67.7s) (  0.2%)
+CLR Transformation (GPU accelerated)              :        39.46 seconds (  0.1%)
+Network Thresholding                              :        15.75 seconds (  0.1%)
+Data Loading                                      :         2.61 seconds (  0.0%)
+GRNBoost2 Inference                               :         0.03 seconds (  0.0%)
+--------------------------------------------------------------------------------
+TOTAL                                             :   8.21 hours (12.5m)
+
+All results saved to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network
+
+Output files:
+  - CLR_adjacency_matrix_mi_clr_python.mtx
+  - CLR_network_edgelist_mi_clr_python.txt
+  - CLR_network_weighted_mi_clr_python.txt
+  - CLR_network_mi_clr_python.graphml
+  - BTM_modules_mi_clr_python.tsv
+
+[INFO] Analysis report saved to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/analysis_report_20260304_124236.txt
+
+================================================================================
+Log file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/network_analysis_20260304_124236.log
+Report file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/analysis_report_20260304_124236.txt
+================================================================================
+
+
+============================================================================
+Job Complete!
+============================================================================
+Ended: Wed Mar  4 20:55:12 CET 2026
+Total runtime: 8h 12m 37s
+============================================================================
+
+[INFO] Cleaning up temporary files...
+[INFO] Cleanup complete
+
+Output files generated:
+-rw-rw-r--. 1 mbotos mbotos  18M Mar  4 16:44 submodule_M.4_1.graphml
+-rw-rw-r--. 1 mbotos mbotos  50M Mar  4 16:44 submodule_M.4_2.graphml
+-rw-rw-r--. 1 mbotos mbotos  63M Mar  4 16:44 submodule_M.4_3.graphml
+-rw-rw-r--. 1 mbotos mbotos  28M Mar  4 16:44 submodule_M.4_4.graphml
+-rw-rw-r--. 1 mbotos mbotos  31M Mar  4 16:44 submodule_M.5_1.graphml
+-rw-rw-r--. 1 mbotos mbotos 105M Mar  4 16:44 submodule_M.5_2.graphml
+-rw-rw-r--. 1 mbotos mbotos 6.4M Mar  4 16:44 submodule_M.5_3.graphml
+-rw-rw-r--. 1 mbotos mbotos 5.8M Mar  4 16:44 submodule_M.5_4.graphml
+-rw-rw-r--. 1 mbotos mbotos  659 Mar  4 16:44 submodule_M.5_5.graphml
+-rw-rw-r--. 1 mbotos mbotos 1.1K Mar  4 16:44 submodule_M.5_6.graphml
+-rw-rw-r--. 1 mbotos mbotos  659 Mar  4 16:44 submodule_M.5_7.graphml
+-rw-rw-r--. 1 mbotos mbotos  23M Mar  4 16:44 submodule_M.6_1.graphml
+-rw-rw-r--. 1 mbotos mbotos  26M Mar  4 16:44 submodule_M.6_2.graphml
+-rw-rw-r--. 1 mbotos mbotos 6.5M Mar  4 16:44 submodule_M.6_3.graphml
+-rw-rw-r--. 1 mbotos mbotos  33K Mar  4 16:44 submodule_M.6_4.graphml
+-rw-rw-r--. 1 mbotos mbotos  964 Mar  4 16:44 submodule_M.6_5.graphml
+-rw-rw-r--. 1 mbotos mbotos 1.2K Mar  4 16:44 submodule_M.6_6.graphml
+-rw-rw-r--. 1 mbotos mbotos  659 Mar  4 16:44 submodule_M.6_7.graphml
+-rw-rw-r--. 1 mbotos mbotos  659 Mar  4 16:44 submodule_M.6_8.graphml
+-rw-rw-r--. 1 mbotos mbotos 711K Mar  4 15:31 submodules_spearman_louvain_leiden.tsv
+
+============================================================================
+Check the following files for results:
+  - network_analysis_*.log     : Complete execution log
+  - analysis_report_*.txt      : Summary report with timings
+  - slurm_16509114_*.out/err : SLURM job output
+============================================================================

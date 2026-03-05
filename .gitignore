@@ -17,7 +17,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-workingEnvironment/*
+#workingEnvironment/*
 *.pdf
 
 # Whitelist approach for top level - ignore everything
@@ -30,35 +30,42 @@ workingEnvironment/*
 #workingEnvironment/**/*
 
 # Then include what we want (order matters!)
-!workingEnvironment/02_counts/*.py
-!workingEnvironment/02_counts/*.r
-!workingEnvironment/02_counts/*.R
-!workingEnvironment/02_counts/*.sh
-!workingEnvironment/02_counts/*.bash
-!workingEnvironment/02_counts/*.md
-#!workingEnvironment/02_counts/*.txt
+#!workingEnvironment/02_counts/*.py
+#!workingEnvironment/02_counts/*.r
+#!workingEnvironment/02_counts/*.R
+#!workingEnvironment/02_counts/*.sh
+#!workingEnvironment/02_counts/*.bash
+#!workingEnvironment/02_counts/*.md
+#workingEnvironment/02_counts/*.txt
 #!workingEnvironment/02_counts/*.tsv
 #!workingEnvironment/02_counts/*.csv
 #!workingEnvironment/02_counts/*.graphml
 #!workingEnvironment/02_counts/*.mtx
 #!workingEnvironment/02_counts/*.rds
-!workingEnvironment/02_counts/*.err
-!workingEnvironment/02_counts/*.out
+#!workingEnvironment/02_counts/*.err
+#!workingEnvironment/02_counts/*.out
 
-!workingEnvironment/03_network/*.py
-!workingEnvironment/03_network/*.r
-!workingEnvironment/03_network/*.R
-!workingEnvironment/03_network/*.sh
-!workingEnvironment/03_network/*.bash
-!workingEnvironment/03_network/*.md
+#!workingEnvironment/03_network/*.py
+#!workingEnvironment/03_network/*.r
+#!workingEnvironment/03_network/*.R
+#!workingEnvironment/03_network/*.sh
+#!workingEnvironment/03_network/*.bash
+#!workingEnvironment/03_network/*.md
 #!workingEnvironment/03_network/*.txt
 #!workingEnvironment/03_network/*.tsv
 #!workingEnvironment/03_network/*.csv
 #!workingEnvironment/03_network/*.graphml
 #!workingEnvironment/03_network/*.mtx
 #!workingEnvironment/03_network/*.rds
-!workingEnvironment/03_network/*.err
-!workingEnvironment/03_network/*.out
-
-
+#!workingEnvironment/03_network/*.err
+#!workingEnvironment/03_network/*.out
+*.log
+*.pdf
+*.mtx
+*.txt
+*.tsv
+*.csv
+*.graphml
+*.rds
+*.err
 
