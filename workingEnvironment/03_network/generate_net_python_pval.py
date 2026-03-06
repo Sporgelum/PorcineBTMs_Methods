@@ -183,7 +183,7 @@ def load_expression(counts_path):
     Returns a DataFrame with genes as rows and samples (Run IDs) as columns.
     """
     #sep = "\t" if counts_path.endswith((".tsv", ".txt")) else ","
-    sep="\\t"
+    sep="\t"
     expr = pd.read_csv(counts_path, sep=sep, index_col=0)
     print(f"[INFO] Loaded expression matrix: {counts_path}")
     print(f"[INFO] Shape: {expr.shape[0]} genes × {expr.shape[1]} samples")
@@ -198,7 +198,7 @@ def load_metadata(metadata_path):
     Returns a DataFrame indexed by Run.
     """
     #sep = "\t" if metadata_path.endswith((".tsv", ".txt")) else ","
-    sep="\\t"
+    sep="\t"
     md = pd.read_csv(metadata_path, sep=sep)
     print(f"[INFO] Loaded metadata: {metadata_path}")
     print(f"[INFO] Metadata shape: {md.shape}")

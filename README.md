@@ -65,3 +65,10 @@ works correctly.
 Replaced slow mutual_info_classif (sklearn) with fast histogram-based MI
 Expected speedup: 50-100x faster 🚀
 Old method: 7.86 hours → New method: ~5-10 minutes estimated
+
+### Newer implementation after meeting 05.03.2026
+In order to filter significant gene-pairs, withing dataset MI was calculated for gene pairs and 30.000 permutations were run to break every possible "random effect" and computed, selecting those that are present with a p-val < 0.001 and present in at least 3 studies. Master network is built using the results of the per-study nodes and edges. For module detection MCODE was applied, being the largest difference to other clustering methods that overlap is accepted.
+
+To run this  updated version we are using `sbatch submit_pval_job.sh` --> including `generate_net_python_pval.py`
+
+

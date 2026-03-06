@@ -1,0 +1,112 @@
+============================================================================
+Gene Network Inference: Permutation MI + MCODE modules
+SLURM Job ID: 16524963
+Node: binfservas30
+Started: Fri Mar  6 13:46:44 CET 2026
+============================================================================
+
+[INFO] Activating Python environment...
+[INFO] Using Python: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/python
+[INFO] Python version: Python 3.9.5
+
+[INFO] Setting up temporary directory...
+[INFO] Temporary directory: /scratch/mbotos/network_pval_tmp_2282183
+
+[INFO] System Information:
+  CPU cores available : 32
+  Memory total        : 1.0Ti
+  Disk (scratch)      : 3.5T
+
+============================================================================
+Starting Permutation MI Network Inference
+============================================================================
+
+
+[2026-03-06 13:46:45] Starting: Loading expression matrix & metadata
+--------------------------------------------------------------------------------
+[INFO] Loaded expression matrix: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/logCPM_matrix_filtered_samples.csv
+[INFO] Shape: 32763 genes × 613 samples
+[INFO] Loaded metadata: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/metadata_with_sample_annotations.csv
+[INFO] Metadata shape: (1198, 18)
+[WARN] 585 metadata rows have no matching column in the expression matrix and will be ignored.
+[INFO] Study detected: PRJNA1107598  (136 samples)
+[INFO] Study detected: PRJNA1163897  (6 samples)
+[WARN] BioProject PRJNA1197383: only 1 samples (< MIN_SAMPLES_PER_STUDY=3) – skipping.
+[INFO] Study detected: PRJNA1200777  (18 samples)
+[INFO] Study detected: PRJNA311061  (73 samples)
+[INFO] Study detected: PRJNA313448  (176 samples)
+[INFO] Study detected: PRJNA479928  (6 samples)
+[INFO] Study detected: PRJNA484712  (12 samples)
+[INFO] Study detected: PRJNA510331  (8 samples)
+[INFO] Study detected: PRJNA512863  (20 samples)
+[INFO] Study detected: PRJNA513475  (10 samples)
+[INFO] Study detected: PRJNA692626  (32 samples)
+[INFO] Study detected: PRJNA699465  (22 samples)
+[INFO] Study detected: PRJNA705952  (12 samples)
+[INFO] Study detected: PRJNA805111  (16 samples)
+[INFO] Study detected: PRJNA812000  (4 samples)
+[INFO] Study detected: PRJNA832220  (5 samples)
+[INFO] Study detected: PRJNA982050  (56 samples)
+[INFO] Total studies discovered: 17
+--------------------------------------------------------------------------------
+[2026-03-06 13:46:47] Completed: Loading expression matrix & metadata
+[TIMING] Duration: 2.76 seconds
+================================================================================
+GENE NETWORK INFERENCE: PERMUTATION-BASED MI SIGNIFICANCE
+================================================================================
+Start time       : 2026-03-06 13:46:47
+Studies found    : 17
+  PRJNA1107598                    136 samples
+  PRJNA1163897                    6 samples
+  PRJNA1200777                    18 samples
+  PRJNA311061                     73 samples
+  PRJNA313448                     176 samples
+  PRJNA479928                     6 samples
+  PRJNA484712                     12 samples
+  PRJNA510331                     8 samples
+  PRJNA512863                     20 samples
+  PRJNA513475                     10 samples
+  PRJNA692626                     32 samples
+  PRJNA699465                     22 samples
+  PRJNA705952                     12 samples
+  PRJNA805111                     16 samples
+  PRJNA812000                     4 samples
+  PRJNA832220                     5 samples
+  PRJNA982050                     56 samples
+N permutations   : 30000
+p-value threshold: 0.001
+Min study count  : 3
+Log file         : /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_20260306_134645.log
+================================================================================
+
+================================================================================
+PROCESSING STUDY: PRJNA1107598  (136 samples)
+================================================================================
+
+[2026-03-06 13:46:47] Starting: PRJNA1107598: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
