@@ -23,7 +23,7 @@ For each study / dataset:
 Master reference network:
   7.  Count how many studies each edge was significant in.
   8.  Retain edges appearing in >= MIN_STUDY_COUNT studies (default 3).
-  9.  Cluster master network (Louvain), save in all downstream formats.
+  9.  Detect modules in master network with MCODE (Bader & Hogue 2003),
 
 Statistical notes
 -----------------
@@ -105,7 +105,12 @@ METADATA_PATH = os.path.join(BASE_DIR, "02_counts/metadata_with_sample_annotatio
 
 # Minimum number of samples a BioProject must have to be included as a study.
 # Projects with too few samples produce unreliable MI estimates.
-MIN_SAMPLES_PER_STUDY = 6
+MIN_SAMPLES_PER_STUDY = 3 # change accordingly to sample size.. 
+
+# MCODE parameters
+MCODE_SCORE_THRESHOLD = 1.2
+MCODE_MIN_SIZE = 3
+MCODE_MIN_DENSITY = 0.1
 
 # Log / report paths are assigned inside main() (not at module scope) so that
 # dask or joblib worker subprocesses that import this module do not create
@@ -177,7 +182,8 @@ def load_expression(counts_path):
     Supports tab- and comma-separated files; auto-detects from extension.
     Returns a DataFrame with genes as rows and samples (Run IDs) as columns.
     """
-    sep = "\t" if counts_path.endswith((".tsv", ".txt")) else ","
+    #sep = "\t" if counts_path.endswith((".tsv", ".txt")) else ","
+    sep="\\t"
     expr = pd.read_csv(counts_path, sep=sep, index_col=0)
     print(f"[INFO] Loaded expression matrix: {counts_path}")
     print(f"[INFO] Shape: {expr.shape[0]} genes × {expr.shape[1]} samples")
@@ -191,7 +197,8 @@ def load_metadata(metadata_path):
     Expected columns (at minimum): Run, BioProject.
     Returns a DataFrame indexed by Run.
     """
-    sep = "\t" if metadata_path.endswith((".tsv", ".txt")) else ","
+    #sep = "\t" if metadata_path.endswith((".tsv", ".txt")) else ","
+    sep="\\t"
     md = pd.read_csv(metadata_path, sep=sep)
     print(f"[INFO] Loaded metadata: {metadata_path}")
     print(f"[INFO] Metadata shape: {md.shape}")
@@ -607,21 +614,242 @@ def build_master_network(study_results, common_gene_names, min_count=3):
 
 
 # ============================================================================
-# Louvain clustering
+# Louvain clustering  ── COMMENTED OUT: replaced by MCODE (see below)
 # ============================================================================
+#
+# def cluster_louvain(adj_matrix, gene_names):
+#     """Louvain clustering on a binary adjacency matrix. Returns (modules, membership)."""
+#     print("[INFO] Performing Louvain clustering...")
+#     adj_sym = np.maximum(adj_matrix, adj_matrix.T)
+#     g = ig.Graph.Adjacency((adj_sym > 0).tolist(), mode="undirected")
+#     g.vs["name"] = gene_names
+#     clusters = g.community_multilevel()
+#     membership = {gene: mid for gene, mid in zip(gene_names, clusters.membership)}
+#     modules = {}
+#     for gene, mid in zip(gene_names, clusters.membership):
+#         modules.setdefault(mid, []).append(gene)
+#     print(f"[INFO] Modules: {len(modules)}, sizes: {sorted([len(v) for v in modules.values()], reverse=True)[:10]}")
+#     return modules, membership
 
-def cluster_louvain(adj_matrix, gene_names):
-    """Louvain clustering on a binary adjacency matrix. Returns (modules, membership)."""
-    print("[INFO] Performing Louvain clustering...")
-    adj_sym = np.maximum(adj_matrix, adj_matrix.T)
+
+# ============================================================================
+# MCODE  (Bader & Hogue 2003, doi:10.1186/1471-2105-4-2)
+# ============================================================================
+# Used by Li et al. (Nat Immunol 2014) for de-novo module search in all
+# blood transcription module (BTM) networks (Cytoscape plug-in, default params).
+#
+# Algorithm summary
+# -----------------
+# Stage 1 – Vertex weighting
+#   For every node v:
+#     a) Find the highest k-core that contains v  → core_level(v)
+#     b) Compute local density: density(N[v]) = edges_within_N[v] / possible_edges
+#        where N[v] is the closed neighbourhood (v plus its direct neighbours).
+#     c) w(v) = core_level(v) × density(N[v])
+#
+# Stage 2 – Complex prediction (seed-and-extend)
+#   For each seed (nodes sorted by weight, highest first):
+#     - Skip if already assigned.
+#     - Grow a candidate complex by BFS: add a neighbour u if
+#       w(u) ≥ MCODE_SCORE_THRESHOLD × max_weight_in_graph
+#     - Record the complex.
+#
+# Stage 3 – Post-processing (matching Li et al. defaults)
+#   - Keep modules with >= MCODE_MIN_SIZE nodes.
+#   - Keep modules with degree density >= MCODE_MIN_DENSITY (Li et al.: 0.3).
+#   - Nodes can appear in multiple modules (overlapping output like MCODE).
+#
+# A membership dict is also returned for downstream compatibility with
+# save_master_results().  When a gene appears in multiple modules it is
+# assigned to the largest one (by size).
+
+# ---- MCODE parameters (matching Li et al. / Cytoscape defaults) ------------
+MCODE_SCORE_THRESHOLD = 0.2   # fraction of max node weight to include in complex
+MCODE_MIN_SIZE        = 3     # minimum number of genes per module
+MCODE_MIN_DENSITY     = 0.3   # minimum degree density (Li et al.: >0.3)
+# ---------------------------------------------------------------------------
+
+
+def _k_core_levels(adj_sym):
+    """
+    Compute the k-core decomposition of a graph represented by a symmetric
+    binary adjacency matrix.  Returns an integer array `core[v]` = the
+    maximum k such that v belongs to the k-core.
+
+    Uses the iterative peeling algorithm (O(V + E)).
+    """
+    n = adj_sym.shape[0]
+    degree = adj_sym.sum(axis=1).astype(int)     # current degree
+    core   = np.zeros(n, dtype=int)
+    removed = np.zeros(n, dtype=bool)
+
+    for k in range(1, n):
+        changed = True
+        while changed:
+            changed = False
+            for v in range(n):
+                if not removed[v] and degree[v] < k:
+                    removed[v] = True
+                    # Update degrees of neighbours
+                    for u in np.where(adj_sym[v] > 0)[0]:
+                        if not removed[u]:
+                            degree[u] -= 1
+                    changed = True
+        if removed.all():
+            break
+        # Assign core level k to all still-active nodes
+        core[~removed] = k
+
+    return core
+
+
+def _k_core_levels_fast(adj_sym):
+    """
+    Fast k-core decomposition using igraph (O(V + E)).
+    Preferred over the pure-numpy version for large graphs.
+    """
     g = ig.Graph.Adjacency((adj_sym > 0).tolist(), mode="undirected")
-    g.vs["name"] = gene_names
-    clusters = g.community_multilevel()
-    membership = {gene: mid for gene, mid in zip(gene_names, clusters.membership)}
+    return np.array(g.coreness(), dtype=int)
+
+
+def _local_density(v, neighbours_v, adj_sym):
+    """
+    Fraction of present edges within the closed neighbourhood of v
+    (v plus its direct neighbours) over all possible edges.
+    """
+    members = [v] + list(neighbours_v)
+    n = len(members)
+    if n < 2:
+        return 0.0
+    # Count edges among members (upper triangle only)
+    sub = adj_sym[np.ix_(members, members)]
+    present = int(np.triu(sub, k=1).sum())
+    possible = n * (n - 1) // 2
+    return present / possible
+
+
+def mcode(adj_matrix, gene_names,
+          score_threshold=MCODE_SCORE_THRESHOLD,
+          min_size=MCODE_MIN_SIZE,
+          min_density=MCODE_MIN_DENSITY):
+    """
+    MCODE – Molecular Complex Detection (Bader & Hogue 2003).
+
+    Parameters
+    ----------
+    adj_matrix     : ndarray (n, n) binary symmetric adjacency matrix
+    gene_names     : list of str  – must have length n
+    score_threshold: float  – fraction of max node weight; neighbours with
+                              weight < threshold × max_weight are excluded
+    min_size       : int    – discard modules with fewer genes than this
+    min_density    : float  – discard modules with degree density < this
+                              (Li et al. post-processing threshold: 0.3)
+
+    Returns
+    -------
+    modules    : dict  {module_id (int): [gene_name, ...]}
+    membership : dict  {gene_name: module_id}  – genes in multiple modules
+                       are assigned to the largest module they appear in
+    """
+    print("[INFO] Running MCODE module detection...")
+    t0 = time.time()
+
+    adj_sym = np.maximum(adj_matrix, adj_matrix.T).astype(np.uint8)
+    n = adj_sym.shape[0]
+    gene_arr = np.array(gene_names)
+
+    # ----------------------------------------------------------------
+    # Stage 1: Vertex weighting
+    # ----------------------------------------------------------------
+    print("[INFO] MCODE stage 1: vertex weighting (k-core + local density)...")
+    core = _k_core_levels_fast(adj_sym)
+
+    # Precompute neighbour lists
+    neighbours = [list(np.where(adj_sym[v] > 0)[0]) for v in range(n)]
+
+    weights = np.zeros(n)
+    for v in range(n):
+        dens = _local_density(v, neighbours[v], adj_sym)
+        weights[v] = core[v] * dens
+
+    max_weight = weights.max()
+    if max_weight == 0:
+        print("[WARN] All node weights are zero – graph may be empty.")
+        return {}, {}
+
+    print(f"[INFO] Node weight range: [{weights.min():.4f}, {max_weight:.4f}]")
+
+    # ----------------------------------------------------------------
+    # Stage 2: Seed-and-extend complex prediction
+    # ----------------------------------------------------------------
+    print("[INFO] MCODE stage 2: seed-and-extend...")
+    wt_threshold = score_threshold * max_weight
+    seed_order   = np.argsort(-weights)   # highest weight first
+    visited      = np.zeros(n, dtype=bool)
+    raw_modules  = []
+
+    for seed in seed_order:
+        if visited[seed]:
+            continue
+        # BFS/DFS expansion from seed
+        module_nodes = set()
+        queue = [seed]
+        while queue:
+            v = queue.pop()
+            if v in module_nodes:
+                continue
+            if weights[v] >= wt_threshold:
+                module_nodes.add(v)
+                for u in neighbours[v]:
+                    if u not in module_nodes and weights[u] >= wt_threshold:
+                        queue.append(u)
+        if module_nodes:
+            raw_modules.append(sorted(module_nodes))
+            for v in module_nodes:
+                visited[v] = True
+
+    print(f"[INFO] MCODE stage 2: {len(raw_modules)} raw complexes found")
+
+    # ----------------------------------------------------------------
+    # Stage 3: Post-processing  (Li et al. thresholds)
+    # ----------------------------------------------------------------
+    print(f"[INFO] MCODE stage 3: filtering (min_size={min_size}, "
+          f"min_density={min_density})...")
     modules = {}
-    for gene, mid in zip(gene_names, clusters.membership):
-        modules.setdefault(mid, []).append(gene)
-    print(f"[INFO] Modules: {len(modules)}, sizes: {sorted([len(v) for v in modules.values()], reverse=True)[:10]}")
+    mid = 0
+    for node_list in raw_modules:
+        if len(node_list) < min_size:
+            continue
+        # Compute degree density within the module
+        sub = adj_sym[np.ix_(node_list, node_list)]
+        m_edges = int(np.triu(sub, k=1).sum())
+        m_nodes = len(node_list)
+        m_possible = m_nodes * (m_nodes - 1) // 2
+        density = m_edges / m_possible if m_possible > 0 else 0.0
+        if density < min_density:
+            continue
+        modules[mid] = [gene_names[i] for i in node_list]
+        mid += 1
+
+    elapsed = time.time() - t0
+    print(f"[INFO] MCODE: {len(modules)} modules after post-processing "
+          f"(in {format_time(elapsed)})")
+    if modules:
+        sizes = sorted([len(v) for v in modules.values()], reverse=True)
+        print(f"[INFO] Module sizes (top 10): {sizes[:10]}")
+
+    # Build membership: assign each gene to the largest module it appears in
+    # (genes not in any module are omitted)
+    gene_to_modules = {}   # gene -> list of (module_size, module_id)
+    for mid_id, genes in modules.items():
+        for g in genes:
+            gene_to_modules.setdefault(g, []).append((len(genes), mid_id))
+
+    membership = {
+        g: max(entries, key=lambda x: x[0])[1]
+        for g, entries in gene_to_modules.items()
+    }
+
     return modules, membership
 
 
@@ -713,7 +941,7 @@ def save_master_results(master_adj, edge_count_matrix, gene_names,
     ).to_csv(node_file, sep="\t", index=False)
     print(f"[SAVED] {node_file}")
 
-    # 7. Submodule GraphML files (one per Louvain module)
+    # 7. Submodule GraphML files (one per MCODE module)
     print("[INFO] Saving per-module subgraph files...")
     saved_submodules = 0
     for mid, mod_genes in modules.items():
@@ -743,7 +971,8 @@ def save_report(timings, info, report_path):
         fh.write("CONFIGURATION\n" + "-" * 80 + "\n")
         for k in ("N_BINS", "DISC_STRATEGY", "N_PERMUTATIONS", "P_VALUE_THRESHOLD",
                   "MIN_STUDY_COUNT", "APPLY_BH_FDR", "BH_FDR_ALPHA", "N_JOBS",
-                  "MIN_SAMPLES_PER_STUDY"):
+                  "MIN_SAMPLES_PER_STUDY",
+                  "MCODE_SCORE_THRESHOLD", "MCODE_MIN_SIZE", "MCODE_MIN_DENSITY"):
             fh.write(f"  {k:30s}: {globals()[k]}\n")
         fh.write(f"  {'COUNTS_PATH':30s}: {COUNTS_PATH}\n")
         fh.write(f"  {'METADATA_PATH':30s}: {METADATA_PATH}\n\n")
@@ -930,10 +1159,10 @@ def main():
         info["Master network: genes"] = len(common_gene_names)
         info["Master network: edges"] = f"{n_master_edges:,}"
 
-    # Louvain clustering on master network
-    with Timer("Master Network: Louvain Clustering", timings):
-        modules, membership = cluster_louvain(master_adj, common_gene_names)
-        info["Master network: Louvain modules"] = len(modules)
+    # MCODE module detection on master network
+    with Timer("Master Network: MCODE Module Detection", timings):
+        modules, membership = mcode(master_adj, common_gene_names)
+        info["Master network: MCODE modules"] = len(modules)
 
     # Save master network
     with Timer("Master Network: Saving", timings):
