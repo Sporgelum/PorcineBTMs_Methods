@@ -41,8 +41,12 @@ N_JOBS = -1  # Use all available CPU cores (-1 = all cores)
 MI_MATRIX_PATH = os.path.join(OUTPUT_DIR, "mi_matrix_cache.npy")
 
 # Logging configuration
-LOG_FILE = os.path.join(OUTPUT_DIR, f"network_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
-REPORT_FILE = os.path.join(OUTPUT_DIR, f"analysis_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt")
+# NOTE: LOG_FILE and REPORT_FILE are intentionally NOT set here at module scope.
+# Setting them here would cause every dask worker subprocess (which imports this
+# module) to call datetime.now() and create different timestamped paths.
+# They are assigned inside main() instead.
+LOG_FILE = None
+REPORT_FILE = None
 
 
 # ============================================================================
@@ -156,12 +160,6 @@ def save_analysis_report(timings, results_info, report_file):
         f.write("\n" + "=" * 80 + "\n")
     
     print(f"\n[INFO] Analysis report saved to: {report_file}")
-
-
-print(f"[INFO] Using all available CPU cores for parallel processing")
-print(f"[INFO] Configuration: nbins={N_BINS}, disc_strategy={DISC_STRATEGY}")
-print(f"[INFO] Log file: {LOG_FILE}")
-print(f"[INFO] Report file: {REPORT_FILE}")
 
 
 # ============================================================================
@@ -590,8 +588,11 @@ def run_grnboost2(expr_data, n_jobs=-1):
     
     start_time = time.time()
     
-    n_workers = os.cpu_count() if n_jobs == -1 else max(1, n_jobs)
-    print(f"[INFO] Running GRNBoost2 with {n_workers} workers...")
+    # Cap workers: 128 workers × ~160 MB data each ≈ 20 GB RAM just for data copies.
+    # 32 workers is a practical upper bound that balances parallelism and memory.
+    max_workers = 32
+    n_workers = min(os.cpu_count() if n_jobs == -1 else max(1, n_jobs), max_workers)
+    print(f"[INFO] Running GRNBoost2 with {n_workers} workers (capped at {max_workers} to limit RAM)...")
     print(f"[INFO] This may take several minutes for large datasets...")
     
     # Build a clean worker environment:
@@ -897,9 +898,21 @@ def compare_networks(adj1, adj2, gene_names, method1="MI+CLR", method2="GRNBoost
 def main():
     """Main pipeline"""
     
+    # Assign log/report file paths here (NOT at module scope) so that dask worker
+    # sub-processes that import this module do NOT create spurious log files or
+    # execute heavyweight I/O at import time.
+    global LOG_FILE, REPORT_FILE
+    LOG_FILE = os.path.join(OUTPUT_DIR, f"network_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
+    REPORT_FILE = os.path.join(OUTPUT_DIR, f"analysis_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt")
+
     # Initialize logging and timing
     sys.stdout = TeeLogger(LOG_FILE)
     timings = {}
+
+    print(f"[INFO] Using all available CPU cores for parallel processing")
+    print(f"[INFO] Configuration: nbins={N_BINS}, disc_strategy={DISC_STRATEGY}")
+    print(f"[INFO] Log file: {LOG_FILE}")
+    print(f"[INFO] Report file: {REPORT_FILE}")
     results_info = {}
     
     print("\n" + "="*80)

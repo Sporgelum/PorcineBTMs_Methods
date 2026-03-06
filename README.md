@@ -58,3 +58,10 @@ with resources in the sbatch:
         `#SBATCH --partition=pgpu       `
         `#SBATCH --gres=gpu:1          # Request 1 GPU (optional, for GPU-accelerated CLR)`
 works correctly.
+
+
+### Improvements:  
+##### Calculate MI (was the slowest step)
+Replaced slow mutual_info_classif (sklearn) with fast histogram-based MI
+Expected speedup: 50-100x faster 🚀
+Old method: 7.86 hours → New method: ~5-10 minutes estimated

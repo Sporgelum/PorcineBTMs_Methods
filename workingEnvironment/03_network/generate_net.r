@@ -136,36 +136,67 @@ node_attr <- data.frame(gene = names(membership(cl)),
 #write.table(node_attr, paste0(output_dir, "node_modules_spearman.txt"),sep="\t", quote=FALSE, row.names=FALSE)
 write.table(table(node_attr$module), paste0(output_dir, "node_modules_mi_mm.txt"),sep="\t", quote=FALSE, row.names=FALSE)
 
+
+
+message("Using KNN")
+message("Using KNN")
+message("Using KNN")
+message("Using KNN")
+
 # %% alternative use -kNN into 10-30 neighbors and then cluster with Leiden, this is more robust to noise and can capture more complex structures in the data. We can use the knn function from the FNN package to compute the k-nearest neighbors and then create a graph based on these neighbors before applying the Leiden algorithm for clustering.
 #BiocManager::install("FNN")
 library("FNN")
-# Compute kNN graph on GENES (rows = genes, columns = samples)
-# Do NOT transpose: knn.index expects observations x features,
-# so we pass logcpm_counts directly (genes x samples → each gene is an observation)
+
+# --- Step 1: Filter genes expressed in at least MIN_SAMPLES samples ---
+# A gene "present" in a sample = logCPM > 0 (i.e. any detected expression)
+MIN_SAMPLES <- 10
+gene_presence <- rowSums(logcpm_counts > 0)
+genes_keep <- names(gene_presence[gene_presence >= MIN_SAMPLES])
+message(sprintf("Genes passing filter (>= %d samples): %d / %d",
+                MIN_SAMPLES, length(genes_keep), nrow(logcpm_counts)))
+
+# Subset CLR network to filtered genes
+# clr_net is from the MI+CLR step above (genes x genes CLR scores)
+clr_sub <- clr_net[genes_keep, genes_keep]
+
+# --- Step 2: Build kNN feature matrix from top-5% CLR connections per gene ---
+# For each gene, keep only its top 5% strongest CLR scores as features;
+# zero-out the rest. This focuses kNN on the most reliable co-expression signal.
+TOP_FRAC <- 0.05
+clr_sparse <- clr_sub
+for (i in seq_len(nrow(clr_sparse))) {
+  row_vals  <- clr_sparse[i, ]
+  thr_i     <- quantile(row_vals, 1 - TOP_FRAC)
+  clr_sparse[i, row_vals < thr_i] <- 0
+}
+message(sprintf("Feature matrix: %d genes x %d features (top %.0f%% CLR per gene)",
+                nrow(clr_sparse), ncol(clr_sparse), TOP_FRAC * 100))
+
+# --- Step 3: Compute kNN graph in CLR-score feature space ---
 k <- 15  # number of neighbors, can be optimized
-knn_result <- knn.index(logcpm_counts, k = k)  # genes x samples, no transpose
-# Create adjacency matrix from kNN result (gene x gene)
-n_genes <- nrow(logcpm_counts)
-knn_adj <- matrix(0, nrow = n_genes, ncol = n_genes)
-for (i in 1:n_genes) {
+knn_result <- knn.index(clr_sparse, k = k)
+
+# Build gene x gene adjacency matrix
+n_genes_filt <- nrow(clr_sparse)
+knn_adj <- matrix(0, nrow = n_genes_filt, ncol = n_genes_filt)
+for (i in 1:n_genes_filt) {
   knn_adj[i, knn_result[i, ]] <- 1
 }
 knn_adj <- knn_adj + t(knn_adj)  # make symmetric
-knn_adj[knn_adj > 1] <- 1  # ensure binary
-diag(knn_adj) <- 0  # remove self-loops
-# Create graph from kNN adjacency matrix (one vertex per gene)
-g_knn <- graph_from_adjacency_matrix(knn_adj, mode = "undirected", diag = FALSE)
-V(g_knn)$name <- rownames(logcpm_counts)  # gene IDs as vertex names
-# Cluster with Leiden
-#cl_leiden <- igraph::cluster_leiden(g_knn)
-cl_louvain <- igraph::cluster_louvain(g_knn)
-modules_louvain <- split(V(g_knn)$name, membership(cl_louvain)) 
-# %% revise from here...
-module_sizes <- sapply(modules_louvain, length)
-large_modules <- names(module_sizes[module_sizes > 100])
+knn_adj[knn_adj > 1] <- 1        # ensure binary
+diag(knn_adj) <- 0               # remove self-loops
 
-head(sort(module_sizes, decreasing = TRUE))
-length(modules_louvain[[which.max(module_sizes)]])
+# Create graph (one vertex per filtered gene)
+g_knn <- graph_from_adjacency_matrix(knn_adj, mode = "undirected", diag = FALSE)
+V(g_knn)$name <- genes_keep  # gene IDs as vertex names
+
+# --- Step 4: Cluster ---
+cl_louvain <- igraph::cluster_louvain(g_knn)
+modules_louvain <- split(V(g_knn)$name, membership(cl_louvain))
+
+module_sizes_louvain <- sapply(modules_louvain, length)
+message(sprintf("kNN-CLR Louvain: %d modules", length(modules_louvain)))
+print(head(sort(module_sizes_louvain, decreasing = TRUE), 10))
 
 
 
@@ -322,7 +353,7 @@ submodule_df  |> dplyr::filter(Submodule == "M.1.1")
 
 #colnames(submodule_df) <- c("Gene", "Submodule")
 write.table(submodule_df,
-            paste0(output_dir, "submodules_spearman_louvain_leiden.tsv"),
+            paste0(output_dir, "submodules_spearman_louvain_louvain.tsv"),
             sep="\t", quote=FALSE, row.names=FALSE)
 
 # %% Save the submodules plot in a pdf for each Module.
