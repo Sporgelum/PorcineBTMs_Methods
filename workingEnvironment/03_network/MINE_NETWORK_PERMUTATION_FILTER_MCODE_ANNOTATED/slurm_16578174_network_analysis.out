@@ -126,3 +126,6 @@ STUDY: PRJNA1107598  (32,763 genes, 136 samples)
 
 [2026-03-13 09:43:44] Starting: PRJNA1107598: MINE MI estimation (50,000,000 pairs)
 --------------------------------------------------------------------------------
+  MINE progress: 9765/97657 batches (10%) | last_loss=-2.5261 | MI_mean=1.5575
+  MINE progress: 19530/97657 batches (20%) | last_loss=-2.5666 | MI_mean=1.5994
+  MINE progress: 29295/97657 batches (30%) | last_loss=-2.5378 | MI_mean=1.5812

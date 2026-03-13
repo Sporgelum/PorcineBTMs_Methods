@@ -102,4 +102,8 @@ Direct run:
 
 python workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/run_pipeline.py --output ./output
 
+### new implementation is qc prefiltering WGCNA style of number of genes using MAD, and visualizing the pre- and post- filtering datasets.
+Furthermore in the pipeline, first step should be fitlerin miRNA/rRNA genes to avoid star hubs and then filter genes based on MADs and then continue with the analysis.
+
+-- implemented idea of qc is already in DSL Repo, need to be implemented here.
 

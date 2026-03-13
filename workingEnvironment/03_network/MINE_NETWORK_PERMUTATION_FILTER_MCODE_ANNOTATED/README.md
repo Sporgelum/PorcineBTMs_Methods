@@ -347,3 +347,4 @@ nvidia-smi --> ps -fp PID || true --> check if the process belongs to you or the
 ## to sloow on my machine, deploy on the cluster.
 
 # Maybe helps to remove first ribosomal genes?
+# #todo add filtering ability and visualization from DSL and furthermore leiden on weighted net and submodule if number of genes larger than 200 per module du mcode in submodules, read DSL repo readme.
