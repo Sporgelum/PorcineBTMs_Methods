@@ -1,0 +1,128 @@
+============================================================================
+Gene Network Inference: MINE + MODULE
+SLURM Job ID: 16578174
+Node: binfservas30
+Started: Fri Mar 13 09:43:10 CET 2026
+============================================================================
+
+[INFO] Counts file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/logCPM_matrix_filtered_samples.csv
+[INFO] Metadata file: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/metadata_with_sample_annotations.csv
+[INFO] Output directory: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output
+
+[INFO] Activating Python environment...
+[INFO] Using Python: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/python
+[INFO] Python version: Python 3.9.5
+
+[INFO] Setting up temporary directory...
+[INFO] Temporary directory: /scratch/mbotos/network_tmp_2825131
+
+[INFO] Cleaning pip cache...
+Files removed: 8 (1.3 MB)
+Directories removed: 0
+
+[INFO] System Information:
+  CPU cores: 64
+  Memory: 1.0Ti
+  Disk space (home): 927G
+  Disk space (scratch): 3.5T
+
+[INFO] GPU Information:
+NVIDIA GeForce RTX 2080 Ti, 11264 MiB
+NVIDIA GeForce RTX 2080 Ti, 11264 MiB
+
+[INFO] Loading PyTorch module for GPU acceleration...
+
+The following have been reloaded with a version change:
+  1) ncurses/6.2 => ncurses/6.2-GCCcore-10.3.0
+
+[INFO] ✓ PyTorch module loaded successfully
+ 67) PyTorch/1.10.0-foss-2021a-CUDA-11.3.1
+
+[INFO] Re-activating virtualenv and setting clean PYTHONPATH (venv + torch module)...
+[INFO] Using Python: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/python
+[INFO] PYTHONPATH: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages:/srv/ss/sib/ibu/rocky8/2023072800/software/PyTorch/1.10.0-foss-2021a-CUDA-11.3.1/lib/python3.9/site-packages
+[INFO] NUMEXPR_DISABLED: 1
+
+[INFO] Checking setuptools/pkg_resources availability...
+[INFO] ✓ pkg_resources available
+
+[INFO] Checking NumPy compatibility for cluster PyTorch...
+[WARNING] NumPy >=2 detected; installing numpy<2 for PyTorch 1.10 compatibility...
+[INFO] NumPy version: 1.26.4
+
+[INFO] Verifying PyTorch import...
+/srv/ss/sib/ibu/rocky8/2023072800/software/PyTorch/1.10.0-foss-2021a-CUDA-11.3.1/lib/python3.9/site-packages/torch/torch_version.py:3: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import packaging  # type: ignore[attr-defined]
+✓ PyTorch 1.10.0 - CUDA available: True
+[INFO] ✓ PyTorch verification successful
+
+============================================================================
+Starting Network Inference Analysis
+============================================================================
+
+================================================================================
+MINE-BASED GENE NETWORK INFERENCE
+Neural MI estimation · Permutation significance · Multi-study consensus
+================================================================================
+Timestamp        : 20260313_094330
+Device           : cuda
+MINE hidden_dim  : 64
+MINE epochs      : 200
+Batch pairs      : 512
+Pre-screen       : ON (spearman |r| > 0.3)
+Null mode        : global
+Null permutations: 10000
+P-value threshold: 0.001
+Min studies      : 3
+Gene filter      : OFF
+================================================================================
+
+[2026-03-13 09:43:30] Starting: Load expression + metadata
+--------------------------------------------------------------------------------
+[INFO] Loaded expression matrix: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/logCPM_matrix_filtered_samples.csv
+[INFO] Shape: 32,763 genes × 613 samples
+[INFO] Loaded metadata: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/metadata_with_sample_annotations.csv
+[INFO] Metadata shape: (1198, 18)
+[WARN] 585 metadata rows without matching expression columns (ignored).
+[INFO] Study: PRJNA1107598 (136 samples)
+[INFO] Study: PRJNA1163897 (6 samples)
+[WARN] PRJNA1197383: 1 samples < 3 — skipping
+[INFO] Study: PRJNA1200777 (18 samples)
+[INFO] Study: PRJNA311061 (73 samples)
+[INFO] Study: PRJNA313448 (176 samples)
+[INFO] Study: PRJNA479928 (6 samples)
+[INFO] Study: PRJNA484712 (12 samples)
+[INFO] Study: PRJNA510331 (8 samples)
+[INFO] Study: PRJNA512863 (20 samples)
+[INFO] Study: PRJNA513475 (10 samples)
+[INFO] Study: PRJNA692626 (32 samples)
+[INFO] Study: PRJNA699465 (22 samples)
+[INFO] Study: PRJNA705952 (12 samples)
+[INFO] Study: PRJNA805111 (16 samples)
+[INFO] Study: PRJNA812000 (4 samples)
+[INFO] Study: PRJNA832220 (5 samples)
+[INFO] Study: PRJNA982050 (56 samples)
+[INFO] Total studies discovered: 17
+--------------------------------------------------------------------------------
+[2026-03-13 09:43:32] Completed: Load expression + metadata
+[TIMING] Duration: 2.79 seconds
+
+================================================================================
+STUDY: PRJNA1107598  (32,763 genes, 136 samples)
+================================================================================
+
+[2026-03-13 09:43:32] Starting: PRJNA1107598: Z-score + candidate selection
+--------------------------------------------------------------------------------
+  Pre-screening 32,763 genes (spearman, |r| > 0.3, 536,690,703 total pairs)...
+    chunk 0/32,763 (0%) — 16,051,812 pairs so far
+    chunk 10,000/32,763 (31%) — 138,413,401 pairs so far
+    chunk 20,000/32,763 (61%) — 214,679,210 pairs so far
+    chunk 30,000/32,763 (92%) — 245,401,521 pairs so far
+  Pre-screen: 245,989,852 pairs above |r| > 0.3 in 5.5s
+  Capped to 50,000,000 pairs (raised threshold to |r| > 0.951)
+--------------------------------------------------------------------------------
+[2026-03-13 09:43:44] Completed: PRJNA1107598: Z-score + candidate selection
+[TIMING] Duration: 11.26 seconds
+
+[2026-03-13 09:43:44] Starting: PRJNA1107598: MINE MI estimation (50,000,000 pairs)
+--------------------------------------------------------------------------------

@@ -1,0 +1,2283 @@
+============================================================================
+Gene Network Inference: Permutation MI + MCODE modules
+SLURM Job ID: 16530133
+Node: binfservas30
+Started: Fri Mar  6 22:42:52 CET 2026
+============================================================================
+
+[INFO] Activating Python environment...
+[INFO] Using Python: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/python
+[INFO] Python version: Python 3.9.5
+
+[INFO] Setting up temporary directory...
+[INFO] Temporary directory: /scratch/mbotos/network_pval_tmp_2382703
+
+[INFO] System Information:
+  CPU cores available : 64
+  Memory total        : 1.0Ti
+  Disk (scratch)      : 3.5T
+
+============================================================================
+Starting Permutation MI Network Inference
+============================================================================
+
+
+[2026-03-06 22:43:08] Starting: Loading expression matrix & metadata
+--------------------------------------------------------------------------------
+[INFO] Loaded expression matrix: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/logCPM_matrix_filtered_samples.csv
+[INFO] Shape: 32763 genes × 613 samples
+[INFO] Loaded metadata: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/metadata_with_sample_annotations.csv
+[INFO] Metadata shape: (1198, 18)
+[WARN] 585 metadata rows have no matching column in the expression matrix and will be ignored.
+[INFO] Study detected: PRJNA1107598  (136 samples)
+[INFO] Study detected: PRJNA1163897  (6 samples)
+[WARN] BioProject PRJNA1197383: only 1 samples (< MIN_SAMPLES_PER_STUDY=3) – skipping.
+[INFO] Study detected: PRJNA1200777  (18 samples)
+[INFO] Study detected: PRJNA311061  (73 samples)
+[INFO] Study detected: PRJNA313448  (176 samples)
+[INFO] Study detected: PRJNA479928  (6 samples)
+[INFO] Study detected: PRJNA484712  (12 samples)
+[INFO] Study detected: PRJNA510331  (8 samples)
+[INFO] Study detected: PRJNA512863  (20 samples)
+[INFO] Study detected: PRJNA513475  (10 samples)
+[INFO] Study detected: PRJNA692626  (32 samples)
+[INFO] Study detected: PRJNA699465  (22 samples)
+[INFO] Study detected: PRJNA705952  (12 samples)
+[INFO] Study detected: PRJNA805111  (16 samples)
+[INFO] Study detected: PRJNA812000  (4 samples)
+[INFO] Study detected: PRJNA832220  (5 samples)
+[INFO] Study detected: PRJNA982050  (56 samples)
+[INFO] Total studies discovered: 17
+--------------------------------------------------------------------------------
+[2026-03-06 22:43:11] Completed: Loading expression matrix & metadata
+[TIMING] Duration: 3.40 seconds
+================================================================================
+GENE NETWORK INFERENCE: PERMUTATION-BASED MI SIGNIFICANCE
+================================================================================
+Start time       : 2026-03-06 22:43:11
+Studies found    : 17
+  PRJNA1107598                    136 samples
+  PRJNA1163897                    6 samples
+  PRJNA1200777                    18 samples
+  PRJNA311061                     73 samples
+  PRJNA313448                     176 samples
+  PRJNA479928                     6 samples
+  PRJNA484712                     12 samples
+  PRJNA510331                     8 samples
+  PRJNA512863                     20 samples
+  PRJNA513475                     10 samples
+  PRJNA692626                     32 samples
+  PRJNA699465                     22 samples
+  PRJNA705952                     12 samples
+  PRJNA805111                     16 samples
+  PRJNA812000                     4 samples
+  PRJNA832220                     5 samples
+  PRJNA982050                     56 samples
+N permutations   : 30000
+p-value threshold: 0.001
+Min study count  : 3
+Log file         : /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_20260306_224308.log
+================================================================================
+
+================================================================================
+PROCESSING STUDY: PRJNA1107598  (136 samples)
+================================================================================
+
+[2026-03-06 22:43:11] Starting: PRJNA1107598: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 43.00 minutes (2580.2s)
+[INFO] MI range: [0.0039, 1.6093]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA1107598.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-06 23:26:28] Completed: PRJNA1107598: MI Matrix
+[TIMING] Duration: 43.29 minutes (2597.5s)
+
+[2026-03-06 23:26:28] Starting: PRJNA1107598: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.75 seconds
+[INFO] Null MI: mean=0.0619, std=0.0222, 99.9th pct=0.1513
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA1107598.txt
+--------------------------------------------------------------------------------
+[2026-03-06 23:26:33] Completed: PRJNA1107598: Null Distribution (30000 perms)
+[TIMING] Duration: 4.75 seconds
+
+[2026-03-06 23:26:33] Starting: PRJNA1107598: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.1513
+[INFO] Significant edges (p < 0.001): 232,274,267
+--------------------------------------------------------------------------------
+[2026-03-06 23:27:31] Completed: PRJNA1107598: Edge Significance Filtering
+[TIMING] Duration: 58.13 seconds
+
+[2026-03-06 23:28:47] Starting: PRJNA1107598: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA1107598
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA1107598.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA1107598.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA1107598.graphml
+--------------------------------------------------------------------------------
+[2026-03-06 23:41:02] Completed: PRJNA1107598: Saving Results
+[TIMING] Duration: 12.25 minutes (734.7s)
+
+================================================================================
+PROCESSING STUDY: PRJNA1163897  (6 samples)
+================================================================================
+
+[2026-03-06 23:41:02] Starting: PRJNA1163897: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 40.07 minutes (2404.4s)
+[INFO] MI range: [1.3297, 1.5607]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA1163897.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 00:21:22] Completed: PRJNA1163897: MI Matrix
+[TIMING] Duration: 40.33 minutes (2419.9s)
+
+[2026-03-07 00:21:22] Starting: PRJNA1163897: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.47 seconds
+[INFO] Null MI: mean=1.3454, std=0.0582, 99.9th pct=1.5607
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA1163897.txt
+--------------------------------------------------------------------------------
+[2026-03-07 00:21:26] Completed: PRJNA1163897: Null Distribution (30000 perms)
+[TIMING] Duration: 4.48 seconds
+
+[2026-03-07 00:21:26] Starting: PRJNA1163897: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.5607
+[INFO] Significant edges (p < 0.001): 0
+--------------------------------------------------------------------------------
+[2026-03-07 00:21:49] Completed: PRJNA1163897: Edge Significance Filtering
+[TIMING] Duration: 22.88 seconds
+
+[2026-03-07 00:22:17] Starting: PRJNA1163897: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA1163897
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA1163897.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA1163897.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA1163897.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 00:23:00] Completed: PRJNA1163897: Saving Results
+[TIMING] Duration: 42.88 seconds
+
+================================================================================
+PROCESSING STUDY: PRJNA1200777  (18 samples)
+================================================================================
+
+[2026-03-07 00:23:00] Starting: PRJNA1200777: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 41.03 minutes (2462.1s)
+[INFO] MI range: [0.3096, 1.6000]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA1200777.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 01:04:15] Completed: PRJNA1200777: MI Matrix
+[TIMING] Duration: 41.26 minutes (2475.5s)
+
+[2026-03-07 01:04:15] Starting: PRJNA1200777: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.43 seconds
+[INFO] Null MI: mean=0.5870, std=0.1170, 99.9th pct=1.0129
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA1200777.txt
+--------------------------------------------------------------------------------
+[2026-03-07 01:04:20] Completed: PRJNA1200777: Null Distribution (30000 perms)
+[TIMING] Duration: 4.44 seconds
+
+[2026-03-07 01:04:20] Starting: PRJNA1200777: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.0129
+[INFO] Significant edges (p < 0.001): 77,606,866
+--------------------------------------------------------------------------------
+[2026-03-07 01:05:18] Completed: PRJNA1200777: Edge Significance Filtering
+[TIMING] Duration: 57.98 seconds
+
+[2026-03-07 01:05:51] Starting: PRJNA1200777: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA1200777
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA1200777.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA1200777.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA1200777.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 01:10:21] Completed: PRJNA1200777: Saving Results
+[TIMING] Duration: 4.51 minutes (270.4s)
+
+================================================================================
+PROCESSING STUDY: PRJNA311061  (73 samples)
+================================================================================
+
+[2026-03-07 01:10:21] Starting: PRJNA311061: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 42.01 minutes (2520.8s)
+[INFO] MI range: [0.0037, 1.6089]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA311061.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 01:52:36] Completed: PRJNA311061: MI Matrix
+[TIMING] Duration: 42.24 minutes (2534.7s)
+
+[2026-03-07 01:52:36] Starting: PRJNA311061: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.62 seconds
+[INFO] Null MI: mean=0.1237, std=0.0451, 99.9th pct=0.2966
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA311061.txt
+--------------------------------------------------------------------------------
+[2026-03-07 01:52:41] Completed: PRJNA311061: Null Distribution (30000 perms)
+[TIMING] Duration: 4.62 seconds
+
+[2026-03-07 01:52:41] Starting: PRJNA311061: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.2966
+[INFO] Significant edges (p < 0.001): 164,014,893
+--------------------------------------------------------------------------------
+[2026-03-07 01:53:44] Completed: PRJNA311061: Edge Significance Filtering
+[TIMING] Duration: 1.06 minutes (63.9s)
+
+[2026-03-07 01:55:01] Starting: PRJNA311061: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA311061
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA311061.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA311061.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA311061.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 02:03:27] Completed: PRJNA311061: Saving Results
+[TIMING] Duration: 8.43 minutes (505.8s)
+
+================================================================================
+PROCESSING STUDY: PRJNA313448  (176 samples)
+================================================================================
+
+[2026-03-07 02:03:27] Starting: PRJNA313448: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 43.92 minutes (2635.3s)
+[INFO] MI range: [0.0019, 1.6094]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA313448.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 02:47:37] Completed: PRJNA313448: MI Matrix
+[TIMING] Duration: 44.17 minutes (2650.0s)
+
+[2026-03-07 02:47:37] Starting: PRJNA313448: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.97 seconds
+[INFO] Null MI: mean=0.0472, std=0.0168, 99.9th pct=0.1153
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA313448.txt
+--------------------------------------------------------------------------------
+[2026-03-07 02:47:42] Completed: PRJNA313448: Null Distribution (30000 perms)
+[TIMING] Duration: 4.97 seconds
+
+[2026-03-07 02:47:42] Starting: PRJNA313448: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.1153
+[INFO] Significant edges (p < 0.001): 263,846,163
+--------------------------------------------------------------------------------
+[2026-03-07 02:48:38] Completed: PRJNA313448: Edge Significance Filtering
+[TIMING] Duration: 56.49 seconds
+
+[2026-03-07 02:50:49] Starting: PRJNA313448: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA313448
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA313448.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA313448.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA313448.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 03:04:35] Completed: PRJNA313448: Saving Results
+[TIMING] Duration: 13.76 minutes (825.8s)
+
+================================================================================
+PROCESSING STUDY: PRJNA479928  (6 samples)
+================================================================================
+
+[2026-03-07 03:04:35] Starting: PRJNA479928: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 39.98 minutes (2399.1s)
+[INFO] MI range: [1.3297, 1.5607]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA479928.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 03:44:51] Completed: PRJNA479928: MI Matrix
+[TIMING] Duration: 40.27 minutes (2416.3s)
+
+[2026-03-07 03:44:51] Starting: PRJNA479928: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.50 seconds
+[INFO] Null MI: mean=1.3447, std=0.0571, 99.9th pct=1.5607
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA479928.txt
+--------------------------------------------------------------------------------
+[2026-03-07 03:44:56] Completed: PRJNA479928: Null Distribution (30000 perms)
+[TIMING] Duration: 4.51 seconds
+
+[2026-03-07 03:44:56] Starting: PRJNA479928: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.5607
+[INFO] Significant edges (p < 0.001): 0
+--------------------------------------------------------------------------------
+[2026-03-07 03:45:18] Completed: PRJNA479928: Edge Significance Filtering
+[TIMING] Duration: 22.89 seconds
+
+[2026-03-07 03:45:49] Starting: PRJNA479928: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA479928
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA479928.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA479928.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA479928.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 03:46:32] Completed: PRJNA479928: Saving Results
+[TIMING] Duration: 43.11 seconds
+
+================================================================================
+PROCESSING STUDY: PRJNA484712  (12 samples)
+================================================================================
+
+[2026-03-07 03:46:32] Starting: PRJNA484712: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 41.31 minutes (2478.8s)
+[INFO] MI range: [0.6931, 1.5890]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA484712.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 04:28:07] Completed: PRJNA484712: MI Matrix
+[TIMING] Duration: 41.58 minutes (2494.5s)
+
+[2026-03-07 04:28:07] Starting: PRJNA484712: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.51 seconds
+[INFO] Null MI: mean=0.8331, std=0.1144, 99.9th pct=1.2708
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA484712.txt
+--------------------------------------------------------------------------------
+[2026-03-07 04:28:11] Completed: PRJNA484712: Null Distribution (30000 perms)
+[TIMING] Duration: 4.52 seconds
+
+[2026-03-07 04:28:11] Starting: PRJNA484712: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.2708
+[INFO] Significant edges (p < 0.001): 51,255,126
+--------------------------------------------------------------------------------
+[2026-03-07 04:28:54] Completed: PRJNA484712: Edge Significance Filtering
+[TIMING] Duration: 43.37 seconds
+
+[2026-03-07 04:29:13] Starting: PRJNA484712: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA484712
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA484712.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA484712.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA484712.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 04:32:14] Completed: PRJNA484712: Saving Results
+[TIMING] Duration: 3.03 minutes (181.8s)
+
+================================================================================
+PROCESSING STUDY: PRJNA510331  (8 samples)
+================================================================================
+
+[2026-03-07 04:32:15] Starting: PRJNA510331: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 39.75 minutes (2385.0s)
+[INFO] MI range: [1.0397, 1.5596]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA510331.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 05:12:17] Completed: PRJNA510331: MI Matrix
+[TIMING] Duration: 40.03 minutes (2402.1s)
+
+[2026-03-07 05:12:17] Starting: PRJNA510331: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.45 seconds
+[INFO] Null MI: mean=1.0948, std=0.0953, 99.9th pct=1.5596
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA510331.txt
+--------------------------------------------------------------------------------
+[2026-03-07 05:12:21] Completed: PRJNA510331: Null Distribution (30000 perms)
+[TIMING] Duration: 4.45 seconds
+
+[2026-03-07 05:12:21] Starting: PRJNA510331: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.5596
+[INFO] Significant edges (p < 0.001): 0
+--------------------------------------------------------------------------------
+[2026-03-07 05:12:43] Completed: PRJNA510331: Edge Significance Filtering
+[TIMING] Duration: 21.69 seconds
+
+[2026-03-07 05:12:50] Starting: PRJNA510331: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA510331
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA510331.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA510331.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA510331.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 05:13:33] Completed: PRJNA510331: Saving Results
+[TIMING] Duration: 43.06 seconds
+
+================================================================================
+PROCESSING STUDY: PRJNA512863  (20 samples)
+================================================================================
+
+[2026-03-07 05:13:33] Starting: PRJNA512863: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 41.35 minutes (2481.2s)
+[INFO] MI range: [0.2231, 1.6094]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA512863.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 05:55:09] Completed: PRJNA512863: MI Matrix
+[TIMING] Duration: 41.59 minutes (2495.7s)
+
+[2026-03-07 05:55:09] Starting: PRJNA512863: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.51 seconds
+[INFO] Null MI: mean=0.5357, std=0.1149, 99.9th pct=0.9255
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA512863.txt
+--------------------------------------------------------------------------------
+[2026-03-07 05:55:14] Completed: PRJNA512863: Null Distribution (30000 perms)
+[TIMING] Duration: 4.52 seconds
+
+[2026-03-07 05:55:14] Starting: PRJNA512863: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.9255
+[INFO] Significant edges (p < 0.001): 22,158,497
+--------------------------------------------------------------------------------
+[2026-03-07 05:56:19] Completed: PRJNA512863: Edge Significance Filtering
+[TIMING] Duration: 1.09 minutes (65.5s)
+
+[2026-03-07 05:56:31] Starting: PRJNA512863: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA512863
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA512863.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA512863.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA512863.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 05:58:23] Completed: PRJNA512863: Saving Results
+[TIMING] Duration: 1.88 minutes (112.7s)
+
+================================================================================
+PROCESSING STUDY: PRJNA513475  (10 samples)
+================================================================================
+
+[2026-03-07 05:58:23] Starting: PRJNA513475: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 41.14 minutes (2468.3s)
+[INFO] MI range: [0.9163, 1.6094]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA513475.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 06:39:45] Completed: PRJNA513475: MI Matrix
+[TIMING] Duration: 41.36 minutes (2481.7s)
+
+[2026-03-07 06:39:45] Starting: PRJNA513475: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.51 seconds
+[INFO] Null MI: mean=0.9931, std=0.1041, 99.9th pct=1.6094
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA513475.txt
+--------------------------------------------------------------------------------
+[2026-03-07 06:39:50] Completed: PRJNA513475: Null Distribution (30000 perms)
+[TIMING] Duration: 4.51 seconds
+
+[2026-03-07 06:39:50] Starting: PRJNA513475: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.6094
+[INFO] Significant edges (p < 0.001): 0
+--------------------------------------------------------------------------------
+[2026-03-07 06:40:13] Completed: PRJNA513475: Edge Significance Filtering
+[TIMING] Duration: 23.48 seconds
+
+[2026-03-07 06:40:19] Starting: PRJNA513475: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA513475
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA513475.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA513475.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA513475.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 06:41:02] Completed: PRJNA513475: Saving Results
+[TIMING] Duration: 43.03 seconds
+
+================================================================================
+PROCESSING STUDY: PRJNA692626  (32 samples)
+================================================================================
+
+[2026-03-07 06:41:02] Starting: PRJNA692626: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 41.32 minutes (2479.1s)
+[INFO] MI range: [0.0506, 1.6065]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA692626.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 07:22:35] Completed: PRJNA692626: MI Matrix
+[TIMING] Duration: 41.55 minutes (2493.1s)
+
+[2026-03-07 07:22:35] Starting: PRJNA692626: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.54 seconds
+[INFO] Null MI: mean=0.3233, std=0.0931, 99.9th pct=0.6522
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA692626.txt
+--------------------------------------------------------------------------------
+[2026-03-07 07:22:40] Completed: PRJNA692626: Null Distribution (30000 perms)
+[TIMING] Duration: 4.54 seconds
+
+[2026-03-07 07:22:40] Starting: PRJNA692626: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.6522
+[INFO] Significant edges (p < 0.001): 112,917,275
+--------------------------------------------------------------------------------
+[2026-03-07 07:23:45] Completed: PRJNA692626: Edge Significance Filtering
+[TIMING] Duration: 1.09 minutes (65.5s)
+
+[2026-03-07 07:24:32] Starting: PRJNA692626: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA692626
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA692626.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA692626.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA692626.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 07:31:27] Completed: PRJNA692626: Saving Results
+[TIMING] Duration: 6.92 minutes (415.1s)
+
+================================================================================
+PROCESSING STUDY: PRJNA699465  (22 samples)
+================================================================================
+
+[2026-03-07 07:31:27] Starting: PRJNA699465: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 41.61 minutes (2496.4s)
+[INFO] MI range: [0.1156, 1.6033]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA699465.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 08:13:17] Completed: PRJNA699465: MI Matrix
+[TIMING] Duration: 41.83 minutes (2509.6s)
+
+[2026-03-07 08:13:17] Starting: PRJNA699465: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.50 seconds
+[INFO] Null MI: mean=0.4838, std=0.1104, 99.9th pct=0.8563
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA699465.txt
+--------------------------------------------------------------------------------
+[2026-03-07 08:13:22] Completed: PRJNA699465: Null Distribution (30000 perms)
+[TIMING] Duration: 4.51 seconds
+
+[2026-03-07 08:13:22] Starting: PRJNA699465: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.8563
+[INFO] Significant edges (p < 0.001): 131,475,274
+--------------------------------------------------------------------------------
+[2026-03-07 08:14:19] Completed: PRJNA699465: Edge Significance Filtering
+[TIMING] Duration: 57.28 seconds
+
+[2026-03-07 08:15:20] Starting: PRJNA699465: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA699465
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA699465.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA699465.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA699465.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 08:22:00] Completed: PRJNA699465: Saving Results
+[TIMING] Duration: 6.67 minutes (400.3s)
+
+================================================================================
+PROCESSING STUDY: PRJNA705952  (12 samples)
+================================================================================
+
+[2026-03-07 08:22:01] Starting: PRJNA705952: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 41.46 minutes (2487.6s)
+[INFO] MI range: [0.6931, 1.5890]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA705952.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 09:03:44] Completed: PRJNA705952: MI Matrix
+[TIMING] Duration: 41.72 minutes (2503.3s)
+
+[2026-03-07 09:03:44] Starting: PRJNA705952: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.45 seconds
+[INFO] Null MI: mean=0.8326, std=0.1147, 99.9th pct=1.2708
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA705952.txt
+--------------------------------------------------------------------------------
+[2026-03-07 09:03:48] Completed: PRJNA705952: Null Distribution (30000 perms)
+[TIMING] Duration: 4.46 seconds
+
+[2026-03-07 09:03:48] Starting: PRJNA705952: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.2708
+[INFO] Significant edges (p < 0.001): 49,302,839
+--------------------------------------------------------------------------------
+[2026-03-07 09:04:35] Completed: PRJNA705952: Edge Significance Filtering
+[TIMING] Duration: 46.97 seconds
+
+[2026-03-07 09:05:07] Starting: PRJNA705952: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA705952
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA705952.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA705952.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA705952.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 09:08:13] Completed: PRJNA705952: Saving Results
+[TIMING] Duration: 3.09 minutes (185.3s)
+
+================================================================================
+PROCESSING STUDY: PRJNA805111  (16 samples)
+================================================================================
+
+[2026-03-07 09:08:13] Starting: PRJNA805111: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 41.27 minutes (2476.4s)
+[INFO] MI range: [0.4315, 1.6021]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA805111.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 09:49:44] Completed: PRJNA805111: MI Matrix
+[TIMING] Duration: 41.53 minutes (2491.6s)
+
+[2026-03-07 09:49:44] Starting: PRJNA805111: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.43 seconds
+[INFO] Null MI: mean=0.6590, std=0.1181, 99.9th pct=1.1034
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA805111.txt
+--------------------------------------------------------------------------------
+[2026-03-07 09:49:49] Completed: PRJNA805111: Null Distribution (30000 perms)
+[TIMING] Duration: 4.43 seconds
+
+[2026-03-07 09:49:49] Starting: PRJNA805111: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.1034
+[INFO] Significant edges (p < 0.001): 24,620,813
+--------------------------------------------------------------------------------
+[2026-03-07 09:50:41] Completed: PRJNA805111: Edge Significance Filtering
+[TIMING] Duration: 52.75 seconds
+
+[2026-03-07 09:50:57] Starting: PRJNA805111: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA805111
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA805111.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA805111.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA805111.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 09:52:49] Completed: PRJNA805111: Saving Results
+[TIMING] Duration: 1.87 minutes (112.5s)
+
+================================================================================
+PROCESSING STUDY: PRJNA812000  (4 samples)
+================================================================================
+
+[2026-03-07 09:52:49] Starting: PRJNA812000: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 39.48 minutes (2368.8s)
+[INFO] MI range: [1.3863, 1.3863]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA812000.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 10:32:33] Completed: PRJNA812000: MI Matrix
+[TIMING] Duration: 39.73 minutes (2383.7s)
+
+[2026-03-07 10:32:33] Starting: PRJNA812000: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.46 seconds
+[INFO] Null MI: mean=1.3863, std=0.0000, 99.9th pct=1.3863
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA812000.txt
+--------------------------------------------------------------------------------
+[2026-03-07 10:32:37] Completed: PRJNA812000: Null Distribution (30000 perms)
+[TIMING] Duration: 4.47 seconds
+
+[2026-03-07 10:32:37] Starting: PRJNA812000: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.3863
+[INFO] Significant edges (p < 0.001): 0
+--------------------------------------------------------------------------------
+[2026-03-07 10:32:50] Completed: PRJNA812000: Edge Significance Filtering
+[TIMING] Duration: 12.42 seconds
+
+[2026-03-07 10:32:56] Starting: PRJNA812000: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA812000
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA812000.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA812000.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA812000.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 10:33:39] Completed: PRJNA812000: Saving Results
+[TIMING] Duration: 43.20 seconds
+
+================================================================================
+PROCESSING STUDY: PRJNA832220  (5 samples)
+================================================================================
+
+[2026-03-07 10:33:39] Starting: PRJNA832220: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 39.53 minutes (2371.9s)
+[INFO] MI range: [1.6094, 1.6094]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA832220.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 11:13:25] Completed: PRJNA832220: MI Matrix
+[TIMING] Duration: 39.77 minutes (2385.9s)
+
+[2026-03-07 11:13:25] Starting: PRJNA832220: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.42 seconds
+[INFO] Null MI: mean=1.6094, std=0.0000, 99.9th pct=1.6094
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA832220.txt
+--------------------------------------------------------------------------------
+[2026-03-07 11:13:29] Completed: PRJNA832220: Null Distribution (30000 perms)
+[TIMING] Duration: 4.43 seconds
+
+[2026-03-07 11:13:29] Starting: PRJNA832220: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.6094
+[INFO] Significant edges (p < 0.001): 0
+--------------------------------------------------------------------------------
+[2026-03-07 11:13:42] Completed: PRJNA832220: Edge Significance Filtering
+[TIMING] Duration: 12.28 seconds
+
+[2026-03-07 11:13:45] Starting: PRJNA832220: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA832220
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA832220.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA832220.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA832220.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 11:14:29] Completed: PRJNA832220: Saving Results
+[TIMING] Duration: 43.15 seconds
+
+================================================================================
+PROCESSING STUDY: PRJNA982050  (56 samples)
+================================================================================
+
+[2026-03-07 11:14:29] Starting: PRJNA982050: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Computing MI matrix (32763 genes, -1 cores)...
+[INFO] MI progress: 500/32763 genes
+[INFO] MI progress: 1000/32763 genes
+[INFO] MI progress: 1500/32763 genes
+[INFO] MI progress: 2000/32763 genes
+[INFO] MI progress: 2500/32763 genes
+[INFO] MI progress: 3000/32763 genes
+[INFO] MI progress: 3500/32763 genes
+[INFO] MI progress: 4000/32763 genes
+[INFO] MI progress: 4500/32763 genes
+[INFO] MI progress: 5000/32763 genes
+[INFO] MI progress: 5500/32763 genes
+[INFO] MI progress: 6000/32763 genes
+[INFO] MI progress: 6500/32763 genes
+[INFO] MI progress: 7000/32763 genes
+[INFO] MI progress: 7500/32763 genes
+[INFO] MI progress: 8000/32763 genes
+[INFO] MI progress: 8500/32763 genes
+[INFO] MI progress: 9000/32763 genes
+[INFO] MI progress: 9500/32763 genes
+[INFO] MI progress: 10000/32763 genes
+[INFO] MI progress: 10500/32763 genes
+[INFO] MI progress: 11000/32763 genes
+[INFO] MI progress: 11500/32763 genes
+[INFO] MI progress: 12000/32763 genes
+[INFO] MI progress: 12500/32763 genes
+[INFO] MI progress: 13000/32763 genes
+[INFO] MI progress: 13500/32763 genes
+[INFO] MI progress: 14000/32763 genes
+[INFO] MI progress: 14500/32763 genes
+[INFO] MI progress: 15000/32763 genes
+[INFO] MI progress: 15500/32763 genes
+[INFO] MI progress: 16000/32763 genes
+[INFO] MI progress: 16500/32763 genes
+[INFO] MI progress: 17000/32763 genes
+[INFO] MI progress: 17500/32763 genes
+[INFO] MI progress: 18000/32763 genes
+[INFO] MI progress: 18500/32763 genes
+[INFO] MI progress: 19000/32763 genes
+[INFO] MI progress: 19500/32763 genes
+[INFO] MI progress: 20000/32763 genes
+[INFO] MI progress: 20500/32763 genes
+[INFO] MI progress: 21000/32763 genes
+[INFO] MI progress: 21500/32763 genes
+[INFO] MI progress: 22000/32763 genes
+[INFO] MI progress: 22500/32763 genes
+[INFO] MI progress: 23000/32763 genes
+[INFO] MI progress: 23500/32763 genes
+[INFO] MI progress: 24000/32763 genes
+[INFO] MI progress: 24500/32763 genes
+[INFO] MI progress: 25000/32763 genes
+[INFO] MI progress: 25500/32763 genes
+[INFO] MI progress: 26000/32763 genes
+[INFO] MI progress: 26500/32763 genes
+[INFO] MI progress: 27000/32763 genes
+[INFO] MI progress: 27500/32763 genes
+[INFO] MI progress: 28000/32763 genes
+[INFO] MI progress: 28500/32763 genes
+[INFO] MI progress: 29000/32763 genes
+[INFO] MI progress: 29500/32763 genes
+[INFO] MI progress: 30000/32763 genes
+[INFO] MI progress: 30500/32763 genes
+[INFO] MI progress: 31000/32763 genes
+[INFO] MI progress: 31500/32763 genes
+[INFO] MI progress: 32000/32763 genes
+[INFO] MI progress: 32500/32763 genes
+[INFO] MI matrix computed in 41.55 minutes (2493.3s)
+[INFO] MI range: [0.0157, 1.6088]
+[INFO] MI matrix cached to: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA982050.npy (4.29 GB)
+--------------------------------------------------------------------------------
+[2026-03-07 11:56:19] Completed: PRJNA982050: MI Matrix
+[TIMING] Duration: 41.84 minutes (2510.2s)
+
+[2026-03-07 11:56:19] Starting: PRJNA982050: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.59 seconds
+[INFO] Null MI: mean=0.1682, std=0.0589, 99.9th pct=0.3828
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA982050.txt
+--------------------------------------------------------------------------------
+[2026-03-07 11:56:24] Completed: PRJNA982050: Null Distribution (30000 perms)
+[TIMING] Duration: 4.59 seconds
+
+[2026-03-07 11:56:24] Starting: PRJNA982050: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.3828
+[INFO] Significant edges (p < 0.001): 99,361,175
+--------------------------------------------------------------------------------
+[2026-03-07 11:57:32] Completed: PRJNA982050: Edge Significance Filtering
+[TIMING] Duration: 1.14 minutes (68.4s)
+
+[2026-03-07 11:58:13] Starting: PRJNA982050: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA982050
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA982050.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA982050.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA982050.graphml
+--------------------------------------------------------------------------------
+[2026-03-07 12:03:39] Completed: PRJNA982050: Saving Results
+[TIMING] Duration: 5.44 minutes (326.3s)
+
+================================================================================
+BUILDING MASTER REFERENCE NETWORK
+================================================================================
+
+[2026-03-07 12:03:39] Starting: Master Network Construction
+--------------------------------------------------------------------------------
+[INFO] Master network: 165,175,492 edges (in >= 3 of 17 studies)
+--------------------------------------------------------------------------------
+[2026-03-07 12:03:59] Completed: Master Network Construction
+[TIMING] Duration: 19.43 seconds
+
+[2026-03-07 12:03:59] Starting: Master Network: MCODE Module Detection
+--------------------------------------------------------------------------------
+[INFO] Running MCODE module detection...
+[INFO] MCODE stage 1: vertex weighting (k-core + local density)...
+[INFO] Node weight range: [0.0000, 15306.1923]
+[INFO] MCODE stage 2: seed-and-extend...
+[INFO] MCODE stage 2: 1 raw complexes found
+[INFO] MCODE stage 3: filtering (min_size=3, min_density=0.3)...
+[INFO] MCODE: 1 modules after post-processing (in 7.07 hours (4.0m))
+[INFO] Module sizes (top 10): [18751]
+--------------------------------------------------------------------------------
+[2026-03-07 19:08:03] Completed: Master Network: MCODE Module Detection
+[TIMING] Duration: 7.07 hours (4.1m)
+
+[2026-03-07 19:08:03] Starting: Master Network: Saving
+--------------------------------------------------------------------------------
+
+[INFO] Saving master reference network...
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/master_network_edgelist.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/master_edge_study_counts.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/master_network_adjacency.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/master_network.graphml
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/master_BTM_modules.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/master_node_modules.tsv
+[INFO] Saving per-module subgraph files...
+[INFO] Saved 1 submodule files
+--------------------------------------------------------------------------------
+[2026-03-07 19:17:29] Completed: Master Network: Saving
+[TIMING] Duration: 9.42 minutes (565.2s)
+
+================================================================================
+PIPELINE COMPLETE
+================================================================================
+End time     : 2026-03-07 19:17:29
+Total runtime: 20.40 hours (23.9m)
+
+TIMING SUMMARY
+--------------------------------------------------------------------------------
+  Master Network: MCODE Module Detection                 :    7.07 hours (4.1m) ( 34.6%)
+  PRJNA313448: MI Matrix                                 : 44.17 minutes (2650.0s) (  3.6%)
+  PRJNA1107598: MI Matrix                                : 43.29 minutes (2597.5s) (  3.5%)
+  PRJNA311061: MI Matrix                                 : 42.24 minutes (2534.7s) (  3.5%)
+  PRJNA982050: MI Matrix                                 : 41.84 minutes (2510.2s) (  3.4%)
+  PRJNA699465: MI Matrix                                 : 41.83 minutes (2509.6s) (  3.4%)
+  PRJNA705952: MI Matrix                                 : 41.72 minutes (2503.3s) (  3.4%)
+  PRJNA512863: MI Matrix                                 : 41.59 minutes (2495.7s) (  3.4%)
+  PRJNA484712: MI Matrix                                 : 41.58 minutes (2494.5s) (  3.4%)
+  PRJNA692626: MI Matrix                                 : 41.55 minutes (2493.1s) (  3.4%)
+  PRJNA805111: MI Matrix                                 : 41.53 minutes (2491.6s) (  3.4%)
+  PRJNA513475: MI Matrix                                 : 41.36 minutes (2481.7s) (  3.4%)
+  PRJNA1200777: MI Matrix                                : 41.26 minutes (2475.5s) (  3.4%)
+  PRJNA1163897: MI Matrix                                : 40.33 minutes (2419.9s) (  3.3%)
+  PRJNA479928: MI Matrix                                 : 40.27 minutes (2416.3s) (  3.3%)
+  PRJNA510331: MI Matrix                                 : 40.03 minutes (2402.1s) (  3.3%)
+  PRJNA832220: MI Matrix                                 : 39.77 minutes (2385.9s) (  3.2%)
+  PRJNA812000: MI Matrix                                 : 39.73 minutes (2383.7s) (  3.2%)
+  PRJNA313448: Saving Results                            : 13.76 minutes (825.8s) (  1.1%)
+  PRJNA1107598: Saving Results                           : 12.25 minutes (734.7s) (  1.0%)
+  Master Network: Saving                                 : 9.42 minutes (565.2s) (  0.8%)
+  PRJNA311061: Saving Results                            : 8.43 minutes (505.8s) (  0.7%)
+  PRJNA692626: Saving Results                            : 6.92 minutes (415.1s) (  0.6%)
+  PRJNA699465: Saving Results                            : 6.67 minutes (400.3s) (  0.5%)
+  PRJNA982050: Saving Results                            : 5.44 minutes (326.3s) (  0.4%)
+  PRJNA1200777: Saving Results                           : 4.51 minutes (270.4s) (  0.4%)
+  PRJNA705952: Saving Results                            : 3.09 minutes (185.3s) (  0.3%)
+  PRJNA484712: Saving Results                            : 3.03 minutes (181.8s) (  0.2%)
+  PRJNA512863: Saving Results                            : 1.88 minutes (112.7s) (  0.2%)
+  PRJNA805111: Saving Results                            : 1.87 minutes (112.5s) (  0.2%)
+  PRJNA982050: Edge Significance Filtering               : 1.14 minutes (68.4s) (  0.1%)
+  PRJNA692626: Edge Significance Filtering               : 1.09 minutes (65.5s) (  0.1%)
+  PRJNA512863: Edge Significance Filtering               : 1.09 minutes (65.5s) (  0.1%)
+  PRJNA311061: Edge Significance Filtering               : 1.06 minutes (63.9s) (  0.1%)
+  PRJNA1107598: Edge Significance Filtering              :        58.13 seconds (  0.1%)
+  PRJNA1200777: Edge Significance Filtering              :        57.98 seconds (  0.1%)
+  PRJNA699465: Edge Significance Filtering               :        57.28 seconds (  0.1%)
+  PRJNA313448: Edge Significance Filtering               :        56.49 seconds (  0.1%)
+  PRJNA805111: Edge Significance Filtering               :        52.75 seconds (  0.1%)
+  PRJNA705952: Edge Significance Filtering               :        46.97 seconds (  0.1%)
+  PRJNA484712: Edge Significance Filtering               :        43.37 seconds (  0.1%)
+  PRJNA812000: Saving Results                            :        43.20 seconds (  0.1%)
+  PRJNA832220: Saving Results                            :        43.15 seconds (  0.1%)
+  PRJNA479928: Saving Results                            :        43.11 seconds (  0.1%)
+  PRJNA510331: Saving Results                            :        43.06 seconds (  0.1%)
+  PRJNA513475: Saving Results                            :        43.03 seconds (  0.1%)
+  PRJNA1163897: Saving Results                           :        42.88 seconds (  0.1%)
+  PRJNA513475: Edge Significance Filtering               :        23.48 seconds (  0.0%)
+  PRJNA479928: Edge Significance Filtering               :        22.89 seconds (  0.0%)
+  PRJNA1163897: Edge Significance Filtering              :        22.88 seconds (  0.0%)
+  PRJNA510331: Edge Significance Filtering               :        21.69 seconds (  0.0%)
+  Master Network Construction                            :        19.43 seconds (  0.0%)
+  PRJNA812000: Edge Significance Filtering               :        12.42 seconds (  0.0%)
+  PRJNA832220: Edge Significance Filtering               :        12.28 seconds (  0.0%)
+  PRJNA313448: Null Distribution (30000 perms)           :         4.97 seconds (  0.0%)
+  PRJNA1107598: Null Distribution (30000 perms)          :         4.75 seconds (  0.0%)
+  PRJNA311061: Null Distribution (30000 perms)           :         4.62 seconds (  0.0%)
+  PRJNA982050: Null Distribution (30000 perms)           :         4.59 seconds (  0.0%)
+  PRJNA692626: Null Distribution (30000 perms)           :         4.54 seconds (  0.0%)
+  PRJNA484712: Null Distribution (30000 perms)           :         4.52 seconds (  0.0%)
+  PRJNA512863: Null Distribution (30000 perms)           :         4.52 seconds (  0.0%)
+  PRJNA513475: Null Distribution (30000 perms)           :         4.51 seconds (  0.0%)
+  PRJNA699465: Null Distribution (30000 perms)           :         4.51 seconds (  0.0%)
+  PRJNA479928: Null Distribution (30000 perms)           :         4.51 seconds (  0.0%)
+  PRJNA1163897: Null Distribution (30000 perms)          :         4.48 seconds (  0.0%)
+  PRJNA812000: Null Distribution (30000 perms)           :         4.47 seconds (  0.0%)
+  PRJNA705952: Null Distribution (30000 perms)           :         4.46 seconds (  0.0%)
+  PRJNA510331: Null Distribution (30000 perms)           :         4.45 seconds (  0.0%)
+  PRJNA1200777: Null Distribution (30000 perms)          :         4.44 seconds (  0.0%)
+  PRJNA805111: Null Distribution (30000 perms)           :         4.43 seconds (  0.0%)
+  PRJNA832220: Null Distribution (30000 perms)           :         4.43 seconds (  0.0%)
+  Loading expression matrix & metadata                   :         3.40 seconds (  0.0%)
+--------------------------------------------------------------------------------
+  TOTAL                                                  :  20.40 hours (23.9m)
+
+Outputs in    : /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL
+Log file      : /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_20260306_224308.log
+Report file   : /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/analysis_report_pval_20260306_224308.txt
+
+[INFO] Report saved: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/analysis_report_pval_20260306_224308.txt
+================================================================================
+
+
+============================================================================
+Job Complete!
+============================================================================
+Ended: Sat Mar  7 19:17:36 CET 2026
+Total runtime: 20h 34m 44s
+============================================================================
+
+[INFO] Cleaning up temporary files...
+[INFO] Cleanup complete
+
+Output files in NETS_MI_PVAL/:
+  5.8G NETS_MI_PVAL/adj_pval_PRJNA1107598.mtx
+  62 NETS_MI_PVAL/adj_pval_PRJNA1163897.mtx
+  2.0G NETS_MI_PVAL/adj_pval_PRJNA1200777.mtx
+  4.1G NETS_MI_PVAL/adj_pval_PRJNA311061.mtx
+  6.6G NETS_MI_PVAL/adj_pval_PRJNA313448.mtx
+  62 NETS_MI_PVAL/adj_pval_PRJNA479928.mtx
+  1.3G NETS_MI_PVAL/adj_pval_PRJNA484712.mtx
+  62 NETS_MI_PVAL/adj_pval_PRJNA510331.mtx
+  564M NETS_MI_PVAL/adj_pval_PRJNA512863.mtx
+  62 NETS_MI_PVAL/adj_pval_PRJNA513475.mtx
+  2.8G NETS_MI_PVAL/adj_pval_PRJNA692626.mtx
+  3.3G NETS_MI_PVAL/adj_pval_PRJNA699465.mtx
+  1.3G NETS_MI_PVAL/adj_pval_PRJNA705952.mtx
+  623M NETS_MI_PVAL/adj_pval_PRJNA805111.mtx
+  62 NETS_MI_PVAL/adj_pval_PRJNA812000.mtx
+  62 NETS_MI_PVAL/adj_pval_PRJNA832220.mtx
+  2.5G NETS_MI_PVAL/adj_pval_PRJNA982050.mtx
+  14K NETS_MI_PVAL/analysis_report_pval_20260306_224308.txt
+  12G NETS_MI_PVAL/edges_pval_PRJNA1107598.tsv
+  25 NETS_MI_PVAL/edges_pval_PRJNA1163897.tsv
+  3.9G NETS_MI_PVAL/edges_pval_PRJNA1200777.tsv
+  8.1G NETS_MI_PVAL/edges_pval_PRJNA311061.tsv
+  14G NETS_MI_PVAL/edges_pval_PRJNA313448.tsv
+  25 NETS_MI_PVAL/edges_pval_PRJNA479928.tsv
+  2.6G NETS_MI_PVAL/edges_pval_PRJNA484712.tsv
+  25 NETS_MI_PVAL/edges_pval_PRJNA510331.tsv
+  1.2G NETS_MI_PVAL/edges_pval_PRJNA512863.tsv
+  25 NETS_MI_PVAL/edges_pval_PRJNA513475.tsv
+  6.1G NETS_MI_PVAL/edges_pval_PRJNA692626.tsv
+  6.6G NETS_MI_PVAL/edges_pval_PRJNA699465.tsv
+  2.6G NETS_MI_PVAL/edges_pval_PRJNA705952.tsv
+  1.3G NETS_MI_PVAL/edges_pval_PRJNA805111.tsv
+  25 NETS_MI_PVAL/edges_pval_PRJNA812000.tsv
+  25 NETS_MI_PVAL/edges_pval_PRJNA832220.tsv
+  5.0G NETS_MI_PVAL/edges_pval_PRJNA982050.tsv
+  403K NETS_MI_PVAL/master_BTM_modules.tsv
+  4.5G NETS_MI_PVAL/master_edge_study_counts.mtx
+  4.1G NETS_MI_PVAL/master_network_adjacency.mtx
+  6.2G NETS_MI_PVAL/master_network_edgelist.tsv
+  8.4G NETS_MI_PVAL/master_network.graphml
+  385K NETS_MI_PVAL/master_node_modules.tsv
+  8.0G NETS_MI_PVAL/master_submodule_M0.graphml
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA1107598.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA1163897.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA1200777.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA311061.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA313448.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA479928.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA484712.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA510331.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA512863.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA513475.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA692626.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA699465.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA705952.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA805111.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA812000.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA832220.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA982050.npy
+  63K NETS_MI_PVAL/network_pval_20260306_224308.log
+  12G NETS_MI_PVAL/network_pval_PRJNA1107598.graphml
+  2.7M NETS_MI_PVAL/network_pval_PRJNA1163897.graphml
+  4.0G NETS_MI_PVAL/network_pval_PRJNA1200777.graphml
+  8.3G NETS_MI_PVAL/network_pval_PRJNA311061.graphml
+  14G NETS_MI_PVAL/network_pval_PRJNA313448.graphml
+  2.7M NETS_MI_PVAL/network_pval_PRJNA479928.graphml
+  2.6G NETS_MI_PVAL/network_pval_PRJNA484712.graphml
+  2.7M NETS_MI_PVAL/network_pval_PRJNA510331.graphml
+  1.2G NETS_MI_PVAL/network_pval_PRJNA512863.graphml
+  2.7M NETS_MI_PVAL/network_pval_PRJNA513475.graphml
+  5.8G NETS_MI_PVAL/network_pval_PRJNA692626.graphml
+  6.7G NETS_MI_PVAL/network_pval_PRJNA699465.graphml
+  2.5G NETS_MI_PVAL/network_pval_PRJNA705952.graphml
+  1.3G NETS_MI_PVAL/network_pval_PRJNA805111.graphml
+  2.7M NETS_MI_PVAL/network_pval_PRJNA812000.graphml
+  2.7M NETS_MI_PVAL/network_pval_PRJNA832220.graphml
+  5.1G NETS_MI_PVAL/network_pval_PRJNA982050.graphml
+  1.6K NETS_MI_PVAL/null_distribution_PRJNA1107598.txt
+  1.1K NETS_MI_PVAL/null_distribution_PRJNA1163897.txt
+  1.4K NETS_MI_PVAL/null_distribution_PRJNA1200777.txt
+  1.7K NETS_MI_PVAL/null_distribution_PRJNA311061.txt
+  1.6K NETS_MI_PVAL/null_distribution_PRJNA313448.txt
+  1.1K NETS_MI_PVAL/null_distribution_PRJNA479928.txt
+  1.2K NETS_MI_PVAL/null_distribution_PRJNA484712.txt
+  1.1K NETS_MI_PVAL/null_distribution_PRJNA510331.txt
+  1.5K NETS_MI_PVAL/null_distribution_PRJNA512863.txt
+  1.1K NETS_MI_PVAL/null_distribution_PRJNA513475.txt
+  1.5K NETS_MI_PVAL/null_distribution_PRJNA692626.txt
+  1.4K NETS_MI_PVAL/null_distribution_PRJNA699465.txt
+  1.2K NETS_MI_PVAL/null_distribution_PRJNA705952.txt
+  1.4K NETS_MI_PVAL/null_distribution_PRJNA805111.txt
+  1.1K NETS_MI_PVAL/null_distribution_PRJNA812000.txt
+  1.1K NETS_MI_PVAL/null_distribution_PRJNA832220.txt
+  1.7K NETS_MI_PVAL/null_distribution_PRJNA982050.txt
+
+============================================================================
+Check the following for results:
+  NETS_MI_PVAL/network_pval_*.log          Complete execution log
+  NETS_MI_PVAL/analysis_report_pval_*.txt  Summary report with timings
+  NETS_MI_PVAL/master_network.graphml      Master network (Cytoscape)
+  NETS_MI_PVAL/master_BTM_modules.tsv      MCODE module membership
+  NETS_MI_PVAL/master_network_edgelist.tsv Edge list with study counts
+  slurm_16530133_network_pval.out/err  SLURM job output
+============================================================================

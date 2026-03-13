@@ -72,3 +72,34 @@ In order to filter significant gene-pairs, withing dataset MI was calculated for
 To run this  updated version we are using `sbatch submit_pval_job.sh` --> including `generate_net_python_pval.py`
 
 
+Now i updated the workflow that the gene pairs with p-val < 0.001 need to be in at least 30% studies, due to the previous run which was generating a huge number of edges and this probably affect the final module detection by MCODE.
+
+TODO: Furthermore, we shall code the remove of ribosomal gene pairs as it will probably create another huge mess.
+
+
+## Git update summary (MINE package pipeline)
+
+The new implementation is now packaged in:
+
+workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED
+
+Key points of this implementation:
+
+1. MI estimation moved to neural MINE (continuous data) instead of the older histogram/minet-style workflow.
+2. The pipeline is a proper Python package (`mine_network`) with modular components:
+    data loading, pre-screening, MINE estimation, permutation testing, master network, MCODE, and annotation.
+3. CLI entry point is `run_pipeline.py` with configurable arguments for counts, metadata, device, permutations, pre-screening, and output.
+4. The SLURM workflow `submit_network_job.sh` runs the packaged pipeline and writes outputs to the local `output/` directory.
+5. Consensus network logic supports minimum study count and study-fraction thresholds.
+6. Optional gene filtering is implemented (ribosomal/miRNA/custom exclusion) before pair selection.
+7. Module annotation via GMT enrichment is integrated in the package.
+
+Run on cluster:
+
+sbatch workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/submit_network_job.sh
+
+Direct run:
+
+python workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/run_pipeline.py --output ./output
+
+

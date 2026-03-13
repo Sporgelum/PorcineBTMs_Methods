@@ -1,0 +1,1147 @@
+============================================================================
+Gene Network Inference: Permutation MI + MCODE modules
+SLURM Job ID: 16552511
+Node: binfservas30
+Started: Wed Mar 11 16:37:44 CET 2026
+============================================================================
+
+[INFO] Activating Python environment...
+[INFO] Using Python: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/python
+[INFO] Python version: Python 3.9.5
+
+[INFO] Setting up temporary directory...
+[INFO] Temporary directory: /scratch/mbotos/network_pval_tmp_2698399
+
+[INFO] System Information:
+  CPU cores available : 64
+  Memory total        : 1.0Ti
+  Disk (scratch)      : 3.5T
+
+============================================================================
+Starting Permutation MI Network Inference
+============================================================================
+
+
+[2026-03-11 16:39:01] Starting: Loading expression matrix & metadata
+--------------------------------------------------------------------------------
+[INFO] Loaded expression matrix: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/logCPM_matrix_filtered_samples.csv
+[INFO] Shape: 32763 genes × 613 samples
+[INFO] Loaded metadata: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/metadata_with_sample_annotations.csv
+[INFO] Metadata shape: (1198, 18)
+[WARN] 585 metadata rows have no matching column in the expression matrix and will be ignored.
+[INFO] Study detected: PRJNA1107598  (136 samples)
+[INFO] Study detected: PRJNA1163897  (6 samples)
+[WARN] BioProject PRJNA1197383: only 1 samples (< MIN_SAMPLES_PER_STUDY=3) – skipping.
+[INFO] Study detected: PRJNA1200777  (18 samples)
+[INFO] Study detected: PRJNA311061  (73 samples)
+[INFO] Study detected: PRJNA313448  (176 samples)
+[INFO] Study detected: PRJNA479928  (6 samples)
+[INFO] Study detected: PRJNA484712  (12 samples)
+[INFO] Study detected: PRJNA510331  (8 samples)
+[INFO] Study detected: PRJNA512863  (20 samples)
+[INFO] Study detected: PRJNA513475  (10 samples)
+[INFO] Study detected: PRJNA692626  (32 samples)
+[INFO] Study detected: PRJNA699465  (22 samples)
+[INFO] Study detected: PRJNA705952  (12 samples)
+[INFO] Study detected: PRJNA805111  (16 samples)
+[INFO] Study detected: PRJNA812000  (4 samples)
+[INFO] Study detected: PRJNA832220  (5 samples)
+[INFO] Study detected: PRJNA982050  (56 samples)
+[INFO] Total studies discovered: 17
+--------------------------------------------------------------------------------
+[2026-03-11 16:39:07] Completed: Loading expression matrix & metadata
+[TIMING] Duration: 6.30 seconds
+================================================================================
+GENE NETWORK INFERENCE: PERMUTATION-BASED MI SIGNIFICANCE
+================================================================================
+Start time       : 2026-03-11 16:39:07
+Studies found    : 17
+  PRJNA1107598                    136 samples
+  PRJNA1163897                    6 samples
+  PRJNA1200777                    18 samples
+  PRJNA311061                     73 samples
+  PRJNA313448                     176 samples
+  PRJNA479928                     6 samples
+  PRJNA484712                     12 samples
+  PRJNA510331                     8 samples
+  PRJNA512863                     20 samples
+  PRJNA513475                     10 samples
+  PRJNA692626                     32 samples
+  PRJNA699465                     22 samples
+  PRJNA705952                     12 samples
+  PRJNA805111                     16 samples
+  PRJNA812000                     4 samples
+  PRJNA832220                     5 samples
+  PRJNA982050                     56 samples
+N permutations   : 30000
+p-value threshold: 0.001
+Min study count  : dynamic (30% of 17 studies = 5)
+Log file         : /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_20260311_163901.log
+================================================================================
+
+================================================================================
+PROCESSING STUDY: PRJNA1107598  (136 samples)
+================================================================================
+
+[2026-03-11 16:39:07] Starting: PRJNA1107598: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA1107598.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 16:39:30] Completed: PRJNA1107598: MI Matrix
+[TIMING] Duration: 23.28 seconds
+
+[2026-03-11 16:39:30] Starting: PRJNA1107598: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 5.06 seconds
+[INFO] Null MI: mean=0.0619, std=0.0222, 99.9th pct=0.1513
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA1107598.txt
+--------------------------------------------------------------------------------
+[2026-03-11 16:39:35] Completed: PRJNA1107598: Null Distribution (30000 perms)
+[TIMING] Duration: 5.07 seconds
+
+[2026-03-11 16:39:35] Starting: PRJNA1107598: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.1513
+[INFO] Significant edges (p < 0.001): 232,271,367
+--------------------------------------------------------------------------------
+[2026-03-11 16:40:33] Completed: PRJNA1107598: Edge Significance Filtering
+[TIMING] Duration: 57.79 seconds
+
+[2026-03-11 16:42:05] Starting: PRJNA1107598: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA1107598
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA1107598.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA1107598.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA1107598.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 16:55:02] Completed: PRJNA1107598: Saving Results
+[TIMING] Duration: 12.95 minutes (776.8s)
+
+================================================================================
+PROCESSING STUDY: PRJNA1163897  (6 samples)
+================================================================================
+
+[2026-03-11 16:55:02] Starting: PRJNA1163897: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA1163897.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 16:55:25] Completed: PRJNA1163897: MI Matrix
+[TIMING] Duration: 23.01 seconds
+
+[2026-03-11 16:55:25] Starting: PRJNA1163897: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.38 seconds
+[INFO] Null MI: mean=1.3454, std=0.0582, 99.9th pct=1.5607
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA1163897.txt
+--------------------------------------------------------------------------------
+[2026-03-11 16:55:30] Completed: PRJNA1163897: Null Distribution (30000 perms)
+[TIMING] Duration: 4.39 seconds
+
+[2026-03-11 16:55:30] Starting: PRJNA1163897: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.5607
+[INFO] Significant edges (p < 0.001): 93,428,501
+--------------------------------------------------------------------------------
+[2026-03-11 16:55:59] Completed: PRJNA1163897: Edge Significance Filtering
+[TIMING] Duration: 29.76 seconds
+
+[2026-03-11 16:56:50] Starting: PRJNA1163897: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA1163897
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA1163897.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA1163897.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA1163897.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 17:01:47] Completed: PRJNA1163897: Saving Results
+[TIMING] Duration: 4.96 minutes (297.4s)
+
+================================================================================
+PROCESSING STUDY: PRJNA1200777  (18 samples)
+================================================================================
+
+[2026-03-11 17:01:47] Starting: PRJNA1200777: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA1200777.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 17:02:09] Completed: PRJNA1200777: MI Matrix
+[TIMING] Duration: 21.44 seconds
+
+[2026-03-11 17:02:09] Starting: PRJNA1200777: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.40 seconds
+[INFO] Null MI: mean=0.5870, std=0.1170, 99.9th pct=1.0129
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA1200777.txt
+--------------------------------------------------------------------------------
+[2026-03-11 17:02:13] Completed: PRJNA1200777: Null Distribution (30000 perms)
+[TIMING] Duration: 4.41 seconds
+
+[2026-03-11 17:02:13] Starting: PRJNA1200777: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.0129
+[INFO] Significant edges (p < 0.001): 77,606,866
+--------------------------------------------------------------------------------
+[2026-03-11 17:02:57] Completed: PRJNA1200777: Edge Significance Filtering
+[TIMING] Duration: 43.57 seconds
+
+[2026-03-11 17:03:37] Starting: PRJNA1200777: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA1200777
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA1200777.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA1200777.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA1200777.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 17:08:12] Completed: PRJNA1200777: Saving Results
+[TIMING] Duration: 4.58 minutes (275.0s)
+
+================================================================================
+PROCESSING STUDY: PRJNA311061  (73 samples)
+================================================================================
+
+[2026-03-11 17:08:12] Starting: PRJNA311061: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA311061.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 17:08:31] Completed: PRJNA311061: MI Matrix
+[TIMING] Duration: 19.54 seconds
+
+[2026-03-11 17:08:31] Starting: PRJNA311061: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.62 seconds
+[INFO] Null MI: mean=0.1237, std=0.0451, 99.9th pct=0.2966
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA311061.txt
+--------------------------------------------------------------------------------
+[2026-03-11 17:08:36] Completed: PRJNA311061: Null Distribution (30000 perms)
+[TIMING] Duration: 4.63 seconds
+
+[2026-03-11 17:08:36] Starting: PRJNA311061: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.2966
+[INFO] Significant edges (p < 0.001): 164,020,526
+--------------------------------------------------------------------------------
+[2026-03-11 17:09:39] Completed: PRJNA311061: Edge Significance Filtering
+[TIMING] Duration: 1.05 minutes (63.2s)
+
+[2026-03-11 17:10:51] Starting: PRJNA311061: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA311061
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA311061.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA311061.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA311061.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 17:19:35] Completed: PRJNA311061: Saving Results
+[TIMING] Duration: 8.74 minutes (524.2s)
+
+================================================================================
+PROCESSING STUDY: PRJNA313448  (176 samples)
+================================================================================
+
+[2026-03-11 17:19:35] Starting: PRJNA313448: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA313448.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 17:19:52] Completed: PRJNA313448: MI Matrix
+[TIMING] Duration: 17.24 seconds
+
+[2026-03-11 17:19:52] Starting: PRJNA313448: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.86 seconds
+[INFO] Null MI: mean=0.0472, std=0.0168, 99.9th pct=0.1153
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA313448.txt
+--------------------------------------------------------------------------------
+[2026-03-11 17:19:57] Completed: PRJNA313448: Null Distribution (30000 perms)
+[TIMING] Duration: 4.86 seconds
+
+[2026-03-11 17:19:57] Starting: PRJNA313448: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.1153
+[INFO] Significant edges (p < 0.001): 263,845,603
+--------------------------------------------------------------------------------
+[2026-03-11 17:20:53] Completed: PRJNA313448: Edge Significance Filtering
+[TIMING] Duration: 56.14 seconds
+
+[2026-03-11 17:23:01] Starting: PRJNA313448: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA313448
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA313448.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA313448.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA313448.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 17:37:30] Completed: PRJNA313448: Saving Results
+[TIMING] Duration: 14.48 minutes (868.7s)
+
+================================================================================
+PROCESSING STUDY: PRJNA479928  (6 samples)
+================================================================================
+
+[2026-03-11 17:37:30] Starting: PRJNA479928: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA479928.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 17:37:52] Completed: PRJNA479928: MI Matrix
+[TIMING] Duration: 21.88 seconds
+
+[2026-03-11 17:37:52] Starting: PRJNA479928: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.42 seconds
+[INFO] Null MI: mean=1.3447, std=0.0571, 99.9th pct=1.5607
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA479928.txt
+--------------------------------------------------------------------------------
+[2026-03-11 17:37:56] Completed: PRJNA479928: Null Distribution (30000 perms)
+[TIMING] Duration: 4.42 seconds
+
+[2026-03-11 17:37:56] Starting: PRJNA479928: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.5607
+[INFO] Significant edges (p < 0.001): 84,188,991
+--------------------------------------------------------------------------------
+[2026-03-11 17:38:25] Completed: PRJNA479928: Edge Significance Filtering
+[TIMING] Duration: 29.09 seconds
+
+[2026-03-11 17:39:15] Starting: PRJNA479928: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA479928
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA479928.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA479928.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA479928.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 17:43:49] Completed: PRJNA479928: Saving Results
+[TIMING] Duration: 4.55 minutes (273.3s)
+
+================================================================================
+PROCESSING STUDY: PRJNA484712  (12 samples)
+================================================================================
+
+[2026-03-11 17:43:49] Starting: PRJNA484712: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA484712.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 17:44:07] Completed: PRJNA484712: MI Matrix
+[TIMING] Duration: 18.39 seconds
+
+[2026-03-11 17:44:07] Starting: PRJNA484712: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.40 seconds
+[INFO] Null MI: mean=0.8331, std=0.1144, 99.9th pct=1.2708
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA484712.txt
+--------------------------------------------------------------------------------
+[2026-03-11 17:44:12] Completed: PRJNA484712: Null Distribution (30000 perms)
+[TIMING] Duration: 4.40 seconds
+
+[2026-03-11 17:44:12] Starting: PRJNA484712: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.2708
+[INFO] Significant edges (p < 0.001): 51,876,993
+--------------------------------------------------------------------------------
+[2026-03-11 17:44:41] Completed: PRJNA484712: Edge Significance Filtering
+[TIMING] Duration: 29.58 seconds
+
+[2026-03-11 17:45:09] Starting: PRJNA484712: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA484712
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA484712.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA484712.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA484712.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 17:48:16] Completed: PRJNA484712: Saving Results
+[TIMING] Duration: 3.12 minutes (187.0s)
+
+================================================================================
+PROCESSING STUDY: PRJNA510331  (8 samples)
+================================================================================
+
+[2026-03-11 17:48:16] Starting: PRJNA510331: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA510331.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 17:48:37] Completed: PRJNA510331: MI Matrix
+[TIMING] Duration: 20.66 seconds
+
+[2026-03-11 17:48:37] Starting: PRJNA510331: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.44 seconds
+[INFO] Null MI: mean=1.0948, std=0.0953, 99.9th pct=1.5596
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA510331.txt
+--------------------------------------------------------------------------------
+[2026-03-11 17:48:41] Completed: PRJNA510331: Null Distribution (30000 perms)
+[TIMING] Duration: 4.44 seconds
+
+[2026-03-11 17:48:41] Starting: PRJNA510331: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.5596
+[INFO] Significant edges (p < 0.001): 33,990,307
+--------------------------------------------------------------------------------
+[2026-03-11 17:49:08] Completed: PRJNA510331: Edge Significance Filtering
+[TIMING] Duration: 26.82 seconds
+
+[2026-03-11 17:49:25] Starting: PRJNA510331: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA510331
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA510331.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA510331.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA510331.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 17:51:43] Completed: PRJNA510331: Saving Results
+[TIMING] Duration: 2.30 minutes (138.2s)
+
+================================================================================
+PROCESSING STUDY: PRJNA512863  (20 samples)
+================================================================================
+
+[2026-03-11 17:51:43] Starting: PRJNA512863: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA512863.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 17:52:09] Completed: PRJNA512863: MI Matrix
+[TIMING] Duration: 25.37 seconds
+
+[2026-03-11 17:52:09] Starting: PRJNA512863: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.43 seconds
+[INFO] Null MI: mean=0.5357, std=0.1149, 99.9th pct=0.9255
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA512863.txt
+--------------------------------------------------------------------------------
+[2026-03-11 17:52:13] Completed: PRJNA512863: Null Distribution (30000 perms)
+[TIMING] Duration: 4.43 seconds
+
+[2026-03-11 17:52:13] Starting: PRJNA512863: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.9255
+[INFO] Significant edges (p < 0.001): 24,826,409
+--------------------------------------------------------------------------------
+[2026-03-11 17:53:03] Completed: PRJNA512863: Edge Significance Filtering
+[TIMING] Duration: 50.36 seconds
+
+[2026-03-11 17:53:19] Starting: PRJNA512863: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA512863
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA512863.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA512863.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA512863.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 17:55:24] Completed: PRJNA512863: Saving Results
+[TIMING] Duration: 2.09 minutes (125.1s)
+
+================================================================================
+PROCESSING STUDY: PRJNA513475  (10 samples)
+================================================================================
+
+[2026-03-11 17:55:24] Starting: PRJNA513475: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA513475.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 17:55:50] Completed: PRJNA513475: MI Matrix
+[TIMING] Duration: 26.21 seconds
+
+[2026-03-11 17:55:50] Starting: PRJNA513475: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.39 seconds
+[INFO] Null MI: mean=0.9931, std=0.1041, 99.9th pct=1.6094
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA513475.txt
+--------------------------------------------------------------------------------
+[2026-03-11 17:55:55] Completed: PRJNA513475: Null Distribution (30000 perms)
+[TIMING] Duration: 4.40 seconds
+
+[2026-03-11 17:55:55] Starting: PRJNA513475: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.6094
+[INFO] Significant edges (p < 0.001): 33,844,510
+--------------------------------------------------------------------------------
+[2026-03-11 17:56:22] Completed: PRJNA513475: Edge Significance Filtering
+[TIMING] Duration: 27.55 seconds
+
+[2026-03-11 17:56:38] Starting: PRJNA513475: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA513475
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA513475.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA513475.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA513475.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 17:58:54] Completed: PRJNA513475: Saving Results
+[TIMING] Duration: 2.26 minutes (135.7s)
+
+================================================================================
+PROCESSING STUDY: PRJNA692626  (32 samples)
+================================================================================
+
+[2026-03-11 17:58:54] Starting: PRJNA692626: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA692626.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 17:59:14] Completed: PRJNA692626: MI Matrix
+[TIMING] Duration: 19.92 seconds
+
+[2026-03-11 17:59:14] Starting: PRJNA692626: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.47 seconds
+[INFO] Null MI: mean=0.3233, std=0.0931, 99.9th pct=0.6522
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA692626.txt
+--------------------------------------------------------------------------------
+[2026-03-11 17:59:18] Completed: PRJNA692626: Null Distribution (30000 perms)
+[TIMING] Duration: 4.47 seconds
+
+[2026-03-11 17:59:18] Starting: PRJNA692626: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.6522
+[INFO] Significant edges (p < 0.001): 112,997,864
+--------------------------------------------------------------------------------
+[2026-03-11 18:00:22] Completed: PRJNA692626: Edge Significance Filtering
+[TIMING] Duration: 1.06 minutes (63.6s)
+
+[2026-03-11 18:01:12] Starting: PRJNA692626: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA692626
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA692626.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA692626.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA692626.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 18:08:24] Completed: PRJNA692626: Saving Results
+[TIMING] Duration: 7.20 minutes (432.3s)
+
+================================================================================
+PROCESSING STUDY: PRJNA699465  (22 samples)
+================================================================================
+
+[2026-03-11 18:08:24] Starting: PRJNA699465: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA699465.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 18:08:44] Completed: PRJNA699465: MI Matrix
+[TIMING] Duration: 19.52 seconds
+
+[2026-03-11 18:08:44] Starting: PRJNA699465: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.44 seconds
+[INFO] Null MI: mean=0.4838, std=0.1104, 99.9th pct=0.8563
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA699465.txt
+--------------------------------------------------------------------------------
+[2026-03-11 18:08:48] Completed: PRJNA699465: Null Distribution (30000 perms)
+[TIMING] Duration: 4.45 seconds
+
+[2026-03-11 18:08:48] Starting: PRJNA699465: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.8563
+[INFO] Significant edges (p < 0.001): 130,652,245
+--------------------------------------------------------------------------------
+[2026-03-11 18:09:35] Completed: PRJNA699465: Edge Significance Filtering
+[TIMING] Duration: 46.27 seconds
+
+[2026-03-11 18:10:40] Starting: PRJNA699465: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA699465
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA699465.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA699465.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA699465.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 18:17:41] Completed: PRJNA699465: Saving Results
+[TIMING] Duration: 7.02 minutes (421.4s)
+
+================================================================================
+PROCESSING STUDY: PRJNA705952  (12 samples)
+================================================================================
+
+[2026-03-11 18:17:41] Starting: PRJNA705952: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA705952.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 18:18:01] Completed: PRJNA705952: MI Matrix
+[TIMING] Duration: 19.52 seconds
+
+[2026-03-11 18:18:01] Starting: PRJNA705952: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.44 seconds
+[INFO] Null MI: mean=0.8326, std=0.1147, 99.9th pct=1.2708
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA705952.txt
+--------------------------------------------------------------------------------
+[2026-03-11 18:18:05] Completed: PRJNA705952: Null Distribution (30000 perms)
+[TIMING] Duration: 4.45 seconds
+
+[2026-03-11 18:18:05] Starting: PRJNA705952: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.2708
+[INFO] Significant edges (p < 0.001): 49,871,125
+--------------------------------------------------------------------------------
+[2026-03-11 18:18:36] Completed: PRJNA705952: Edge Significance Filtering
+[TIMING] Duration: 31.05 seconds
+
+[2026-03-11 18:19:07] Starting: PRJNA705952: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA705952
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA705952.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA705952.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA705952.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 18:22:15] Completed: PRJNA705952: Saving Results
+[TIMING] Duration: 3.13 minutes (187.8s)
+
+================================================================================
+PROCESSING STUDY: PRJNA805111  (16 samples)
+================================================================================
+
+[2026-03-11 18:22:15] Starting: PRJNA805111: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA805111.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 18:22:38] Completed: PRJNA805111: MI Matrix
+[TIMING] Duration: 22.45 seconds
+
+[2026-03-11 18:22:38] Starting: PRJNA805111: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.62 seconds
+[INFO] Null MI: mean=0.6590, std=0.1181, 99.9th pct=1.1034
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA805111.txt
+--------------------------------------------------------------------------------
+[2026-03-11 18:22:42] Completed: PRJNA805111: Null Distribution (30000 perms)
+[TIMING] Duration: 4.62 seconds
+
+[2026-03-11 18:22:42] Starting: PRJNA805111: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.1034
+[INFO] Significant edges (p < 0.001): 24,620,813
+--------------------------------------------------------------------------------
+[2026-03-11 18:23:17] Completed: PRJNA805111: Edge Significance Filtering
+[TIMING] Duration: 34.45 seconds
+
+[2026-03-11 18:23:33] Starting: PRJNA805111: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA805111
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA805111.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA805111.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA805111.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 18:25:31] Completed: PRJNA805111: Saving Results
+[TIMING] Duration: 1.97 minutes (118.2s)
+
+================================================================================
+PROCESSING STUDY: PRJNA812000  (4 samples)
+================================================================================
+
+[2026-03-11 18:25:31] Starting: PRJNA812000: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA812000.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 18:25:53] Completed: PRJNA812000: MI Matrix
+[TIMING] Duration: 22.02 seconds
+
+[2026-03-11 18:25:53] Starting: PRJNA812000: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.44 seconds
+[INFO] Null MI: mean=1.3863, std=0.0000, 99.9th pct=1.3863
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA812000.txt
+--------------------------------------------------------------------------------
+[2026-03-11 18:25:58] Completed: PRJNA812000: Null Distribution (30000 perms)
+[TIMING] Duration: 4.44 seconds
+
+[2026-03-11 18:25:58] Starting: PRJNA812000: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.3863
+[INFO] Significant edges (p < 0.001): 536,690,703
+--------------------------------------------------------------------------------
+[2026-03-11 18:26:27] Completed: PRJNA812000: Edge Significance Filtering
+[TIMING] Duration: 28.91 seconds
+
+[2026-03-11 18:29:06] Starting: PRJNA812000: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA812000
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA812000.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA812000.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA812000.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 18:54:54] Completed: PRJNA812000: Saving Results
+[TIMING] Duration: 25.80 minutes (1547.8s)
+
+================================================================================
+PROCESSING STUDY: PRJNA832220  (5 samples)
+================================================================================
+
+[2026-03-11 18:54:54] Starting: PRJNA832220: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA832220.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 18:55:12] Completed: PRJNA832220: MI Matrix
+[TIMING] Duration: 18.38 seconds
+
+[2026-03-11 18:55:12] Starting: PRJNA832220: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.39 seconds
+[INFO] Null MI: mean=1.6094, std=0.0000, 99.9th pct=1.6094
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA832220.txt
+--------------------------------------------------------------------------------
+[2026-03-11 18:55:17] Completed: PRJNA832220: Null Distribution (30000 perms)
+[TIMING] Duration: 4.39 seconds
+
+[2026-03-11 18:55:17] Starting: PRJNA832220: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 1.6094
+[INFO] Significant edges (p < 0.001): 536,690,703
+--------------------------------------------------------------------------------
+[2026-03-11 18:55:46] Completed: PRJNA832220: Edge Significance Filtering
+[TIMING] Duration: 29.01 seconds
+
+[2026-03-11 18:59:01] Starting: PRJNA832220: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA832220
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA832220.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA832220.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA832220.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 19:24:04] Completed: PRJNA832220: Saving Results
+[TIMING] Duration: 25.05 minutes (1503.1s)
+
+================================================================================
+PROCESSING STUDY: PRJNA982050  (56 samples)
+================================================================================
+
+[2026-03-11 19:24:04] Starting: PRJNA982050: MI Matrix
+--------------------------------------------------------------------------------
+[INFO] Discretising: 5 bins, strategy=quantile
+[INFO] Loading cached MI matrix from: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/mi_cache_PRJNA982050.npy
+[INFO] Loaded: shape=(32763, 32763)
+--------------------------------------------------------------------------------
+[2026-03-11 19:24:25] Completed: PRJNA982050: MI Matrix
+[TIMING] Duration: 20.89 seconds
+
+[2026-03-11 19:24:25] Starting: PRJNA982050: Null Distribution (30000 perms)
+--------------------------------------------------------------------------------
+[INFO] Building null MI distribution: 30000 permutations...
+[INFO] Null permutations: 5000/30000
+[INFO] Null permutations: 10000/30000
+[INFO] Null permutations: 15000/30000
+[INFO] Null permutations: 20000/30000
+[INFO] Null permutations: 25000/30000
+[INFO] Null permutations: 30000/30000
+[INFO] Null distribution built in 4.53 seconds
+[INFO] Null MI: mean=0.1682, std=0.0589, 99.9th pct=0.3828
+[SAVED] Null distribution QC: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/null_distribution_PRJNA982050.txt
+--------------------------------------------------------------------------------
+[2026-03-11 19:24:30] Completed: PRJNA982050: Null Distribution (30000 perms)
+[TIMING] Duration: 4.53 seconds
+
+[2026-03-11 19:24:30] Starting: PRJNA982050: Edge Significance Filtering
+--------------------------------------------------------------------------------
+[INFO] MI significance threshold (p < 0.001): 0.3828
+[INFO] Significant edges (p < 0.001): 99,361,144
+--------------------------------------------------------------------------------
+[2026-03-11 19:25:37] Completed: PRJNA982050: Edge Significance Filtering
+[TIMING] Duration: 1.12 minutes (67.1s)
+
+[2026-03-11 19:26:46] Starting: PRJNA982050: Saving Results
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for study: PRJNA982050
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/edges_pval_PRJNA982050.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/adj_pval_PRJNA982050.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_PRJNA982050.graphml
+--------------------------------------------------------------------------------
+[2026-03-11 19:32:22] Completed: PRJNA982050: Saving Results
+[TIMING] Duration: 5.59 minutes (335.6s)
+
+================================================================================
+BUILDING MASTER REFERENCE NETWORK
+================================================================================
+[INFO] Dynamic MIN_STUDY_COUNT: ceil(30% × 17 studies) = 5
+
+[2026-03-11 19:32:22] Starting: Master Network Construction
+--------------------------------------------------------------------------------
+[INFO] Master network: 177,655,297 edges (in >= 5 of 17 studies)
+--------------------------------------------------------------------------------
+[2026-03-11 19:32:41] Completed: Master Network Construction
+[TIMING] Duration: 19.48 seconds
+
+[2026-03-11 19:32:41] Starting: Master Network: MCODE Module Detection
+--------------------------------------------------------------------------------
+[INFO] Running MCODE module detection...
+[INFO] MCODE stage 1: vertex weighting (k-core + local density)...
+[INFO] Node weight range: [2.7143, 15347.8382]
+[INFO] MCODE stage 2: seed-and-extend...
+[INFO] MCODE stage 2: 1 raw complexes found
+[INFO] MCODE stage 3: filtering (min_size=3, min_density=0.3)...
+[INFO] MCODE: 1 modules after post-processing (in 7.58 hours (34.6m))
+[INFO] Module sizes (top 10): [19413]
+--------------------------------------------------------------------------------
+[2026-03-12 03:07:25] Completed: Master Network: MCODE Module Detection
+[TIMING] Duration: 7.58 hours (34.7m)
+
+[2026-03-12 03:07:25] Starting: Master Network: Saving
+--------------------------------------------------------------------------------
+
+[INFO] Saving master reference network...
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/master_network_edgelist.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/master_edge_study_counts.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/master_network_adjacency.mtx
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/master_network.graphml
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/master_BTM_modules.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/master_node_modules.tsv
+[INFO] Saving per-module subgraph files...
+[INFO] Saved 1 submodule files
+--------------------------------------------------------------------------------
+[2026-03-12 03:17:48] Completed: Master Network: Saving
+[TIMING] Duration: 10.39 minutes (623.1s)
+
+================================================================================
+PIPELINE COMPLETE
+================================================================================
+End time     : 2026-03-12 03:17:48
+Total runtime: 10.34 hours (20.5m)
+
+TIMING SUMMARY
+--------------------------------------------------------------------------------
+  Master Network: MCODE Module Detection                 :   7.58 hours (34.7m) ( 73.3%)
+  PRJNA812000: Saving Results                            : 25.80 minutes (1547.8s) (  4.2%)
+  PRJNA832220: Saving Results                            : 25.05 minutes (1503.1s) (  4.0%)
+  PRJNA313448: Saving Results                            : 14.48 minutes (868.7s) (  2.3%)
+  PRJNA1107598: Saving Results                           : 12.95 minutes (776.8s) (  2.1%)
+  Master Network: Saving                                 : 10.39 minutes (623.1s) (  1.7%)
+  PRJNA311061: Saving Results                            : 8.74 minutes (524.2s) (  1.4%)
+  PRJNA692626: Saving Results                            : 7.20 minutes (432.3s) (  1.2%)
+  PRJNA699465: Saving Results                            : 7.02 minutes (421.4s) (  1.1%)
+  PRJNA982050: Saving Results                            : 5.59 minutes (335.6s) (  0.9%)
+  PRJNA1163897: Saving Results                           : 4.96 minutes (297.4s) (  0.8%)
+  PRJNA1200777: Saving Results                           : 4.58 minutes (275.0s) (  0.7%)
+  PRJNA479928: Saving Results                            : 4.55 minutes (273.3s) (  0.7%)
+  PRJNA705952: Saving Results                            : 3.13 minutes (187.8s) (  0.5%)
+  PRJNA484712: Saving Results                            : 3.12 minutes (187.0s) (  0.5%)
+  PRJNA510331: Saving Results                            : 2.30 minutes (138.2s) (  0.4%)
+  PRJNA513475: Saving Results                            : 2.26 minutes (135.7s) (  0.4%)
+  PRJNA512863: Saving Results                            : 2.09 minutes (125.1s) (  0.3%)
+  PRJNA805111: Saving Results                            : 1.97 minutes (118.2s) (  0.3%)
+  PRJNA982050: Edge Significance Filtering               : 1.12 minutes (67.1s) (  0.2%)
+  PRJNA692626: Edge Significance Filtering               : 1.06 minutes (63.6s) (  0.2%)
+  PRJNA311061: Edge Significance Filtering               : 1.05 minutes (63.2s) (  0.2%)
+  PRJNA1107598: Edge Significance Filtering              :        57.79 seconds (  0.2%)
+  PRJNA313448: Edge Significance Filtering               :        56.14 seconds (  0.2%)
+  PRJNA512863: Edge Significance Filtering               :        50.36 seconds (  0.1%)
+  PRJNA699465: Edge Significance Filtering               :        46.27 seconds (  0.1%)
+  PRJNA1200777: Edge Significance Filtering              :        43.57 seconds (  0.1%)
+  PRJNA805111: Edge Significance Filtering               :        34.45 seconds (  0.1%)
+  PRJNA705952: Edge Significance Filtering               :        31.05 seconds (  0.1%)
+  PRJNA1163897: Edge Significance Filtering              :        29.76 seconds (  0.1%)
+  PRJNA484712: Edge Significance Filtering               :        29.58 seconds (  0.1%)
+  PRJNA479928: Edge Significance Filtering               :        29.09 seconds (  0.1%)
+  PRJNA832220: Edge Significance Filtering               :        29.01 seconds (  0.1%)
+  PRJNA812000: Edge Significance Filtering               :        28.91 seconds (  0.1%)
+  PRJNA513475: Edge Significance Filtering               :        27.55 seconds (  0.1%)
+  PRJNA510331: Edge Significance Filtering               :        26.82 seconds (  0.1%)
+  PRJNA513475: MI Matrix                                 :        26.21 seconds (  0.1%)
+  PRJNA512863: MI Matrix                                 :        25.37 seconds (  0.1%)
+  PRJNA1107598: MI Matrix                                :        23.28 seconds (  0.1%)
+  PRJNA1163897: MI Matrix                                :        23.01 seconds (  0.1%)
+  PRJNA805111: MI Matrix                                 :        22.45 seconds (  0.1%)
+  PRJNA812000: MI Matrix                                 :        22.02 seconds (  0.1%)
+  PRJNA479928: MI Matrix                                 :        21.88 seconds (  0.1%)
+  PRJNA1200777: MI Matrix                                :        21.44 seconds (  0.1%)
+  PRJNA982050: MI Matrix                                 :        20.89 seconds (  0.1%)
+  PRJNA510331: MI Matrix                                 :        20.66 seconds (  0.1%)
+  PRJNA692626: MI Matrix                                 :        19.92 seconds (  0.1%)
+  PRJNA311061: MI Matrix                                 :        19.54 seconds (  0.1%)
+  PRJNA705952: MI Matrix                                 :        19.52 seconds (  0.1%)
+  PRJNA699465: MI Matrix                                 :        19.52 seconds (  0.1%)
+  Master Network Construction                            :        19.48 seconds (  0.1%)
+  PRJNA484712: MI Matrix                                 :        18.39 seconds (  0.0%)
+  PRJNA832220: MI Matrix                                 :        18.38 seconds (  0.0%)
+  PRJNA313448: MI Matrix                                 :        17.24 seconds (  0.0%)
+  Loading expression matrix & metadata                   :         6.30 seconds (  0.0%)
+  PRJNA1107598: Null Distribution (30000 perms)          :         5.07 seconds (  0.0%)
+  PRJNA313448: Null Distribution (30000 perms)           :         4.86 seconds (  0.0%)
+  PRJNA311061: Null Distribution (30000 perms)           :         4.63 seconds (  0.0%)
+  PRJNA805111: Null Distribution (30000 perms)           :         4.62 seconds (  0.0%)
+  PRJNA982050: Null Distribution (30000 perms)           :         4.53 seconds (  0.0%)
+  PRJNA692626: Null Distribution (30000 perms)           :         4.47 seconds (  0.0%)
+  PRJNA699465: Null Distribution (30000 perms)           :         4.45 seconds (  0.0%)
+  PRJNA705952: Null Distribution (30000 perms)           :         4.45 seconds (  0.0%)
+  PRJNA510331: Null Distribution (30000 perms)           :         4.44 seconds (  0.0%)
+  PRJNA812000: Null Distribution (30000 perms)           :         4.44 seconds (  0.0%)
+  PRJNA512863: Null Distribution (30000 perms)           :         4.43 seconds (  0.0%)
+  PRJNA479928: Null Distribution (30000 perms)           :         4.42 seconds (  0.0%)
+  PRJNA1200777: Null Distribution (30000 perms)          :         4.41 seconds (  0.0%)
+  PRJNA484712: Null Distribution (30000 perms)           :         4.40 seconds (  0.0%)
+  PRJNA513475: Null Distribution (30000 perms)           :         4.40 seconds (  0.0%)
+  PRJNA832220: Null Distribution (30000 perms)           :         4.39 seconds (  0.0%)
+  PRJNA1163897: Null Distribution (30000 perms)          :         4.39 seconds (  0.0%)
+--------------------------------------------------------------------------------
+  TOTAL                                                  :  10.34 hours (20.5m)
+
+Outputs in    : /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL
+Log file      : /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/network_pval_20260311_163901.log
+Report file   : /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/analysis_report_pval_20260311_163901.txt
+
+[INFO] Report saved: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/NETS_MI_PVAL/analysis_report_pval_20260311_163901.txt
+================================================================================
+
+
+============================================================================
+Job Complete!
+============================================================================
+Ended: Thu Mar 12 03:17:59 CET 2026
+Total runtime: 10h 40m 15s
+============================================================================
+
+[INFO] Cleaning up temporary files...
+[INFO] Cleanup complete
+
+Output files in NETS_MI_PVAL/:
+  5.8G NETS_MI_PVAL/adj_pval_PRJNA1107598.mtx
+  2.4G NETS_MI_PVAL/adj_pval_PRJNA1163897.mtx
+  2.0G NETS_MI_PVAL/adj_pval_PRJNA1200777.mtx
+  4.1G NETS_MI_PVAL/adj_pval_PRJNA311061.mtx
+  6.6G NETS_MI_PVAL/adj_pval_PRJNA313448.mtx
+  2.1G NETS_MI_PVAL/adj_pval_PRJNA479928.mtx
+  1.3G NETS_MI_PVAL/adj_pval_PRJNA484712.mtx
+  862M NETS_MI_PVAL/adj_pval_PRJNA510331.mtx
+  632M NETS_MI_PVAL/adj_pval_PRJNA512863.mtx
+  860M NETS_MI_PVAL/adj_pval_PRJNA513475.mtx
+  2.9G NETS_MI_PVAL/adj_pval_PRJNA692626.mtx
+  3.3G NETS_MI_PVAL/adj_pval_PRJNA699465.mtx
+  1.3G NETS_MI_PVAL/adj_pval_PRJNA705952.mtx
+  623M NETS_MI_PVAL/adj_pval_PRJNA805111.mtx
+  14G NETS_MI_PVAL/adj_pval_PRJNA812000.mtx
+  14G NETS_MI_PVAL/adj_pval_PRJNA832220.mtx
+  2.5G NETS_MI_PVAL/adj_pval_PRJNA982050.mtx
+  14K NETS_MI_PVAL/analysis_report_pval_20260306_224308.txt
+  14K NETS_MI_PVAL/analysis_report_pval_20260311_163901.txt
+  12G NETS_MI_PVAL/edges_pval_PRJNA1107598.tsv
+  4.6G NETS_MI_PVAL/edges_pval_PRJNA1163897.tsv
+  3.9G NETS_MI_PVAL/edges_pval_PRJNA1200777.tsv
+  8.1G NETS_MI_PVAL/edges_pval_PRJNA311061.tsv
+  14G NETS_MI_PVAL/edges_pval_PRJNA313448.tsv
+  4.1G NETS_MI_PVAL/edges_pval_PRJNA479928.tsv
+  2.6G NETS_MI_PVAL/edges_pval_PRJNA484712.tsv
+  1.7G NETS_MI_PVAL/edges_pval_PRJNA510331.tsv
+  1.4G NETS_MI_PVAL/edges_pval_PRJNA512863.tsv
+  1.7G NETS_MI_PVAL/edges_pval_PRJNA513475.tsv
+  6.1G NETS_MI_PVAL/edges_pval_PRJNA692626.tsv
+  6.5G NETS_MI_PVAL/edges_pval_PRJNA699465.tsv
+  2.5G NETS_MI_PVAL/edges_pval_PRJNA705952.tsv
+  1.3G NETS_MI_PVAL/edges_pval_PRJNA805111.tsv
+  26G NETS_MI_PVAL/edges_pval_PRJNA812000.tsv
+  26G NETS_MI_PVAL/edges_pval_PRJNA832220.tsv
+  5.0G NETS_MI_PVAL/edges_pval_PRJNA982050.tsv
+  418K NETS_MI_PVAL/master_BTM_modules.tsv
+  6.8G NETS_MI_PVAL/master_edge_study_counts.mtx
+  4.5G NETS_MI_PVAL/master_network_adjacency.mtx
+  6.7G NETS_MI_PVAL/master_network_edgelist.tsv
+  9.0G NETS_MI_PVAL/master_network.graphml
+  399K NETS_MI_PVAL/master_node_modules.tsv
+  8.4G NETS_MI_PVAL/master_submodule_M0.graphml
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA1107598.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA1163897.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA1200777.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA311061.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA313448.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA479928.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA484712.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA510331.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA512863.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA513475.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA692626.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA699465.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA705952.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA805111.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA812000.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA832220.npy
+  4.0G NETS_MI_PVAL/mi_cache_PRJNA982050.npy
+  63K NETS_MI_PVAL/network_pval_20260306_224308.log
+  61K NETS_MI_PVAL/network_pval_20260311_163901.log
+  12G NETS_MI_PVAL/network_pval_PRJNA1107598.graphml
+  4.8G NETS_MI_PVAL/network_pval_PRJNA1163897.graphml
+  4.0G NETS_MI_PVAL/network_pval_PRJNA1200777.graphml
+  8.3G NETS_MI_PVAL/network_pval_PRJNA311061.graphml
+  14G NETS_MI_PVAL/network_pval_PRJNA313448.graphml
+  4.3G NETS_MI_PVAL/network_pval_PRJNA479928.graphml
+  2.7G NETS_MI_PVAL/network_pval_PRJNA484712.graphml
+  1.8G NETS_MI_PVAL/network_pval_PRJNA510331.graphml
+  1.3G NETS_MI_PVAL/network_pval_PRJNA512863.graphml
+  1.8G NETS_MI_PVAL/network_pval_PRJNA513475.graphml
+  5.8G NETS_MI_PVAL/network_pval_PRJNA692626.graphml
+  6.7G NETS_MI_PVAL/network_pval_PRJNA699465.graphml
+  2.6G NETS_MI_PVAL/network_pval_PRJNA705952.graphml
+  1.3G NETS_MI_PVAL/network_pval_PRJNA805111.graphml
+  28G NETS_MI_PVAL/network_pval_PRJNA812000.graphml
+  28G NETS_MI_PVAL/network_pval_PRJNA832220.graphml
+  5.1G NETS_MI_PVAL/network_pval_PRJNA982050.graphml
+  1.6K NETS_MI_PVAL/null_distribution_PRJNA1107598.txt
+  1.1K NETS_MI_PVAL/null_distribution_PRJNA1163897.txt
+  1.4K NETS_MI_PVAL/null_distribution_PRJNA1200777.txt
+  1.7K NETS_MI_PVAL/null_distribution_PRJNA311061.txt
+  1.6K NETS_MI_PVAL/null_distribution_PRJNA313448.txt
+  1.1K NETS_MI_PVAL/null_distribution_PRJNA479928.txt
+  1.2K NETS_MI_PVAL/null_distribution_PRJNA484712.txt
+  1.1K NETS_MI_PVAL/null_distribution_PRJNA510331.txt
+  1.5K NETS_MI_PVAL/null_distribution_PRJNA512863.txt
+  1.1K NETS_MI_PVAL/null_distribution_PRJNA513475.txt
+  1.5K NETS_MI_PVAL/null_distribution_PRJNA692626.txt
+  1.4K NETS_MI_PVAL/null_distribution_PRJNA699465.txt
+  1.2K NETS_MI_PVAL/null_distribution_PRJNA705952.txt
+  1.4K NETS_MI_PVAL/null_distribution_PRJNA805111.txt
+  1.1K NETS_MI_PVAL/null_distribution_PRJNA812000.txt
+  1.1K NETS_MI_PVAL/null_distribution_PRJNA832220.txt
+  1.7K NETS_MI_PVAL/null_distribution_PRJNA982050.txt
+
+============================================================================
+Check the following for results:
+  NETS_MI_PVAL/network_pval_*.log          Complete execution log
+  NETS_MI_PVAL/analysis_report_pval_*.txt  Summary report with timings
+  NETS_MI_PVAL/master_network.graphml      Master network (Cytoscape)
+  NETS_MI_PVAL/master_BTM_modules.tsv      MCODE module membership
+  NETS_MI_PVAL/master_network_edgelist.tsv Edge list with study counts
+  slurm_16552511_network_pval.out/err  SLURM job output
+============================================================================

@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=gene_network_pval
-#SBATCH --time=24:00:00
+#SBATCH --time=48:00:00
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=32
-#SBATCH --mem-per-cpu=6G
+#SBATCH --cpus-per-task=64
+#SBATCH --mem-per-cpu=8G
 #SBATCH --output=slurm_%j_network_pval.out
 #SBATCH --error=slurm_%j_network_pval.err
 #SBATCH --partition=pgpu          # CPU-only job – no GPU needed

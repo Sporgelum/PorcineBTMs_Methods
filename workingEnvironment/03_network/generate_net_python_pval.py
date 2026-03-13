@@ -91,7 +91,10 @@ APPLY_BH_FDR = False          # Set True to also save BH-corrected edge list
 BH_FDR_ALPHA = 0.05           # FDR level (only used when APPLY_BH_FDR = True)
 
 # Master network parameters
-MIN_STUDY_COUNT = 3           # Edge must appear in >= this many studies
+MIN_STUDY_COUNT = 3           # Edge must appear in >= this many studies (static fallback)
+MIN_STUDY_FRACTION = 0.30     # Dynamic threshold: edge must appear in >= 30% of studies
+                              # (overrides MIN_STUDY_COUNT when studies are auto-discovered;
+                              #  set to None to use the static MIN_STUDY_COUNT instead)
 
 # ---- Shared input files (studies are auto-discovered from the metadata) ------
 # The metadata CSV/TSV must contain at minimum two columns:
@@ -970,8 +973,8 @@ def save_report(timings, info, report_path):
 
         fh.write("CONFIGURATION\n" + "-" * 80 + "\n")
         for k in ("N_BINS", "DISC_STRATEGY", "N_PERMUTATIONS", "P_VALUE_THRESHOLD",
-                  "MIN_STUDY_COUNT", "APPLY_BH_FDR", "BH_FDR_ALPHA", "N_JOBS",
-                  "MIN_SAMPLES_PER_STUDY",
+                  "MIN_STUDY_COUNT", "MIN_STUDY_FRACTION", "APPLY_BH_FDR", "BH_FDR_ALPHA",
+                  "N_JOBS", "MIN_SAMPLES_PER_STUDY",
                   "MCODE_SCORE_THRESHOLD", "MCODE_MIN_SIZE", "MCODE_MIN_DENSITY"):
             fh.write(f"  {k:30s}: {globals()[k]}\n")
         fh.write(f"  {'COUNTS_PATH':30s}: {COUNTS_PATH}\n")
@@ -1032,7 +1035,11 @@ def main():
         print(f"  {s['name']:30s}  {s['expr'].shape[1]} samples")
     print(f"N permutations   : {N_PERMUTATIONS}")
     print(f"p-value threshold: {P_VALUE_THRESHOLD}")
-    print(f"Min study count  : {MIN_STUDY_COUNT}")
+    if MIN_STUDY_FRACTION is not None:
+        _preview = max(1, round(MIN_STUDY_FRACTION * len(studies)))
+        print(f"Min study count  : dynamic ({MIN_STUDY_FRACTION*100:.0f}% of {len(studies)} studies = {_preview})")
+    else:
+        print(f"Min study count  : {MIN_STUDY_COUNT} (static)")
     print(f"Log file         : {LOG_FILE}")
     print("=" * 80)
 
@@ -1144,8 +1151,12 @@ def main():
     print("BUILDING MASTER REFERENCE NETWORK")
     print("=" * 80)
 
-    if len(study_results) < MIN_STUDY_COUNT:
-        print(f"[WARN] Only {len(study_results)} studies processed, but MIN_STUDY_COUNT={MIN_STUDY_COUNT}.")
+    n_studies_total = len(study_results)
+    if MIN_STUDY_FRACTION is not None:
+        effective_min = max(1, round(MIN_STUDY_FRACTION * n_studies_total))
+        print(f"[INFO] Dynamic MIN_STUDY_COUNT: ceil({MIN_STUDY_FRACTION*100:.0f}% × {n_studies_total} studies) = {effective_min}")
+    elif n_studies_total < MIN_STUDY_COUNT:
+        print(f"[WARN] Only {n_studies_total} studies processed, but MIN_STUDY_COUNT={MIN_STUDY_COUNT}.")
         print(f"[WARN] Setting MIN_STUDY_COUNT to 1 for this run.")
         effective_min = 1
     else:
