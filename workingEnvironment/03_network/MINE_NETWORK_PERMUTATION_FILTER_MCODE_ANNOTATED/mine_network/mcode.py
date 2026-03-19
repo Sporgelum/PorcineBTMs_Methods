@@ -50,6 +50,18 @@ import igraph as ig
 import time
 
 
+def _membership_from_modules(modules: dict) -> dict:
+    """Assign each gene to the largest module it belongs to."""
+    gene_to_modules = {}
+    for mid_id, genes in modules.items():
+        for g in genes:
+            gene_to_modules.setdefault(g, []).append((len(genes), mid_id))
+    return {
+        g: max(entries, key=lambda x: x[0])[1]
+        for g, entries in gene_to_modules.items()
+    }
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # Internal helpers
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -214,15 +226,192 @@ def mcode(
         sizes = sorted([len(v) for v in modules.values()], reverse=True)
         print(f"[INFO] Module sizes (top 10): {sizes[:10]}")
 
-    # Build membership: gene → largest module
-    gene_to_modules = {}
-    for mid_id, genes in modules.items():
-        for g in genes:
-            gene_to_modules.setdefault(g, []).append((len(genes), mid_id))
-
-    membership = {
-        g: max(entries, key=lambda x: x[0])[1]
-        for g, entries in gene_to_modules.items()
-    }
+    membership = _membership_from_modules(modules)
 
     return modules, membership
+
+
+def leiden_modules(
+    adj_matrix: np.ndarray,
+    gene_names: list,
+    edge_weights: np.ndarray = None,
+    resolution: float = 1.0,
+    n_iterations: int = -1,
+    min_size: int = 3,
+) -> tuple:
+    """
+    Detect graph communities using Leiden and return MCODE-compatible output.
+    """
+    print("[INFO] Running Leiden community detection...")
+    t0 = time.time()
+
+    adj_sym = np.maximum(adj_matrix, adj_matrix.T)
+    rows, cols = np.where(np.triu(adj_sym, k=1) > 0)
+
+    g = ig.Graph(
+        n=adj_sym.shape[0],
+        edges=list(zip(rows.tolist(), cols.tolist())),
+        directed=False,
+    )
+    g.vs["name"] = gene_names
+
+    weights = None
+    if edge_weights is not None:
+        ew_sym = np.maximum(edge_weights, edge_weights.T)
+        weights = ew_sym[rows, cols].astype(float)
+        g.es["weight"] = weights.tolist()
+
+    try:
+        part = g.community_leiden(
+            objective_function="modularity",
+            weights=weights,
+            resolution=resolution,
+            n_iterations=n_iterations,
+        )
+    except TypeError:
+        part = g.community_leiden(
+            objective_function="modularity",
+            weights=weights,
+            resolution_parameter=resolution,
+            n_iterations=n_iterations,
+        )
+
+    modules = {}
+    mid = 0
+    for comm in part:
+        if len(comm) < min_size:
+            continue
+        modules[mid] = [gene_names[i] for i in comm]
+        mid += 1
+
+    elapsed = time.time() - t0
+    print(f"[INFO] Leiden: {len(modules)} modules after size filtering "
+          f"(min_size={min_size}, {elapsed:.1f}s)")
+    if modules:
+        sizes = sorted([len(v) for v in modules.values()], reverse=True)
+        print(f"[INFO] Leiden module sizes (top 10): {sizes[:10]}")
+
+    membership = _membership_from_modules(modules)
+    return modules, membership
+
+
+def refine_large_modules(
+    modules: dict,
+    master_adj: np.ndarray,
+    gene_names: list,
+    size_threshold: int,
+    method: str = "mcode",
+    leiden_resolution: float = 1.0,
+    leiden_iterations: int = -1,
+    score_threshold: float = 0.2,
+    min_size: int = 3,
+    min_density: float = 0.3,
+) -> tuple:
+    """
+    Refine oversized modules and replace them with detected submodules.
+
+    Parameters
+    ----------
+    method : str
+        Submodule detector used within oversized parent modules:
+        ``"mcode"`` or ``"leiden"``.
+    """
+    if size_threshold is None:
+        membership = _membership_from_modules(modules)
+        return modules, membership, []
+
+    if method not in {"mcode", "leiden"}:
+        raise ValueError(f"Unsupported submodule method: {method}")
+
+    print(
+        f"[INFO] Refining modules larger than {size_threshold} genes "
+        f"with {method.upper()}..."
+    )
+
+    gene_to_idx = {g: i for i, g in enumerate(gene_names)}
+    refined = {}
+    parent_child = []
+    new_mid = 0
+
+    for parent_id, genes in modules.items():
+        if len(genes) <= size_threshold:
+            refined[new_mid] = genes
+            parent_child.append({
+                "parent_module": f"M{parent_id}",
+                "child_module": f"M{new_mid}",
+                "parent_size": len(genes),
+                "child_size": len(genes),
+                "refined": False,
+            })
+            new_mid += 1
+            continue
+
+        idx = [gene_to_idx[g] for g in genes]
+        sub_adj = master_adj[np.ix_(idx, idx)]
+
+        if method == "leiden":
+            submods, _ = leiden_modules(
+                sub_adj,
+                genes,
+                edge_weights=None,
+                resolution=leiden_resolution,
+                n_iterations=leiden_iterations,
+                min_size=min_size,
+            )
+        else:
+            submods, _ = mcode(
+                sub_adj,
+                genes,
+                score_threshold=score_threshold,
+                min_size=min_size,
+                min_density=min_density,
+            )
+
+        if not submods:
+            refined[new_mid] = genes
+            parent_child.append({
+                "parent_module": f"M{parent_id}",
+                "child_module": f"M{new_mid}",
+                "parent_size": len(genes),
+                "child_size": len(genes),
+                "refined": False,
+            })
+            new_mid += 1
+            continue
+
+        for _, subgenes in submods.items():
+            refined[new_mid] = subgenes
+            parent_child.append({
+                "parent_module": f"M{parent_id}",
+                "child_module": f"M{new_mid}",
+                "parent_size": len(genes),
+                "child_size": len(subgenes),
+                "refined": True,
+            })
+            new_mid += 1
+
+    membership = _membership_from_modules(refined)
+    print(f"[INFO] Refinement complete: {len(modules)} -> {len(refined)} modules")
+    return refined, membership, parent_child
+
+
+def refine_large_modules_with_mcode(
+    modules: dict,
+    master_adj: np.ndarray,
+    gene_names: list,
+    size_threshold: int,
+    score_threshold: float = 0.2,
+    min_size: int = 3,
+    min_density: float = 0.3,
+) -> tuple:
+    """Backward-compatible wrapper for historical call sites."""
+    return refine_large_modules(
+        modules=modules,
+        master_adj=master_adj,
+        gene_names=gene_names,
+        size_threshold=size_threshold,
+        method="mcode",
+        score_threshold=score_threshold,
+        min_size=min_size,
+        min_density=min_density,
+    )

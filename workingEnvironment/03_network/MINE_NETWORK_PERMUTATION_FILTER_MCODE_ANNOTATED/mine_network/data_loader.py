@@ -266,3 +266,38 @@ def zscore_expression(expr_data: pd.DataFrame) -> np.ndarray:
     std = X.std(axis=1, keepdims=True)
     std[std == 0] = 1.0  # avoid division by zero for constant genes
     return (X - mu) / std
+
+
+def select_top_genes_by_mad(expr_full: pd.DataFrame, top_n: int) -> pd.DataFrame:
+    """
+    Keep the top-N most variable genes by MAD across samples.
+
+    Parameters
+    ----------
+    expr_full : pd.DataFrame
+        Full expression matrix (genes × samples).
+    top_n : int
+        Number of genes to retain. If >= number of genes, matrix is returned
+        unchanged.
+
+    Returns
+    -------
+    pd.DataFrame
+        Filtered expression matrix with top-N MAD genes.
+    """
+    n_genes = expr_full.shape[0]
+    if top_n is None or top_n <= 0 or top_n >= n_genes:
+        return expr_full
+
+    X = expr_full.values.astype(np.float32)
+    med = np.median(X, axis=1, keepdims=True)
+    mad = np.median(np.abs(X - med), axis=1)
+
+    keep_idx = np.argpartition(mad, n_genes - top_n)[-top_n:]
+    keep_idx = keep_idx[np.argsort(mad[keep_idx])[::-1]]
+
+    filtered = expr_full.iloc[keep_idx].copy()
+    print(f"[INFO] MAD filtering: kept top {top_n:,} / {n_genes:,} genes")
+    print(f"[INFO] MAD range kept: {mad[keep_idx].min():.6f} – "
+          f"{mad[keep_idx].max():.6f}")
+    return filtered

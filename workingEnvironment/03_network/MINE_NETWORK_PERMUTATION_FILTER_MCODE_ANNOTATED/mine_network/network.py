@@ -235,3 +235,55 @@ def build_master_network(
     print(f"[INFO] Master network: {n_edges:,} edges "
           f"(in >= {min_count} of {len(study_results)} studies)")
     return master_adj, edge_count
+
+
+def aggregate_master_weights(
+    n_genes: int,
+    study_weight_records: list,
+    master_adj: np.ndarray,
+    mode: str = "n_studies",
+    edge_count: np.ndarray = None,
+) -> np.ndarray:
+    """
+    Aggregate study-level edge weights into a master weighted matrix.
+
+    Parameters
+    ----------
+    n_genes : int
+        Number of genes in master network.
+    study_weight_records : list[dict]
+        Each record has arrays: ``pairs`` (n,2 int), ``weights`` (n float).
+    master_adj : np.ndarray
+        Binary master adjacency used as support mask.
+    mode : str
+        ``n_studies`` | ``mean_mi`` | ``mean_neglog10p``.
+    edge_count : np.ndarray, optional
+        Required for ``mode='n_studies'``.
+    """
+    if mode == "n_studies":
+        if edge_count is None:
+            raise ValueError("edge_count is required for mode='n_studies'")
+        w = edge_count.astype(np.float32)
+        w[master_adj == 0] = 0.0
+        return w
+
+    w_sum = np.zeros((n_genes, n_genes), dtype=np.float32)
+    w_n = np.zeros((n_genes, n_genes), dtype=np.float32)
+
+    for rec in study_weight_records:
+        pairs = rec["pairs"]
+        vals = rec["weights"].astype(np.float32)
+        if len(pairs) == 0:
+            continue
+        i = pairs[:, 0]
+        j = pairs[:, 1]
+        np.add.at(w_sum, (i, j), vals)
+        np.add.at(w_sum, (j, i), vals)
+        np.add.at(w_n, (i, j), 1.0)
+        np.add.at(w_n, (j, i), 1.0)
+
+    with np.errstate(invalid="ignore", divide="ignore"):
+        w = np.divide(w_sum, w_n, out=np.zeros_like(w_sum), where=w_n > 0)
+    w[master_adj == 0] = 0.0
+    np.fill_diagonal(w, 0.0)
+    return w

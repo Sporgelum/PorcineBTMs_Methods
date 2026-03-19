@@ -38,33 +38,329 @@ or custom scripts without running the full pipeline.
 import os
 import sys
 import gc
+import time
 import numpy as np
 import torch
+from typing import Optional
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from .config import PipelineConfig
-from .data_loader import load_expression, load_metadata, discover_studies, zscore_expression, filter_genes
+from .data_loader import (
+    load_expression,
+    load_metadata,
+    discover_studies,
+    zscore_expression,
+    filter_genes,
+    select_top_genes_by_mad,
+)
 from .mine_estimator import estimate_mi_for_pairs
 from .permutation import (
     build_global_null, build_per_pair_null,
     compute_pvalues_global, compute_pvalues_per_pair,
 )
 from .prescreen import prescreen_pairs, all_pairs
-from .network import filter_edges, build_edgelist, apply_bh_fdr, build_master_network
-from .mcode import mcode
-from .annotation import load_multiple_gmt, annotate_modules, save_annotations, download_enrichr_libraries
+from .network import (
+    filter_edges,
+    build_edgelist,
+    apply_bh_fdr,
+    build_master_network,
+    aggregate_master_weights,
+)
+from .mcode import mcode, leiden_modules, refine_large_modules
+from .annotation import (
+    load_multiple_gmt_with_sources,
+    annotate_modules,
+    save_annotations,
+    save_annotations_by_source,
+    download_enrichr_libraries,
+)
+from .ortholog import load_ortholog_map, map_modules, map_gene_set
 from .io_utils import (
     TeeLogger, Timer, format_time,
     save_null_qc, save_study_results, save_master_results, save_report,
+    summarize_network_topology, save_study_network_stats,
     save_mine_diagnostics,
 )
+from .qc_plots import save_sample_qc_figure
+
+
+def _cuda_device_is_usable(device_str: str) -> bool:
+    """Return True if a CUDA device can run a tiny allocation + sync."""
+    try:
+        d = torch.device(device_str)
+        x = torch.zeros(1, device=d)
+        # Force a real kernel launch to surface lazy CUDA errors early.
+        x = x + 1
+        if d.index is not None:
+            torch.cuda.synchronize(d.index)
+        else:
+            torch.cuda.synchronize()
+        return True
+    except Exception:
+        return False
+
+
+def _first_usable_cuda_device() -> Optional[torch.device]:
+    """Find the first visible CUDA device that is usable by this process."""
+    if not torch.cuda.is_available():
+        return None
+
+    n = torch.cuda.device_count()
+    for i in range(n):
+        cand = f"cuda:{i}"
+        if _cuda_device_is_usable(cand):
+            return torch.device(cand)
+    return None
+
+
+def _usable_cuda_devices() -> list[torch.device]:
+    """Return all visible CUDA devices that pass a tiny allocation test."""
+    if not torch.cuda.is_available():
+        return []
+    out = []
+    for i in range(torch.cuda.device_count()):
+        cand = f"cuda:{i}"
+        if _cuda_device_is_usable(cand):
+            out.append(torch.device(cand))
+    return out
 
 
 def _resolve_device(cfg: PipelineConfig) -> torch.device:
-    """Resolve 'auto' to the best available device."""
-    if cfg.device == "auto":
-        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    return torch.device(cfg.device)
+    """Resolve requested device with CUDA probing and safe fallback behavior."""
+    requested = (cfg.device or "auto").strip().lower()
+
+    if requested == "auto":
+        usable = _first_usable_cuda_device()
+        if usable is not None:
+            return usable
+        return torch.device("cpu")
+
+    if requested == "cpu":
+        return torch.device("cpu")
+
+    if requested == "cuda":
+        usable = _first_usable_cuda_device()
+        if usable is not None:
+            return usable
+        print("[WARN] CUDA requested but no usable visible GPU found; falling back to CPU.")
+        return torch.device("cpu")
+
+    if requested.startswith("cuda:"):
+        if _cuda_device_is_usable(requested):
+            return torch.device(requested)
+        print(f"[WARN] Requested device '{requested}' is not usable; falling back to CPU.")
+        return torch.device("cpu")
+
+    # Allow future torch backends while preserving old behavior.
+    return torch.device(requested)
+
+
+def _reindex_pairs_to_subset(
+    pairs: np.ndarray,
+    weights: np.ndarray,
+    keep_idx: list,
+    original_size: int,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Map edge pairs from an original gene index space into a kept subset."""
+    if len(pairs) == 0:
+        return (
+            np.empty((0, 2), dtype=np.int32),
+            np.asarray(weights, dtype=np.float32),
+        )
+
+    mapping = np.full(original_size, -1, dtype=np.int32)
+    mapping[np.asarray(keep_idx, dtype=np.int32)] = np.arange(len(keep_idx), dtype=np.int32)
+    new_pairs = mapping[pairs]
+    keep_mask = (new_pairs[:, 0] >= 0) & (new_pairs[:, 1] >= 0)
+    return new_pairs[keep_mask], np.asarray(weights, dtype=np.float32)[keep_mask]
+
+
+def _resolve_study_devices(cfg: PipelineConfig, primary_device: torch.device) -> list[torch.device]:
+    """Resolve worker devices for study-level parallel execution."""
+    n_workers = max(1, int(getattr(cfg, "study_gpu_workers", 1)))
+    if n_workers <= 1:
+        return [primary_device]
+
+    requested = [d.lower() for d in getattr(cfg, "study_gpu_devices", [])]
+    if requested:
+        devices = []
+        for d in requested:
+            if d.startswith("cuda") and _cuda_device_is_usable(d):
+                devices.append(torch.device(d))
+        if devices:
+            return devices[:n_workers]
+
+    auto_devices = _usable_cuda_devices()
+    if not auto_devices:
+        return [primary_device]
+    return auto_devices[:n_workers]
+
+
+def _process_single_study(study_idx: int, study: dict, cfg: PipelineConfig, device: torch.device) -> dict:
+    """Run one full study pipeline and return data required for master merge."""
+    study_name = study["name"]
+    expr_data = study["expr"]
+    gene_names = study["gene_names"]
+    n_genes = len(gene_names)
+    n_samples = expr_data.shape[1]
+
+    local_info = {
+        f"{study_name}: genes": str(n_genes),
+        f"{study_name}: samples": str(n_samples),
+    }
+    local_timings = {}
+
+    print(f"\n{'=' * 80}")
+    print(f"STUDY: {study_name}  ({n_genes:,} genes, {n_samples} samples)")
+    print(f"GPU worker device: {device}")
+    print("=" * 80)
+
+    t0 = time.time()
+    X = zscore_expression(expr_data)
+    if cfg.prescreen.enabled:
+        pair_indices = prescreen_pairs(
+            X,
+            method=cfg.prescreen.method,
+            threshold=cfg.prescreen.threshold,
+            max_pairs=cfg.prescreen.max_pairs,
+            n_jobs=cfg.n_jobs,
+        )
+    else:
+        pair_indices = all_pairs(n_genes)
+    local_timings[f"{study_name}: Z-score + candidate selection"] = time.time() - t0
+
+    n_cand = len(pair_indices)
+    local_info[f"{study_name}: candidate pairs"] = f"{n_cand:,}"
+    if n_cand == 0:
+        print(f"[WARN] No candidate pairs for {study_name} — skipping")
+        return {
+            "idx": study_idx,
+            "name": study_name,
+            "skipped": True,
+            "info": local_info,
+            "timings": local_timings,
+        }
+
+    t0 = time.time()
+    mi_values, mine_diag = estimate_mi_for_pairs(
+        X, pair_indices, cfg.mine, device, verbose=True,
+    )
+    save_mine_diagnostics(mine_diag, study_name, cfg.output_dir)
+    pos = mi_values[mi_values > 0]
+    local_info[f"{study_name}: MI range"] = (
+        f"{pos.min():.4f} – {pos.max():.4f}" if len(pos) > 0 else "all zero"
+    )
+    local_timings[f"{study_name}: MINE MI estimation ({n_cand:,} pairs)"] = time.time() - t0
+
+    t0 = time.time()
+    if cfg.permutation.mode == "global":
+        null_mi = build_global_null(
+            X, cfg.mine,
+            n_permutations=cfg.permutation.n_permutations,
+            seed=cfg.permutation.seed,
+            device=device,
+        )
+        mi_thr = save_null_qc(
+            null_mi, study_name,
+            cfg.permutation.p_value_threshold, cfg.output_dir,
+        )
+        p_values = compute_pvalues_global(mi_values, null_mi)
+        local_info[f"{study_name}: MI threshold (p<{cfg.permutation.p_value_threshold})"] = (
+            f"{mi_thr:.4f}"
+        )
+    elif cfg.permutation.mode == "per_pair":
+        null_mi_pp = build_per_pair_null(
+            X, pair_indices, cfg.mine,
+            n_permutations=cfg.permutation.n_permutations,
+            seed=cfg.permutation.seed,
+            device=device,
+        )
+        p_values = compute_pvalues_per_pair(mi_values, null_mi_pp)
+        del null_mi_pp
+    else:
+        raise ValueError(f"Unknown permutation mode: {cfg.permutation.mode}")
+    local_timings[
+        f"{study_name}: permutation null ({cfg.permutation.mode}, {cfg.permutation.n_permutations} perms)"
+    ] = time.time() - t0
+
+    t0 = time.time()
+    sig_mask = p_values < cfg.permutation.p_value_threshold
+    adj_sig = filter_edges(
+        mi_values, p_values, pair_indices, n_genes,
+        p_threshold=cfg.permutation.p_value_threshold,
+    )
+    n_edges = int(np.triu(adj_sig, k=1).sum())
+    local_info[f"{study_name}: significant edges"] = f"{n_edges:,}"
+
+    sig_pairs = pair_indices[sig_mask]
+    if cfg.module.master_edge_weight == "mean_neglog10p":
+        edge_weights = -np.log10(p_values[sig_mask] + cfg.module.weight_eps)
+    elif cfg.module.master_edge_weight == "mean_mi":
+        edge_weights = mi_values[sig_mask]
+    else:
+        edge_weights = np.ones(sig_mask.sum(), dtype=np.float32)
+
+    if len(edge_weights) > 0:
+        if cfg.module.weight_clip_min is not None:
+            edge_weights = np.maximum(edge_weights, cfg.module.weight_clip_min)
+        if cfg.module.weight_clip_max is not None:
+            edge_weights = np.minimum(edge_weights, cfg.module.weight_clip_max)
+        if cfg.module.normalize_weights:
+            w_min = edge_weights.min()
+            w_max = edge_weights.max()
+            if w_max > w_min:
+                edge_weights = (edge_weights - w_min) / (w_max - w_min)
+    local_timings[f"{study_name}: edge filtering"] = time.time() - t0
+
+    edgelist_df = build_edgelist(
+        adj_sig, pair_indices, mi_values, p_values, gene_names,
+    )
+    if len(edgelist_df) > 0:
+        if cfg.module.master_edge_weight == "mean_neglog10p":
+            ew = -np.log10(edgelist_df["p_value"].values + cfg.module.weight_eps)
+        elif cfg.module.master_edge_weight == "mean_mi":
+            ew = edgelist_df["MI_MINE"].values
+        else:
+            ew = np.ones(len(edgelist_df), dtype=np.float32)
+        edgelist_df["edge_weight"] = ew
+
+    bh_df = None
+    if cfg.apply_bh_fdr:
+        bh_df = apply_bh_fdr(
+            pair_indices, mi_values, p_values, gene_names,
+            fdr_alpha=cfg.bh_fdr_alpha,
+        )
+
+    t0 = time.time()
+    save_study_results(
+        study_name, adj_sig, edgelist_df, gene_names,
+        cfg.output_dir, bh_df=bh_df,
+        make_minimap=cfg.visualization.enabled,
+        minimap_base_dir=os.path.join(cfg.output_dir, "minimap_networks"),
+        minimap_max_nodes=cfg.visualization.max_nodes,
+        minimap_dpi=cfg.visualization.dpi,
+        minimap_edge_alpha=cfg.visualization.edge_alpha,
+    )
+    local_timings[f"{study_name}: saving"] = time.time() - t0
+
+    topology = summarize_network_topology(study_name, adj_sig)
+
+    del mi_values, p_values, X
+    gc.collect()
+
+    return {
+        "idx": study_idx,
+        "name": study_name,
+        "skipped": False,
+        "gene_names": list(gene_names),
+        "adj": adj_sig,
+        "pairs": sig_pairs.astype(np.int32, copy=False),
+        "weights": np.asarray(edge_weights, dtype=np.float32),
+        "topology": topology,
+        "info": local_info,
+        "timings": local_timings,
+    }
 
 
 def run_pipeline(cfg: PipelineConfig) -> dict:
@@ -107,6 +403,13 @@ def run_pipeline(cfg: PipelineConfig) -> dict:
     print(f"Null permutations: {cfg.permutation.n_permutations}")
     print(f"P-value threshold: {cfg.permutation.p_value_threshold}")
     print(f"Min studies      : {cfg.network.min_study_count}")
+    print(f"Study GPU workers: {cfg.study_gpu_workers}")
+    if cfg.study_gpu_devices:
+        print(f"Study GPU devices: {', '.join(cfg.study_gpu_devices)}")
+    print(f"Module method    : {cfg.module.method}")
+    print(f"Submodule method : {cfg.module.submodule_method}")
+    print(f"Master edge wt   : {cfg.module.master_edge_weight}")
+    print(f"Network minimaps : {'ON' if cfg.visualization.enabled else 'OFF'}")
     if cfg.gene_filter.enabled:
         print("Gene filter      : ON")
         print(f"  ribosomal      : {cfg.gene_filter.remove_ribosomal}")
@@ -115,6 +418,13 @@ def run_pipeline(cfg: PipelineConfig) -> dict:
         print(f"  list file      : {cfg.gene_filter.exclude_genes_file or 'none'}")
     else:
         print("Gene filter      : OFF")
+    if cfg.qc.mad_top_genes is not None or cfg.qc.plot_pre_filter or cfg.qc.plot_post_filter:
+        print("QC/MAD           : ON")
+        print(f"  mad top genes  : {cfg.qc.mad_top_genes or 'none'}")
+        print(f"  pre plot       : {cfg.qc.plot_pre_filter}")
+        print(f"  post plot      : {cfg.qc.plot_post_filter}")
+    else:
+        print("QC/MAD           : OFF")
     print("=" * 80)
 
     # ── Step 0: Load data ──
@@ -139,6 +449,36 @@ def run_pipeline(cfg: PipelineConfig) -> dict:
             print(f"  removed total       : {filt_summary['removed_total']:,}")
             print(f"  output genes        : {filt_summary['output_genes']:,}")
 
+        if cfg.qc.plot_pre_filter:
+            qc_dir = os.path.join(cfg.output_dir, "qc")
+            pre_qc_file = os.path.join(qc_dir, "qc_pre_filter.png")
+            save_sample_qc_figure(
+                expr_full,
+                pre_qc_file,
+                title=(f"Pre-filter QC ({expr_full.shape[0]:,} genes × "
+                       f"{expr_full.shape[1]:,} samples)"),
+                corr_threshold=None,
+                n_quantiles=cfg.qc.line_quantiles,
+            )
+
+        if cfg.qc.mad_top_genes is not None:
+            before_n = expr_full.shape[0]
+            expr_full = select_top_genes_by_mad(expr_full, cfg.qc.mad_top_genes)
+            info["Genes before MAD filter"] = f"{before_n:,}"
+            info["Genes after MAD filter"] = f"{expr_full.shape[0]:,}"
+
+        if cfg.qc.plot_post_filter:
+            qc_dir = os.path.join(cfg.output_dir, "qc")
+            post_qc_file = os.path.join(qc_dir, "qc_post_filter.png")
+            save_sample_qc_figure(
+                expr_full,
+                post_qc_file,
+                title=(f"Post-filter QC ({expr_full.shape[0]:,} genes × "
+                       f"{expr_full.shape[1]:,} samples)"),
+                corr_threshold=cfg.prescreen.threshold,
+                n_quantiles=cfg.qc.line_quantiles,
+            )
+
         studies = discover_studies(
             expr_full, metadata,
             min_samples=cfg.network.min_samples_per_study,
@@ -152,154 +492,79 @@ def run_pipeline(cfg: PipelineConfig) -> dict:
     info["Expression matrix"] = cfg.counts_path
 
     # ── Step 1: Process each study ──
+    study_payloads = []
+    worker_devices = _resolve_study_devices(cfg, device)
+    if cfg.study_gpu_workers > 1 and len(worker_devices) > 1:
+        print(f"[INFO] Study-level GPU parallel mode enabled: "
+              f"{len(worker_devices)} workers on "
+              f"{', '.join(str(d) for d in worker_devices)}")
+        with ThreadPoolExecutor(max_workers=len(worker_devices)) as ex:
+            futures = {}
+            for i, study in enumerate(studies):
+                d = worker_devices[i % len(worker_devices)]
+                fut = ex.submit(_process_single_study, i, study, cfg, d)
+                futures[fut] = (i, study["name"], d)
+            for fut in as_completed(futures):
+                i, sname, d = futures[fut]
+                try:
+                    study_payloads.append(fut.result())
+                except Exception as e:
+                    print(f"[ERROR] Study worker failed for {sname} on {d}: {e}")
+                    raise
+    else:
+        if cfg.study_gpu_workers > 1:
+            print("[WARN] Requested study-level GPU workers > 1 but only one "
+                  "usable device found; running sequentially.")
+        for i, study in enumerate(studies):
+            study_payloads.append(_process_single_study(i, study, cfg, device))
+
+    # Merge per-study info and timings into global summary dictionaries.
+    study_payloads.sort(key=lambda x: x["idx"])
+    for payload in study_payloads:
+        info.update(payload.get("info", {}))
+        timings.update(payload.get("timings", {}))
+
+    # Keep only studies that produced candidate pairs.
+    study_payloads = [p for p in study_payloads if not p.get("skipped", False)]
+
     study_results = []
-    study_mi_values = {}  # for optional mean-MI edge weighting
-    common_gene_names = None
+    study_weight_records = []
+    study_network_stats_rows = [p["topology"] for p in study_payloads]
 
-    for study in studies:
-        study_name = study["name"]
-        expr_data = study["expr"]
-        gene_names = study["gene_names"]
-        n_genes = len(gene_names)
-        n_samples = expr_data.shape[1]
+    common_gene_names = list(study_payloads[0]["gene_names"]) if study_payloads else []
+    if study_payloads:
+        for payload in study_payloads[1:]:
+            gene_set = set(payload["gene_names"])
+            common_gene_names = [g for g in common_gene_names if g in gene_set]
 
-        print(f"\n{'=' * 80}")
-        print(f"STUDY: {study_name}  ({n_genes:,} genes, {n_samples} samples)")
-        print("=" * 80)
-
-        info[f"{study_name}: genes"] = str(n_genes)
-        info[f"{study_name}: samples"] = str(n_samples)
-
-        # ── Z-score ──
-        with Timer(f"{study_name}: Z-score + candidate selection", timings):
-            X = zscore_expression(expr_data)
-
-            if cfg.prescreen.enabled:
-                pair_indices = prescreen_pairs(
-                    X,
-                    method=cfg.prescreen.method,
-                    threshold=cfg.prescreen.threshold,
-                    max_pairs=cfg.prescreen.max_pairs,
-                    n_jobs=cfg.n_jobs,
-                )
-            else:
-                pair_indices = all_pairs(n_genes)
-
-            n_cand = len(pair_indices)
-            info[f"{study_name}: candidate pairs"] = f"{n_cand:,}"
-
-        if n_cand == 0:
-            print(f"[WARN] No candidate pairs for {study_name} — skipping")
-            continue
-
-        # ── MINE MI estimation ──
-        with Timer(f"{study_name}: MINE MI estimation ({n_cand:,} pairs)", timings):
-            mi_values, mine_diag = estimate_mi_for_pairs(
-                X, pair_indices, cfg.mine, device, verbose=True,
-            )
-            pos = mi_values[mi_values > 0]
-            info[f"{study_name}: MI range"] = (
-                f"{pos.min():.4f} – {pos.max():.4f}" if len(pos) > 0
-                else "all zero"
-            )
-            # Save MINE training diagnostics
-            save_mine_diagnostics(mine_diag, study_name, cfg.output_dir)
-
-        # ── Permutation null + p-values ──
-        with Timer(f"{study_name}: permutation null ({cfg.permutation.mode}, "
-                   f"{cfg.permutation.n_permutations} perms)", timings):
-
-            if cfg.permutation.mode == "global":
-                null_mi = build_global_null(
-                    X, cfg.mine,
-                    n_permutations=cfg.permutation.n_permutations,
-                    seed=cfg.permutation.seed,
-                    device=device,
-                )
-                mi_thr = save_null_qc(
-                    null_mi, study_name,
-                    cfg.permutation.p_value_threshold, cfg.output_dir,
-                )
-                p_values = compute_pvalues_global(mi_values, null_mi)
-                info[f"{study_name}: MI threshold (p<{cfg.permutation.p_value_threshold})"] = (
-                    f"{mi_thr:.4f}"
-                )
-
-            elif cfg.permutation.mode == "per_pair":
-                null_mi_pp = build_per_pair_null(
-                    X, pair_indices, cfg.mine,
-                    n_permutations=cfg.permutation.n_permutations,
-                    seed=cfg.permutation.seed,
-                    device=device,
-                )
-                p_values = compute_pvalues_per_pair(mi_values, null_mi_pp)
-                del null_mi_pp
-
-            else:
-                raise ValueError(f"Unknown permutation mode: {cfg.permutation.mode}")
-
-        # ── Filter edges ──
-        with Timer(f"{study_name}: edge filtering", timings):
-            adj_sig = filter_edges(
-                mi_values, p_values, pair_indices, n_genes,
-                p_threshold=cfg.permutation.p_value_threshold,
-            )
-            n_edges = int(np.triu(adj_sig, k=1).sum())
-            info[f"{study_name}: significant edges"] = f"{n_edges:,}"
-
-        # Edge list
-        edgelist_df = build_edgelist(
-            adj_sig, pair_indices, mi_values, p_values, gene_names,
+    for payload in study_payloads:
+        gene_names = payload["gene_names"]
+        current_gene_to_idx = {g: i for i, g in enumerate(gene_names)}
+        idx_curr = [current_gene_to_idx[g] for g in common_gene_names]
+        adj_sig = payload["adj"][np.ix_(idx_curr, idx_curr)]
+        sig_pairs, edge_weights = _reindex_pairs_to_subset(
+            payload["pairs"],
+            payload["weights"],
+            idx_curr,
+            len(gene_names),
         )
-
-        # Optional BH-FDR
-        bh_df = None
-        if cfg.apply_bh_fdr:
-            bh_df = apply_bh_fdr(
-                pair_indices, mi_values, p_values, gene_names,
-                fdr_alpha=cfg.bh_fdr_alpha,
-            )
-
-        # Save per-study
-        with Timer(f"{study_name}: saving", timings):
-            save_study_results(
-                study_name, adj_sig, edgelist_df, gene_names,
-                cfg.output_dir, bh_df=bh_df,
-            )
-
-        # ── Track for master network ──
-        if common_gene_names is None:
-            common_gene_names = list(gene_names)
-            study_results.append({"name": study_name, "adj": adj_sig})
-            study_mi_values[study_name] = (pair_indices, mi_values)
-        else:
-            # Intersect gene names
-            common_set = set(common_gene_names) & set(gene_names)
-            if len(common_set) < len(common_gene_names):
-                print(f"[WARN] Gene intersection: {len(common_gene_names)} → "
-                      f"{len(common_set)}")
-                old_idx = [
-                    common_gene_names.index(g) for g in common_gene_names
-                    if g in common_set
-                ]
-                common_gene_names = [
-                    g for g in common_gene_names if g in common_set
-                ]
-                for prev in study_results:
-                    prev["adj"] = prev["adj"][np.ix_(old_idx, old_idx)]
-                idx_curr = [gene_names.index(g) for g in common_gene_names]
-                adj_sig = adj_sig[np.ix_(idx_curr, idx_curr)]
-            study_results.append({"name": study_name, "adj": adj_sig})
-            study_mi_values[study_name] = (pair_indices, mi_values)
-
-        # Free memory
-        del mi_values, p_values, X
-        gc.collect()
+        study_results.append({"name": payload["name"], "adj": adj_sig})
+        study_weight_records.append({
+            "name": payload["name"],
+            "pairs": sig_pairs,
+            "weights": edge_weights,
+        })
 
     # ── Step 2: Master network ──
     if not study_results:
         print("[ERROR] No study results to combine.")
         sys.exit(1)
+
+    # Save study network connectivity stats by default.
+    save_study_network_stats(
+        study_network_stats_rows,
+        os.path.join(cfg.output_dir, "minimap_networks"),
+    )
 
     n_studies = len(study_results)
 
@@ -318,19 +583,70 @@ def run_pipeline(cfg: PipelineConfig) -> dict:
         master_adj, edge_count = build_master_network(
             study_results, common_gene_names, min_count=effective_min,
         )
+        master_edge_weight = aggregate_master_weights(
+            n_genes=len(common_gene_names),
+            study_weight_records=study_weight_records,
+            master_adj=master_adj,
+            mode=cfg.module.master_edge_weight,
+            edge_count=edge_count,
+        )
         n_master = int(np.triu(master_adj, k=1).sum())
         info["Master: genes"] = str(len(common_gene_names))
         info["Master: edges"] = f"{n_master:,}"
+        if n_master > 0:
+            w_vals = master_edge_weight[np.triu(master_adj, k=1) == 1]
+            info["Master: edge weight range"] = (
+                f"{float(np.min(w_vals)):.4f} – {float(np.max(w_vals)):.4f}"
+            )
 
-    # ── Step 3: MCODE ──
-    with Timer("MCODE module detection", timings):
-        modules, membership = mcode(
-            master_adj, common_gene_names,
-            score_threshold=cfg.mcode.score_threshold,
-            min_size=cfg.mcode.min_size,
-            min_density=cfg.mcode.min_density,
-        )
-        info["Master: MCODE modules"] = str(len(modules))
+    # ── Step 3: Module detection ──
+    with Timer("Module detection", timings):
+        module_min_size = cfg.module.module_min_size
+
+        if cfg.module.method == "leiden":
+            modules, membership = leiden_modules(
+                master_adj,
+                common_gene_names,
+                edge_weights=master_edge_weight,
+                resolution=cfg.module.module_leiden_resolution,
+                n_iterations=cfg.module.module_leiden_iterations,
+                min_size=module_min_size,
+            )
+        else:
+            modules, membership = mcode(
+                master_adj, common_gene_names,
+                score_threshold=cfg.module.module_mcode_score_threshold,
+                min_size=module_min_size,
+                min_density=cfg.module.module_mcode_min_density,
+            )
+
+        if (
+            cfg.module.submodule_size_threshold is not None
+            and cfg.module.submodule_method != "none"
+        ):
+            modules, membership, parent_child_rows = refine_large_modules(
+                modules,
+                master_adj,
+                common_gene_names,
+                size_threshold=cfg.module.submodule_size_threshold,
+                method=cfg.module.submodule_method,
+                leiden_resolution=cfg.module.submodule_leiden_resolution,
+                leiden_iterations=cfg.module.submodule_leiden_iterations,
+                score_threshold=cfg.module.submodule_mcode_score_threshold,
+                min_size=cfg.module.submodule_min_size,
+                min_density=cfg.module.submodule_mcode_min_density,
+            )
+        else:
+            if (
+                cfg.module.submodule_size_threshold is not None
+                and cfg.module.submodule_method == "none"
+            ):
+                print(
+                    "[INFO] Submodule refinement skipped "
+                    "(--submodule-method none)."
+                )
+            parent_child_rows = []
+        info["Master: modules"] = str(len(modules))
 
     # ── Step 4: Annotation ──
     # Download GMT files from Enrichr if requested
@@ -347,20 +663,55 @@ def run_pipeline(cfg: PipelineConfig) -> dict:
 
     if cfg.annotation.gmt_paths:
         with Timer("Module annotation (enrichment)", timings):
-            gene_sets = load_multiple_gmt(cfg.annotation.gmt_paths)
+            gene_sets, geneset_to_library, library_manifest = load_multiple_gmt_with_sources(
+                cfg.annotation.gmt_paths
+            )
 
+            modules_for_annotation = modules
             if cfg.annotation.background_genes:
                 with open(cfg.annotation.background_genes, "r") as f:
-                    bg = set(line.strip() for line in f if line.strip())
+                    bg_for_annotation = set(line.strip() for line in f if line.strip())
             else:
-                bg = set(common_gene_names)
+                bg_for_annotation = set(common_gene_names)
+
+            if cfg.annotation.ortholog_map_path:
+                print("[INFO] Applying ortholog mapping before enrichment:")
+                print(f"  map file : {cfg.annotation.ortholog_map_path}")
+                print(f"  source   : {cfg.annotation.ortholog_source_col}")
+                print(f"  target   : {cfg.annotation.ortholog_target_col}")
+
+                orth_map = load_ortholog_map(
+                    cfg.annotation.ortholog_map_path,
+                    cfg.annotation.ortholog_source_col,
+                    cfg.annotation.ortholog_target_col,
+                )
+                modules_for_annotation, map_stats = map_modules(modules, orth_map)
+                bg_for_annotation, bg_mapped = map_gene_set(bg_for_annotation, orth_map)
+
+                print("[INFO] Ortholog mapping summary:")
+                print(f"  module source genes  : {map_stats['source_unique_genes']:,}")
+                print(f"  module genes mapped  : {map_stats['source_genes_mapped']:,}")
+                print(f"  module target genes  : {map_stats['mapped_unique_genes']:,}")
+                print(f"  background mapped    : {bg_mapped:,} -> {len(bg_for_annotation):,}")
 
             annotation_df = annotate_modules(
-                modules, gene_sets, bg,
+                modules_for_annotation,
+                gene_sets,
+                bg_for_annotation,
                 fdr_threshold=cfg.annotation.fdr_threshold,
                 min_overlap=cfg.annotation.min_overlap,
             )
+            if not annotation_df.empty:
+                annotation_df["GeneSetLibrary"] = annotation_df["GeneSet"].map(
+                    geneset_to_library
+                ).fillna("unknown")
             save_annotations(annotation_df, cfg.output_dir)
+            if cfg.annotation.save_per_gmt_results:
+                save_annotations_by_source(
+                    annotation_df,
+                    cfg.output_dir,
+                    library_manifest=library_manifest,
+                )
             info["Annotations"] = str(len(annotation_df))
     else:
         print("\n[INFO] No GMT gene-set files provided — skipping annotation. "
@@ -369,10 +720,19 @@ def run_pipeline(cfg: PipelineConfig) -> dict:
     # ── Step 5: Save master ──
     with Timer("Save master network", timings):
         save_master_results(
-            master_adj, edge_count, common_gene_names,
-            modules, membership,
+            master_adj, edge_count, master_edge_weight,
+            common_gene_names,
+            modules, membership, parent_child_rows,
             min_count=effective_min, n_studies=n_studies,
             output_dir=cfg.output_dir,
+            module_export_map_path=cfg.annotation.module_export_map_path,
+            module_export_key_col=cfg.annotation.module_export_key_col,
+            module_export_cols=cfg.annotation.module_export_cols,
+            make_minimap=cfg.visualization.enabled,
+            minimap_base_dir=os.path.join(cfg.output_dir, "minimap_networks"),
+            minimap_max_nodes=cfg.visualization.max_nodes,
+            minimap_dpi=cfg.visualization.dpi,
+            minimap_edge_alpha=cfg.visualization.edge_alpha,
         )
 
     # ── Summary ──

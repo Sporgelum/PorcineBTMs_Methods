@@ -221,9 +221,40 @@ results = run_pipeline(cfg)
 | `--mode` | `global` | `global` or `per_pair` |
 | `--min-studies` | 3 | Min studies for master edge |
 | `--min-samples` | 3 | Min samples per study |
+| `--module-method` | `mcode` | First-pass detector: `mcode` or `leiden` |
+| `--module-min-size` | 3 | Minimum first-pass module size |
+| `--module-mcode-score-threshold` | 0.2 | First-pass MCODE seed threshold |
+| `--module-mcode-min-density` | 0.3 | First-pass MCODE density filter |
+| `--module-leiden-resolution` | 1.0 | First-pass Leiden resolution |
+| `--module-leiden-iterations` | -1 | First-pass Leiden iterations |
+| `--submodule-method` | `none` | Refinement detector: `none`, `mcode`, `leiden` |
+| `--submodule-size-threshold` | (none) | Refine parent modules larger than this size |
+| `--submodule-min-size` | 3 | Minimum submodule size in refinement |
+| `--submodule-mcode-score-threshold` | 0.2 | Refinement MCODE seed threshold |
+| `--submodule-mcode-min-density` | 0.3 | Refinement MCODE density filter |
+| `--submodule-leiden-resolution` | 1.0 | Refinement Leiden resolution |
+| `--submodule-leiden-iterations` | -1 | Refinement Leiden iterations |
 | `--gmt` | (none) | GMT files for annotation |
 | `--download-gmt` | (off) | Auto-download GMT files from Enrichr API |
 | `--enrichr-libs` | (all 5) | Enrichr library names to download |
+
+### Clean module/submodule workflow
+
+Use this pattern to avoid redundant flags:
+
+1. Choose one first-pass method with `--module-method`.
+2. Set only arguments relevant to that method.
+3. Choose one refinement method with `--submodule-method` (or `none`).
+4. Set `--submodule-size-threshold` only if refinement is enabled.
+
+Examples:
+
+- First pass Leiden + refinement Leiden:
+   - `--module-method leiden --module-leiden-resolution 1.2 --module-min-size 3 --submodule-method leiden --submodule-size-threshold 100 --submodule-leiden-resolution 1.1 --submodule-min-size 10`
+- First pass Leiden + refinement MCODE:
+   - `--module-method leiden --module-leiden-resolution 1.2 --module-min-size 3 --submodule-method mcode --submodule-size-threshold 100 --submodule-mcode-score-threshold 0.2 --submodule-mcode-min-density 0.05 --submodule-min-size 10`
+- First pass MCODE + no refinement:
+   - `--module-method mcode --module-mcode-score-threshold 0.2 --module-mcode-min-density 0.05 --module-min-size 3 --submodule-method none`
 
 ---
 
@@ -237,7 +268,8 @@ PipelineConfig
 ├── PrescreenConfig     enabled, method, threshold, max_pairs
 ├── PermutationConfig   n_permutations, seed, p_value_threshold, mode
 ├── NetworkConfig       min_study_count, min_study_fraction, min_samples_per_study
-├── MCODEConfig         score_threshold, min_size, min_density
+├── ModuleConfig        module/submodule method selection + method-specific settings
+├── MCODEConfig         legacy compatibility defaults
 └── AnnotationConfig    gmt_paths, fdr_threshold, min_overlap, background_genes, download_enrichr, enrichr_libraries
 ```
 
@@ -347,4 +379,96 @@ nvidia-smi --> ps -fp PID || true --> check if the process belongs to you or the
 ## to sloow on my machine, deploy on the cluster.
 
 # Maybe helps to remove first ribosomal genes?
-# #todo add filtering ability and visualization from DSL and furthermore leiden on weighted net and submodule if number of genes larger than 200 per module du mcode in submodules, read DSL repo readme.
+
+# IMPLEMENTED add filtering ability and visualization from DSL and furthermore leiden on weighted net and submodule if number of genes larger than 200 per module du mcode in submodules, read DSL repo readme.
+
+
+### smoke test boot
+cd /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED && source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate && module load PyTorch && export VENV_SITE=/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages && export TORCH_SITE=${EBROOTPYTORCH}/lib/python3.9/site-packages && export PYTHONPATH=${VENV_SITE}:${TORCH_SITE} && export NUMEXPR_DISABLED=1 && python run_pipeline.py --output ./output/smoke_test_boot --device cuda --perms 10 --mode global --pval 0.05 --epochs 1 --batch-pairs 64 --prescreen-threshold 0.5 --max-pairs 1000 --prescreen-method spearman --mad-top-genes 500 --qc-preplot --qc-postplot --module-method leiden --master-edge-weight mean_neglog10p --normalize-weights --submodule-size-threshold 50
+
+### smoke test leiden quick
+source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate
+module load PyTorch
+export VENV_SITE=/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages
+export TORCH_SITE=${EBROOTPYTORCH}/lib/python3.9/site-packages
+export PYTHONPATH=${VENV_SITE}:${TORCH_SITE}
+export NUMEXPR_DISABLED=1
+
+python run_pipeline.py \
+  --output ./output/smoke_test_leiden_quick \
+  --device cuda \
+  --perms 10 \
+  --mode global \
+  --pval 0.05 \
+  --epochs 1 \
+  --batch-pairs 64 \
+  --prescreen-threshold 0.5 \
+  --max-pairs 1000 \
+  --prescreen-method spearman \
+  --mad-top-genes 500 \
+  --qc-preplot \
+  --qc-postplot \
+  --module-method leiden \
+  --master-edge-weight mean_neglog10p \
+  --normalize-weights \
+  --submodule-size-threshold 50
+
+
+#### Test with all the integrations, fitlering, max pairs, leiden and pre and post filtering visu.
+##### smoke test leiden
+
+
+cd /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED
+source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate
+module load PyTorch
+export VENV_SITE=/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages
+export TORCH_SITE=${EBROOTPYTORCH}/lib/python3.9/site-packages
+export PYTHONPATH=${VENV_SITE}:${TORCH_SITE}
+export NUMEXPR_DISABLED=1
+
+python run_pipeline.py --output ./output/smoke_test_leiden --device cuda --perms 10000 --mode global --pval 0.01 --epochs 100 --batch-pairs 512 --prescreen-threshold 0.3 --max-pairs 1000000 --prescreen-method "spearman" --mad-top-genes 10000 --qc-preplot --qc-postplot --module-method leiden --master-edge-weight mean_neglog10p --normalize-weights --submodule-size-threshold 200 --download-gmt
+
+#### test adding new mcode density and size, lower the density to get a module but need modules with at least 10 genes, and convert pig to human before enrichment of data.
+source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate && module load PyTorch && export VENV_SITE=/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages && export TORCH_SITE=${EBROOTPYTORCH}/lib/python3.9/site-packages && export PYTHONPATH=${VENV_SITE}:${TORCH_SITE} && export NUMEXPR_DISABLED=1 && python run_pipeline.py --output ./output/smoke_test_leiden_v2 --device cuda --perms 1000 --mode global --pval 0.05 --epochs 50 --batch-pairs 256 --prescreen-threshold 0.5 --max-pairs 50000 --prescreen-method spearman --mad-top-genes 2000 --qc-preplot --qc-postplot --module-method leiden --master-edge-weight mean_neglog10p --normalize-weights --submodule-size-threshold 100 --mcode-min-size 10 --mcode-min-density 0.05   --ortholog-map ../gene_id_mapping.tsv --ortholog-source-col ensembl_gene_id --ortholog-target-col external_gene_name --download-gmt
+
+# New Improvement now it allows to output more features as annotated modules "translated" the ensembl gene ids in anntoated modules.
+source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate && module load PyTorch && export VENV_SITE=/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages && export TORCH_SITE=${EBROOTPYTORCH}/lib/python3.9/site-packages && export PYTHONPATH=${VENV_SITE}:${TORCH_SITE} && export NUMEXPR_DISABLED=1 && python run_pipeline.py --output ./output/smoke_test_leiden_v2 --device cuda --perms 1000 --mode global --pval 0.05 --epochs 50 --batch-pairs 256 --prescreen-threshold 0.5 --max-pairs 50000 --prescreen-method spearman --mad-top-genes 2000 --qc-preplot --qc-postplot --module-method leiden --master-edge-weight mean_neglog10p --normalize-weights --submodule-size-threshold 100 --mcode-min-size 10 --mcode-min-density 0.05   --ortholog-map ../gene_id_mapping.tsv --ortholog-source-col ensembl_gene_id --ortholog-target-col external_gene_name --download-gmt --module-export-map ../gene_id_mapping.tsv --module-export-key-col ensembl_gene_id --module-export-cols external_gene_name entrezgene_id
+
+## keeps now per gmt enrichment of modules, so we can explore those of interest, and also outputs a mini network per study and main network colored by main modules or (leiden) submodules (mcode)
+source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate && module load PyTorch && export VENV_SITE=/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages && export TORCH_SITE=${EBROOTPYTORCH}/lib/python3.9/site-packages && export PYTHONPATH=${VENV_SITE}:${TORCH_SITE} && export NUMEXPR_DISABLED=1 && python run_pipeline.py --output ./output/smoke_test_leiden_v2 --device cuda --perms 1000 --mode global --pval 0.05 --epochs 50 --batch-pairs 256 --prescreen-threshold 0.5 --max-pairs 50000 --prescreen-method spearman --mad-top-genes 2000 --qc-preplot --qc-postplot --module-method leiden --master-edge-weight mean_neglog10p --normalize-weights --submodule-size-threshold 100 --mcode-min-size 10 --mcode-min-density 0.05   --ortholog-map ../gene_id_mapping.tsv --ortholog-source-col ensembl_gene_id --ortholog-target-col external_gene_name --download-gmt --module-export-map ../gene_id_mapping.tsv --module-export-key-col ensembl_gene_id --module-export-cols external_gene_name entrezgene_id --save-per-gmt-enrichments --include-network-visualization
+
+cd /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED && source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate && module load PyTorch && export VENV_SITE=/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages && export TORCH_SITE=${EBROOTPYTORCH}/lib/python3.9/site-packages && export PYTHONPATH=${VENV_SITE}:${TORCH_SITE} && export NUMEXPR_DISABLED=1 && python run_pipeline.py --output ./output/smoke_test_leiden_v2_res1p2 --device auto --perms 1000 --mode global --pval 0.05 --epochs 50 --batch-pairs 256 --prescreen-threshold 0.5 --max-pairs 50000 --prescreen-method spearman --mad-top-genes 2000 --qc-preplot --qc-postplot --module-method leiden --module-leiden-resolution 1.2 --module-min-size 3 --master-edge-weight mean_neglog10p --normalize-weights --submodule-method leiden --submodule-size-threshold 100 --submodule-leiden-resolution 1.0 --submodule-min-size 10 --ortholog-map ../gene_id_mapping.tsv --ortholog-source-col ensembl_gene_id --ortholog-target-col external_gene_name --download-gmt --module-export-map ../gene_id_mapping.tsv --module-export-key-col ensembl_gene_id --module-export-cols external_gene_name entrezgene_id --save-per-gmt-enrichments --include-network-visualization
+
+# smoke test leiden v2 improved... with arguments controlling for firs modules and second submodule algorithm.
+cd /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED && source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate && module load PyTorch && export VENV_SITE=/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages && export TORCH_SITE=${EBROOTPYTORCH}/lib/python3.9/site-packages && export PYTHONPATH=${VENV_SITE}:${TORCH_SITE} && export NUMEXPR_DISABLED=1 && python run_pipeline.py --output ./output/compare_5M_3size_mod_ledien_res1p2_10size_submod_mcode_005 --device auto --perms 10000 --mode global --pval 0.05 --epochs 100 --batch-pairs 512 --prescreen-threshold 0.1 --max-pairs 5000000 --prescreen-method spearman --mad-top-genes 25000 --qc-preplot --qc-postplot --module-method leiden --module-leiden-resolution 1.2 --module-min-size 10 --master-edge-weight mean_neglog10p --normalize-weights --submodule-method mcode --submodule-size-threshold 200 --submodule-min-size 10 --submodule-mcode-score-threshold 0.2 --submodule-mcode-min-density 0.3 --ortholog-map ../gene_id_mapping.tsv --ortholog-source-col ensembl_gene_id --ortholog-target-col external_gene_name --download-gmt --module-export-map ../gene_id_mapping.tsv --module-export-key-col ensembl_gene_id --module-export-cols external_gene_name entrezgene_id --save-per-gmt-enrichments --include-network-visualization
+
+# above run used the same space in GPU, wanted to make it a little faster and bigger the preocess by processing the double batch size and using less epochs..
+cd /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED && source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate && module load PyTorch && export VENV_SITE=/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages && export TORCH_SITE=${EBROOTPYTORCH}/lib/python3.9/site-packages && export PYTHONPATH=${VENV_SITE}:${TORCH_SITE} && export NUMEXPR_DISABLED=1 && python run_pipeline.py --output ./output/compare_1024_001_10000_60_50M_3size_mod_ledien_res1p2_10size_submod_mcode_005 --device auto --perms 10000 --mode global --pval 0.01 --epochs 60 --batch-pairs 1024 --prescreen-threshold 0.1 --max-pairs 50000000 --prescreen-method spearman --mad-top-genes 25000 --qc-preplot --qc-postplot --module-method leiden --module-leiden-resolution 1.2 --module-min-size 10 --master-edge-weight mean_neglog10p --normalize-weights --submodule-method mcode --submodule-size-threshold 200 --submodule-min-size 10 --submodule-mcode-score-threshold 0.2 --submodule-mcode-min-density 0.3 --ortholog-map ../gene_id_mapping.tsv --ortholog-source-col ensembl_gene_id --ortholog-target-col external_gene_name --download-gmt --module-export-map ../gene_id_mapping.tsv --module-export-key-col ensembl_gene_id --module-export-cols external_gene_name entrezgene_id --save-per-gmt-enrichments --include-network-visualization
+# this increased a little the load on the GPU memory, but the workload is massive while memory not such a big issue.
+
+## Smoke Tests: Single GPU vs Parallel 2-GPU
+
+Use the same lightweight settings in both tests so runtime and outputs are comparable.
+
+### A) Baseline smoke test (1 GPU worker)
+
+```bash
+source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate
+python /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/run_pipeline.py --counts data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/logCPM_matrix_filtered_samples.csv --meta /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/02_counts/metadata_with_sample_annotations.csv --output /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output_smoke_1gpu --device cuda --study-gpu-workers 1 --epochs 15 --batch-pairs 256 --perms 50 --prescreen-threshold 0.4 --max-pairs 120000 --min-studies 1 --module-method leiden --module-leiden-resolution 1.1 --module-min-size 3 --submodule-method none
+```
+
+### B) Parallel smoke test (2 GPU workers, one study per worker)
+
+cd /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED && source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate && module load PyTorch && export VENV_SITE=/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages && export TORCH_SITE=${EBROOTPYTORCH}/lib/python3.9/site-packages && export PYTHONPATH=${VENV_SITE}:${TORCH_SITE} && export NUMEXPR_DISABLED=1 && python run_pipeline.py --output ./output/smoke_test_gpu_2 --device cuda --study-gpu-workers 2 --perms 10000 --mode global --pval 0.05 --epochs 100 --batch-pairs 512 --prescreen-threshold 0.1 --max-pairs 5000000 --prescreen-method spearman --mad-top-genes 25000 --qc-preplot --qc-postplot --module-method leiden --module-leiden-resolution 1.2 --module-min-size 10 --master-edge-weight mean_neglog10p --normalize-weights --submodule-method mcode --submodule-size-threshold 200 --submodule-min-size 10 --submodule-mcode-score-threshold 0.2 --submodule-mcode-min-density 0.3 --ortholog-map ../gene_id_mapping.tsv --ortholog-source-col ensembl_gene_id --ortholog-target-col external_gene_name --download-gmt --module-export-map ../gene_id_mapping.tsv --module-export-key-col ensembl_gene_id --module-export-cols external_gene_name entrezgene_id --save-per-gmt-enrichments --include-network-visualization
+
+
+Expected parallel log indicator:
+
+- Study-level GPU parallel mode enabled: 2 workers on cuda:0, cuda:1
+
+If only one usable GPU is visible, the pipeline will warn and run sequentially.
+### -- > working on double GPU!!!
+
+# Re-Run whole datasets with no capping on 2 gpus save outputs.
+
+cd /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED && source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate && module load PyTorch && export VENV_SITE=/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages && export TORCH_SITE=${EBROOTPYTORCH}/lib/python3.9/site-packages && export PYTHONPATH=${VENV_SITE}:${TORCH_SITE} && export NUMEXPR_DISABLED=1 && python run_pipeline.py --output ./output/wholde_dataset_in_gpu_2 --device cuda --study-gpu-workers 2 --perms 30000 --mode global --pval 0.05 --epochs 150 --batch-pairs 512 --prescreen-threshold 0.1 --max-pairs 500000000 --prescreen-method spearman --mad-top-genes 30000 --qc-preplot --qc-postplot --module-method leiden --module-leiden-resolution 1.2 --module-min-size 10 --master-edge-weight mean_neglog10p --normalize-weights --submodule-method mcode --submodule-size-threshold 200 --submodule-min-size 10 --submodule-mcode-score-threshold 0.2 --submodule-mcode-min-density 0.3 --ortholog-map ../gene_id_mapping.tsv --ortholog-source-col ensembl_gene_id --ortholog-target-col external_gene_name --download-gmt --module-export-map ../gene_id_mapping.tsv --module-export-key-col ensembl_gene_id --module-export-cols external_gene_name entrezgene_id --save-per-gmt-enrichments --include-network-visualization

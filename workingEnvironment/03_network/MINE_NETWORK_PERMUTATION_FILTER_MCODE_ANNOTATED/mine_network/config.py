@@ -198,6 +198,75 @@ class NetworkConfig:
 
 
 @dataclass
+class ModuleConfig:
+    """
+    Module detection and weighted-edge aggregation options.
+
+    Attributes
+    ----------
+    method : str
+        First-pass module detector on the master network:
+        ``"mcode"`` or ``"leiden"``.
+    submodule_method : str
+        Refinement detector for oversized modules:
+        ``"none"``, ``"mcode"``, or ``"leiden"``.
+    master_edge_weight : str
+        Master edge weighting mode:
+        - ``"n_studies"``      : support count across studies
+        - ``"mean_mi"``        : mean MI among significant study edges
+        - ``"mean_neglog10p"`` : mean -log10(p + eps) among significant edges
+    normalize_weights : bool
+        If True, min-max normalize study-level weights before aggregation.
+    weight_clip_min : float or None
+        Optional lower clip for study-level weights before aggregation.
+    weight_clip_max : float or None
+        Optional upper clip for study-level weights before aggregation.
+    weight_eps : float
+        Numerical stabilizer for significance weights.
+    module_min_size : int
+        Minimum size for first-pass modules.
+    module_leiden_resolution : float
+        Leiden resolution for first-pass modules.
+    module_leiden_iterations : int
+        Leiden iterations for first-pass modules.
+    module_mcode_score_threshold : float
+        MCODE score-threshold for first-pass modules.
+    module_mcode_min_density : float
+        MCODE minimum density for first-pass modules.
+    submodule_size_threshold : int or None
+        If set, modules larger than this are refined by ``submodule_method``.
+    submodule_min_size : int
+        Minimum size for submodules produced during refinement.
+    submodule_leiden_resolution : float
+        Leiden resolution for refinement when ``submodule_method=leiden``.
+    submodule_leiden_iterations : int
+        Leiden iterations for refinement when ``submodule_method=leiden``.
+    submodule_mcode_score_threshold : float
+        MCODE score-threshold for refinement when ``submodule_method=mcode``.
+    submodule_mcode_min_density : float
+        MCODE minimum density for refinement when ``submodule_method=mcode``.
+    """
+    method: str = "mcode"
+    submodule_method: str = "none"
+    master_edge_weight: str = "n_studies"
+    normalize_weights: bool = False
+    weight_clip_min: float = None
+    weight_clip_max: float = None
+    weight_eps: float = 1e-12
+    module_min_size: int = 3
+    module_leiden_resolution: float = 1.0
+    module_leiden_iterations: int = -1
+    module_mcode_score_threshold: float = 0.2
+    module_mcode_min_density: float = 0.3
+    submodule_size_threshold: int = None
+    submodule_min_size: int = 3
+    submodule_leiden_resolution: float = 1.0
+    submodule_leiden_iterations: int = -1
+    submodule_mcode_score_threshold: float = 0.2
+    submodule_mcode_min_density: float = 0.3
+
+
+@dataclass
 class MCODEConfig:
     """
     MCODE dense-subgraph module detection (Bader & Hogue 2003).
@@ -257,6 +326,24 @@ class AnnotationConfig:
     background_genes : str or None
         Path to a text file with one gene per line defining the universe.
         If None, all genes in the expression matrix are used.
+    ortholog_map_path : str or None
+        Optional TSV mapping file to translate module genes before
+        enrichment (for example pig symbols -> human symbols).
+    ortholog_source_col : str
+        Source-species column name in mapping file.
+    ortholog_target_col : str
+        Target-species column name in mapping file.
+    module_export_map_path : str or None
+        Optional TSV/CSV file used to append extra identifier columns to
+        module membership output tables.
+    module_export_key_col : str
+        Column in ``module_export_map_path`` matching the module gene IDs.
+    module_export_cols : list[str]
+        Extra columns to append to module tables. If empty, all columns in
+        the mapping file except ``module_export_key_col`` are appended.
+    save_per_gmt_results : bool
+        If True, split enrichment output into per-library folders under
+        ``enrichments_gmt/`` while still saving global combined tables.
     """
     gmt_paths: list = field(default_factory=list)
     download_enrichr: bool = False
@@ -264,6 +351,35 @@ class AnnotationConfig:
     fdr_threshold: float = 0.05
     min_overlap: int = 2
     background_genes: str = None
+    ortholog_map_path: str = None
+    ortholog_source_col: str = "pig_gene"
+    ortholog_target_col: str = "human_gene"
+    module_export_map_path: str = None
+    module_export_key_col: str = "ensembl_gene_id"
+    module_export_cols: list = field(default_factory=list)
+    save_per_gmt_results: bool = False
+
+
+@dataclass
+class VisualizationConfig:
+    """
+    Optional network minimap rendering settings.
+
+    Attributes
+    ----------
+    enabled : bool
+        If True, save small PNG minimaps for study and master networks.
+    max_nodes : int
+        Max nodes drawn per minimap (highest-degree nodes retained if larger).
+    dpi : int
+        PNG resolution.
+    edge_alpha : float
+        Transparency for drawn edges.
+    """
+    enabled: bool = False
+    max_nodes: int = 1200
+    dpi: int = 180
+    edge_alpha: float = 0.08
 
 
 @dataclass
@@ -297,6 +413,28 @@ class GeneFilterConfig:
     exclude_genes_file: str = None
 
 
+@dataclass
+class QCConfig:
+    """
+    Optional exploratory QC visualisation and MAD gene filtering.
+
+    Attributes
+    ----------
+    plot_pre_filter : bool
+        Save a three-panel sample QC figure before MAD filtering.
+    plot_post_filter : bool
+        Save the same QC figure after MAD filtering.
+    mad_top_genes : int or None
+        If set, keep only the top-N genes ranked by MAD across all samples.
+    line_quantiles : int
+        Number of quantile points for the sample distribution line panel.
+    """
+    plot_pre_filter: bool = False
+    plot_post_filter: bool = False
+    mad_top_genes: int = None
+    line_quantiles: int = 200
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # Master configuration
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -312,9 +450,12 @@ class PipelineConfig:
     prescreen : PrescreenConfig
     permutation : PermutationConfig
     network : NetworkConfig
+    module : ModuleConfig
     mcode : MCODEConfig
     annotation : AnnotationConfig
+    visualization : VisualizationConfig
     gene_filter : GeneFilterConfig
+    qc : QCConfig
     counts_path : str
         Path to the logCPM expression matrix (genes × samples, tab-separated).
     metadata_path : str
@@ -325,6 +466,14 @@ class PipelineConfig:
         PyTorch device: "auto", "cuda", "cpu".
     n_jobs : int
         CPU cores for pre-screening parallelism (-1 = all cores).
+    study_gpu_workers : int
+        Number of concurrent study workers for GPU execution.
+        Use 1 for sequential behavior (default), 2 to run one study per GPU
+        on two visible devices.
+    study_gpu_devices : list[str]
+        Optional explicit CUDA device list for study workers, for example
+        ["cuda:0", "cuda:1"]. If empty and ``study_gpu_workers > 1``,
+        usable visible CUDA devices are auto-detected.
     apply_bh_fdr : bool
         Also save BH-corrected edge lists per study.
     bh_fdr_alpha : float
@@ -334,9 +483,12 @@ class PipelineConfig:
     prescreen: PrescreenConfig = field(default_factory=PrescreenConfig)
     permutation: PermutationConfig = field(default_factory=PermutationConfig)
     network: NetworkConfig = field(default_factory=NetworkConfig)
+    module: ModuleConfig = field(default_factory=ModuleConfig)
     mcode: MCODEConfig = field(default_factory=MCODEConfig)
     annotation: AnnotationConfig = field(default_factory=AnnotationConfig)
+    visualization: VisualizationConfig = field(default_factory=VisualizationConfig)
     gene_filter: GeneFilterConfig = field(default_factory=GeneFilterConfig)
+    qc: QCConfig = field(default_factory=QCConfig)
 
     # Paths — set at runtime or via CLI
     counts_path: str = ""
@@ -346,6 +498,8 @@ class PipelineConfig:
     # Hardware
     device: str = "auto"
     n_jobs: int = -1
+    study_gpu_workers: int = 1
+    study_gpu_devices: list = field(default_factory=list)
 
     # Optional BH-FDR per study
     apply_bh_fdr: bool = False

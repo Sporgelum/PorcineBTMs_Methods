@@ -86,8 +86,13 @@ def main():
     parser.add_argument("--output", type=str, default=None,
                         help="Output directory (default: ./output).")
     parser.add_argument("--device", type=str, default="auto",
-                        choices=["auto", "cuda", "cpu"],
-                        help="Compute device (default: auto).")
+                        help="Compute device (default: auto). Examples: auto, cpu, cuda, cuda:0, cuda:1")
+    parser.add_argument("--study-gpu-workers", type=int, default=1,
+                        help="Concurrent study workers across GPUs (default: 1)."
+                            " Set to 2 to run one study per GPU on two devices.")
+    parser.add_argument("--study-gpu-devices", type=str, nargs="*", default=[],
+                        help="Optional explicit CUDA devices for study workers,"
+                            " e.g. cuda:0 cuda:1.")
 
     # MINE parameters
     parser.add_argument("--hidden", type=int, default=64,
@@ -120,6 +125,20 @@ def main():
     parser.add_argument("--exclude-genes-file", type=str, default=None,
                         help="Text file (one gene per line) with genes to exclude.")
 
+    # QC and optional MAD filtering
+    parser.add_argument("--mad-top-genes", type=int, default=None,
+                        help="Keep only top-N genes by MAD before study splitting."
+                             " Example: 5000")
+    parser.add_argument("--qc-preplot", action="store_true",
+                        help="Save pre-filter QC figure (dendrogram + sample"
+                             " distribution lines + Spearman heatmap).")
+    parser.add_argument("--qc-postplot", action="store_true",
+                        help="Save post-filter QC figure using the filtered"
+                             " matrix (after MAD selection).")
+    parser.add_argument("--qc-quantiles", type=int, default=200,
+                        help="Number of quantile points in QC sample"
+                             " distribution line plots (default: 200).")
+
     # Permutation
     parser.add_argument("--perms", type=int, default=10000,
                         help="Number of permutations (default: 10000).")
@@ -134,7 +153,84 @@ def main():
                         help="Min studies for master edge (default: 3).")
     parser.add_argument("--min-samples", type=int, default=3,
                         help="Min samples per study (default: 3).")
+    parser.add_argument("--module-method", type=str, default="mcode",
+                        choices=["mcode", "leiden"],
+                        help="First-pass module detector on master network.")
+    parser.add_argument("--module-min-size", type=int, default=3,
+                        help="Minimum size for first-pass modules (default: 3).")
+    parser.add_argument("--module-mcode-score-threshold", type=float, default=0.2,
+                        help="MCODE score threshold for first-pass modules (default: 0.2).")
+    parser.add_argument("--module-mcode-min-density", type=float, default=0.3,
+                        help="MCODE minimum density for first-pass modules (default: 0.3).")
+    parser.add_argument("--module-leiden-resolution", type=float, default=1.0,
+                        help="Leiden resolution for first-pass modules (default: 1.0).")
+    parser.add_argument("--module-leiden-iterations", type=int, default=-1,
+                        help="Leiden iterations for first-pass modules (-1 uses igraph default).")
 
+    parser.add_argument("--submodule-method", type=str, default="none",
+                        choices=["none", "mcode", "leiden"],
+                        help="Refinement method inside oversized modules (default: none).")
+    parser.add_argument("--submodule-size-threshold", type=int, default=None,
+                        help="Refine modules larger than this size.")
+    parser.add_argument("--submodule-min-size", type=int, default=3,
+                        help="Minimum size for refinement submodules (default: 3).")
+    parser.add_argument("--submodule-mcode-score-threshold", type=float,
+                        default=0.2,
+                        help="MCODE score threshold for refinement (default: 0.2).")
+    parser.add_argument("--submodule-mcode-min-density", type=float,
+                        default=0.3,
+                        help="MCODE minimum density for refinement (default: 0.3).")
+    parser.add_argument("--submodule-leiden-resolution", type=float,
+                        default=1.0,
+                        help="Leiden resolution for refinement (default: 1.0).")
+    parser.add_argument("--submodule-leiden-iterations", type=int,
+                        default=-1,
+                        help="Leiden iterations for refinement (-1 uses igraph default).")
+
+    # Deprecated aliases (hidden from --help) for backward compatibility
+    parser.add_argument("--mcode-score-threshold", type=float,
+                        dest="module_mcode_score_threshold",
+                        help=argparse.SUPPRESS)
+    parser.add_argument("--mcode-min-size", type=int,
+                        dest="module_min_size",
+                        help=argparse.SUPPRESS)
+    parser.add_argument("--mcode-min-density", type=float,
+                        dest="module_mcode_min_density",
+                        help=argparse.SUPPRESS)
+    parser.add_argument("--leiden-resolution", type=float,
+                        dest="module_leiden_resolution",
+                        help=argparse.SUPPRESS)
+    parser.add_argument("--leiden-iterations", type=int,
+                        dest="module_leiden_iterations",
+                        help=argparse.SUPPRESS)
+    parser.add_argument("--min-size-modules", type=int,
+                        dest="module_min_size",
+                        help=argparse.SUPPRESS)
+    parser.add_argument("--min-size-submodules", type=int,
+                        dest="submodule_min_size",
+                        help=argparse.SUPPRESS)
+    parser.add_argument("--refine-mcode-score-threshold", type=float,
+                        dest="submodule_mcode_score_threshold",
+                        help=argparse.SUPPRESS)
+    parser.add_argument("--refine-mcode-min-size", type=int,
+                        dest="submodule_min_size",
+                        help=argparse.SUPPRESS)
+    parser.add_argument("--refine-mcode-min-density", type=float,
+                        dest="submodule_mcode_min_density",
+                        help=argparse.SUPPRESS)
+
+    parser.add_argument("--master-edge-weight", type=str,
+                        default="n_studies",
+                        choices=["n_studies", "mean_mi", "mean_neglog10p"],
+                        help="Master edge weighting mode.")
+    parser.add_argument("--normalize-weights", action="store_true",
+                        help="Normalize study-level weights before aggregation.")
+    parser.add_argument("--weight-clip-min", type=float, default=None,
+                        help="Optional lower clip for study-level weights.")
+    parser.add_argument("--weight-clip-max", type=float, default=None,
+                        help="Optional upper clip for study-level weights.")
+    parser.add_argument("--weight-eps", type=float, default=1e-12,
+                        help="Epsilon for significance weight -log10(p + eps).")
     # Annotation
     parser.add_argument("--gmt", type=str, nargs="*", default=[],
                         help="GMT gene-set files for module annotation.")
@@ -144,6 +240,29 @@ def main():
                         help="Specific Enrichr library names to download. "
                              "If --download-gmt is set without this, downloads "
                              "all defaults (GO, KEGG, Reactome, WikiPathway, MSigDB Hallmark).")
+    parser.add_argument("--ortholog-map", type=str, default=None,
+                        help="Optional TSV map for cross-species annotation (for example pig->human).")
+    parser.add_argument("--ortholog-source-col", type=str, default="pig_gene",
+                        help="Source gene column in --ortholog-map.")
+    parser.add_argument("--ortholog-target-col", type=str, default="human_gene",
+                        help="Target gene column in --ortholog-map.")
+    parser.add_argument("--module-export-map", type=str, default=None,
+                        help="Optional TSV/CSV map to append extra gene ID columns to module output tables.")
+    parser.add_argument("--module-export-key-col", type=str,
+                        default="ensembl_gene_id",
+                        help="Gene ID column in --module-export-map that matches module Gene column.")
+    parser.add_argument("--module-export-cols", type=str, nargs="*", default=[],
+                        help="Columns from --module-export-map to append. If omitted, all non-key columns are used.")
+    parser.add_argument("--save-per-gmt-enrichments", action="store_true",
+                        help="Save enrichment outputs in per-GMT folders under enrichments_gmt/ in addition to global summaries.")
+    parser.add_argument("--include-network-visualization", action="store_true",
+                        help="Save small PNG minimaps for each study network and for the master network.")
+    parser.add_argument("--network-viz-max-nodes", type=int, default=1200,
+                        help="Maximum nodes rendered in minimap PNGs (default: 1200).")
+    parser.add_argument("--network-viz-dpi", type=int, default=180,
+                        help="DPI for minimap PNGs (default: 180).")
+    parser.add_argument("--network-viz-edge-alpha", type=float, default=0.08,
+                        help="Edge transparency in minimap PNGs (default: 0.08).")
 
     args = parser.parse_args()
 
@@ -169,6 +288,8 @@ def main():
         Path(__file__).resolve().parent / "output"
     )
     cfg.device = args.device
+    cfg.study_gpu_workers = max(1, int(args.study_gpu_workers))
+    cfg.study_gpu_devices = [d.strip() for d in args.study_gpu_devices if d.strip()]
 
     # MINE
     cfg.mine.hidden_dim = args.hidden
@@ -193,6 +314,12 @@ def main():
         bool(cfg.gene_filter.exclude_genes_file),
     ])
 
+    # QC + MAD
+    cfg.qc.mad_top_genes = args.mad_top_genes
+    cfg.qc.plot_pre_filter = args.qc_preplot
+    cfg.qc.plot_post_filter = args.qc_postplot
+    cfg.qc.line_quantiles = args.qc_quantiles
+
     # Permutation
     cfg.permutation.n_permutations = args.perms
     cfg.permutation.p_value_threshold = args.pval
@@ -201,6 +328,37 @@ def main():
     # Network
     cfg.network.min_study_count = args.min_studies
     cfg.network.min_samples_per_study = args.min_samples
+    # Module detection + edge weighting
+    cfg.module.method = args.module_method
+    cfg.module.submodule_method = args.submodule_method
+    cfg.module.module_min_size = args.module_min_size
+    cfg.module.module_mcode_score_threshold = args.module_mcode_score_threshold
+    cfg.module.module_mcode_min_density = args.module_mcode_min_density
+    cfg.module.module_leiden_resolution = args.module_leiden_resolution
+    cfg.module.module_leiden_iterations = args.module_leiden_iterations
+    cfg.module.submodule_size_threshold = args.submodule_size_threshold
+    cfg.module.submodule_min_size = args.submodule_min_size
+    cfg.module.submodule_mcode_score_threshold = (
+        args.submodule_mcode_score_threshold
+    )
+    cfg.module.submodule_mcode_min_density = args.submodule_mcode_min_density
+    cfg.module.submodule_leiden_resolution = (
+        args.submodule_leiden_resolution
+    )
+    cfg.module.submodule_leiden_iterations = (
+        args.submodule_leiden_iterations
+    )
+
+    # Keep legacy MCODE config in sync for old internal references.
+    cfg.mcode.score_threshold = args.module_mcode_score_threshold
+    cfg.mcode.min_size = args.module_min_size
+    cfg.mcode.min_density = args.module_mcode_min_density
+
+    cfg.module.master_edge_weight = args.master_edge_weight
+    cfg.module.normalize_weights = args.normalize_weights
+    cfg.module.weight_clip_min = args.weight_clip_min
+    cfg.module.weight_clip_max = args.weight_clip_max
+    cfg.module.weight_eps = args.weight_eps
 
     # Annotation
     if args.gmt:
@@ -209,6 +367,19 @@ def main():
         cfg.annotation.download_enrichr = True
         if args.enrichr_libs:
             cfg.annotation.enrichr_libraries = args.enrichr_libs
+    cfg.annotation.ortholog_map_path = args.ortholog_map
+    cfg.annotation.ortholog_source_col = args.ortholog_source_col
+    cfg.annotation.ortholog_target_col = args.ortholog_target_col
+    cfg.annotation.module_export_map_path = args.module_export_map
+    cfg.annotation.module_export_key_col = args.module_export_key_col
+    cfg.annotation.module_export_cols = args.module_export_cols
+    cfg.annotation.save_per_gmt_results = args.save_per_gmt_enrichments
+
+    # Network minimap visualization
+    cfg.visualization.enabled = args.include_network_visualization
+    cfg.visualization.max_nodes = args.network_viz_max_nodes
+    cfg.visualization.dpi = args.network_viz_dpi
+    cfg.visualization.edge_alpha = args.network_viz_edge_alpha
 
     # ── Run ──
     run_pipeline(cfg)

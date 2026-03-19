@@ -44,6 +44,7 @@ from datetime import datetime
 from scipy.sparse import csr_matrix
 from scipy.io import mmwrite
 import igraph as ig
+from .network_viz import save_study_minimap, save_master_minimaps
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -260,6 +261,11 @@ def save_study_results(
     gene_names: list,
     output_dir: str,
     bh_df: pd.DataFrame = None,
+    make_minimap: bool = False,
+    minimap_base_dir: str = None,
+    minimap_max_nodes: int = 1200,
+    minimap_dpi: int = 180,
+    minimap_edge_alpha: float = 0.08,
 ) -> None:
     """
     Save per-study results: edge list, adjacency, GraphML.
@@ -275,6 +281,8 @@ def save_study_results(
     output_dir : str
     bh_df : pd.DataFrame, optional
         BH-corrected edges.
+    make_minimap : bool
+        If True, save a small per-study network PNG.
     """
     print(f"\n[INFO] Saving results for: {study_name}")
 
@@ -303,22 +311,151 @@ def save_study_results(
             sep="\t", index=False,
         )
 
+    if make_minimap and minimap_base_dir:
+        try:
+            save_study_minimap(
+                study_name=study_name,
+                adj=adj_sym,
+                gene_names=gene_names,
+                base_dir=minimap_base_dir,
+                max_nodes=minimap_max_nodes,
+                dpi=minimap_dpi,
+                edge_alpha=minimap_edge_alpha,
+            )
+        except Exception as e:
+            print(f"[WARN] Could not save study minimap for {study_name}: {e}")
+
     print(f"[SAVED] Study {study_name}: edges, adjacency, GraphML")
+
+
+def summarize_network_topology(study_name: str, adj: np.ndarray) -> dict:
+    """
+    Compute connectivity summary for one study network.
+
+    Returns fields used by study_net_stats.tsv.
+    """
+    adj_sym = np.maximum(adj, adj.T).astype(np.uint8)
+    np.fill_diagonal(adj_sym, 0)
+
+    n = int(adj_sym.shape[0])
+    m = int(np.triu(adj_sym, k=1).sum())
+    max_edges = n * (n - 1) // 2
+    density = (m / max_edges) if max_edges > 0 else 0.0
+
+    rows, cols = np.where(np.triu(adj_sym, k=1) > 0)
+    g = ig.Graph(n=n, edges=list(zip(rows.tolist(), cols.tolist())), directed=False)
+    comp_sizes = sorted(g.components().sizes(), reverse=True)
+
+    n_components = len(comp_sizes)
+    giant_component_size = int(comp_sizes[0]) if comp_sizes else 0
+    giant_component_fraction = (giant_component_size / n) if n > 0 else 0.0
+    singleton_components = int(sum(1 for s in comp_sizes if s == 1))
+
+    return {
+        "study": study_name,
+        "nodes": n,
+        "edges": m,
+        "density": density,
+        "components": n_components,
+        "giant_component": giant_component_size,
+        "giant_component_fraction": giant_component_fraction,
+        "singleton_components": singleton_components,
+    }
+
+
+def save_study_network_stats(stats_rows: list, minimap_base_dir: str) -> None:
+    """Save per-study network connectivity stats to minimap_networks/study_net_stats.tsv."""
+    if not stats_rows:
+        return
+
+    os.makedirs(minimap_base_dir, exist_ok=True)
+    stats_df = pd.DataFrame(stats_rows).sort_values("study")
+    out_path = os.path.join(minimap_base_dir, "study_net_stats.tsv")
+    stats_df.to_csv(out_path, sep="\t", index=False)
+    print(f"[SAVED] {out_path}")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Master network saving
 # ═══════════════════════════════════════════════════════════════════════════════
 
+def _append_gene_metadata(
+    module_df: pd.DataFrame,
+    gene_col: str,
+    map_path: str,
+    key_col: str,
+    extra_cols: list,
+) -> pd.DataFrame:
+    """
+    Append gene metadata columns to a module table using a mapping file.
+
+    The mapping file can be TSV or CSV. If duplicate keys exist, values are
+    collapsed per key using semicolon-separated unique entries.
+    """
+    if module_df.empty:
+        return module_df.copy()
+
+    map_df = pd.read_csv(map_path, sep=None, engine="python", dtype=str)
+    map_df.columns = [c.strip() for c in map_df.columns]
+
+    if key_col not in map_df.columns:
+        raise ValueError(
+            f"Column '{key_col}' was not found in mapping file: {map_path}"
+        )
+
+    selected_cols = [c for c in (extra_cols or []) if c in map_df.columns]
+    if not selected_cols:
+        selected_cols = [c for c in map_df.columns if c != key_col]
+
+    if not selected_cols:
+        return module_df.copy()
+
+    compact = map_df[[key_col] + selected_cols].copy()
+    compact[key_col] = compact[key_col].astype(str).str.strip()
+
+    def _collapse(series: pd.Series) -> str:
+        vals = []
+        for value in series.fillna("").astype(str):
+            value = value.strip()
+            if not value or value.lower() == "nan":
+                continue
+            vals.append(value)
+        if not vals:
+            return ""
+        return ";".join(sorted(set(vals)))
+
+    compact = (
+        compact
+        .groupby(key_col, as_index=False)
+        .agg({col: _collapse for col in selected_cols})
+    )
+
+    out_df = module_df.copy()
+    out_df[gene_col] = out_df[gene_col].astype(str).str.strip()
+    out_df = out_df.merge(compact, left_on=gene_col, right_on=key_col, how="left")
+    if key_col != gene_col:
+        out_df = out_df.drop(columns=[key_col])
+    return out_df
+
 def save_master_results(
     master_adj: np.ndarray,
     edge_count: np.ndarray,
+    master_edge_weight: np.ndarray,
     gene_names: list,
     modules: dict,
     membership: dict,
+    parent_child_rows: list,
     min_count: int,
     n_studies: int,
     output_dir: str,
+    module_export_map_path: str = None,
+    module_export_key_col: str = "ensembl_gene_id",
+    module_export_cols: list = None,
+    make_minimap: bool = False,
+    minimap_base_dir: str = None,
+    minimap_max_nodes: int = 1200,
+    minimap_dpi: int = 180,
+    minimap_edge_alpha: float = 0.08,
 ) -> None:
     """
     Save master network, modules, and subgraph files.
@@ -336,28 +473,52 @@ def save_master_results(
         Binary master adjacency.
     edge_count : np.ndarray
         Study count per edge.
+    master_edge_weight : np.ndarray
+        Weighted master edge matrix.
     gene_names : list[str]
     modules : dict
         MCODE modules.
     membership : dict
         Gene → module mapping.
+    parent_child_rows : list[dict]
+        Parent-child mapping for refined modules.
     min_count : int
         Minimum study count used.
     n_studies : int
         Total number of studies.
     output_dir : str
+    module_export_map_path : str or None
+        Optional mapping table to append additional gene identifier columns
+        to module membership outputs.
+    module_export_key_col : str
+        Gene ID key column in the mapping table.
+    module_export_cols : list[str] or None
+        Columns to append from the mapping table. If None/empty, all columns
+        except ``module_export_key_col`` are appended.
+    make_minimap : bool
+        If True, save master network minimap PNG files.
     """
     print("\n[INFO] Saving master network...")
+    master_edge_weight = np.asarray(master_edge_weight, dtype=float)
     gene_arr = np.array(gene_names)
     rows, cols = np.where(np.triu(master_adj, k=1) == 1)
 
-    # Edge list with study count
-    pd.DataFrame({
+    # Edge list with study count + optional weight
+    edge_df = pd.DataFrame({
         "gene_A": gene_arr[rows],
         "gene_B": gene_arr[cols],
         "n_studies": edge_count[rows, cols],
-    }).sort_values("n_studies", ascending=False).to_csv(
+        "edge_weight": master_edge_weight[rows, cols],
+    })
+    edge_df.sort_values(["n_studies", "edge_weight"], ascending=False).to_csv(
         os.path.join(output_dir, "master_network_edgelist.tsv"),
+        sep="\t", index=False,
+    )
+
+    edge_df[["gene_A", "gene_B", "edge_weight"]].sort_values(
+        "edge_weight", ascending=False
+    ).to_csv(
+        os.path.join(output_dir, "master_network_weighted_edgelist.tsv"),
         sep="\t", index=False,
     )
 
@@ -366,15 +527,22 @@ def save_master_results(
             csr_matrix(master_adj))
     mmwrite(os.path.join(output_dir, "master_edge_study_counts.mtx"),
             csr_matrix(np.triu(edge_count)))
+    mmwrite(os.path.join(output_dir, "master_edge_weights.mtx"),
+            csr_matrix(np.triu(master_edge_weight)))
 
-    # GraphML with module annotation
-    adj_sym = np.maximum(master_adj, master_adj.T)
-    g = ig.Graph.Adjacency((adj_sym > 0).tolist(), mode="undirected")
+    # GraphML with module annotation + edge attributes
+    g = ig.Graph(
+        n=len(gene_names),
+        edges=list(zip(rows.tolist(), cols.tolist())),
+        directed=False,
+    )
     g.vs["name"] = gene_names
     g.vs["module"] = [
         f"M{membership[gn]}" if gn in membership else "unassigned"
         for gn in gene_names
     ]
+    g.es["n_studies"] = edge_count[rows, cols].astype(int).tolist()
+    g.es["edge_weight"] = master_edge_weight[rows, cols].astype(float).tolist()
     g.write_graphml(os.path.join(output_dir, "master_network.graphml"))
 
     # Module membership tables
@@ -383,16 +551,71 @@ def save_master_results(
         for mid, genes in modules.items()
         for gene in genes
     ]
-    pd.DataFrame(btm_rows).to_csv(
+    btm_df = pd.DataFrame(btm_rows)
+    btm_df.to_csv(
         os.path.join(output_dir, "master_BTM_modules.tsv"),
         sep="\t", index=False,
     )
-    pd.DataFrame([
+    node_df = pd.DataFrame([
         {"gene": g, "module": f"M{m}"} for g, m in membership.items()
-    ]).to_csv(
+    ])
+    node_df.to_csv(
         os.path.join(output_dir, "master_node_modules.tsv"),
         sep="\t", index=False,
     )
+
+    if module_export_map_path:
+        try:
+            btm_annot = _append_gene_metadata(
+                btm_df,
+                gene_col="Gene",
+                map_path=module_export_map_path,
+                key_col=module_export_key_col,
+                extra_cols=module_export_cols or [],
+            )
+            node_annot = _append_gene_metadata(
+                node_df,
+                gene_col="gene",
+                map_path=module_export_map_path,
+                key_col=module_export_key_col,
+                extra_cols=module_export_cols or [],
+            )
+            btm_annot.to_csv(
+                os.path.join(output_dir, "master_BTM_modules_annotated.tsv"),
+                sep="\t", index=False,
+            )
+            node_annot.to_csv(
+                os.path.join(output_dir, "master_node_modules_annotated.tsv"),
+                sep="\t", index=False,
+            )
+            mapped = int((btm_annot.drop(columns=["Gene", "Module"], errors="ignore")
+                          .notna()
+                          .any(axis=1)
+                          .sum()))
+            print(f"[SAVED] Annotated module tables: {mapped:,}/{len(btm_annot):,} rows with metadata")
+        except Exception as e:
+            print(f"[WARN] Could not append module metadata columns: {e}")
+
+    if parent_child_rows:
+        pd.DataFrame(parent_child_rows).to_csv(
+            os.path.join(output_dir, "module_parent_child_mapping.tsv"),
+            sep="\t", index=False,
+        )
+
+    if make_minimap and minimap_base_dir:
+        try:
+            save_master_minimaps(
+                master_adj=master_adj,
+                gene_names=gene_names,
+                membership=membership,
+                parent_child_rows=parent_child_rows,
+                base_dir=minimap_base_dir,
+                max_nodes=minimap_max_nodes,
+                dpi=minimap_dpi,
+                edge_alpha=minimap_edge_alpha,
+            )
+        except Exception as e:
+            print(f"[WARN] Could not save master minimaps: {e}")
 
     # Per-module subgraphs
     gene_name_list = list(gene_names)
@@ -412,7 +635,7 @@ def save_master_results(
         )
         saved += 1
 
-    print(f"[SAVED] Master: edgelist, adjacency, GraphML, "
+    print(f"[SAVED] Master: edgelist, weighted edges, adjacency, GraphML, "
           f"{len(modules)} modules, {saved} subgraphs")
 
 

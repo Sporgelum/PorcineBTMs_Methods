@@ -52,6 +52,7 @@ pathways, functional categories, or known gene signatures.
 
 import os
 import time
+import re
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -216,6 +217,54 @@ def load_multiple_gmt(gmt_paths: list) -> dict:
     for path in gmt_paths:
         merged.update(load_gmt(path))
     return merged
+
+
+def _sanitize_library_name(name: str) -> str:
+    """Convert a library/path label into a filesystem-safe folder name."""
+    cleaned = re.sub(r"[^A-Za-z0-9._-]+", "_", str(name).strip())
+    cleaned = cleaned.strip("._")
+    return cleaned.lower() or "unknown"
+
+
+def _library_name_from_gmt_path(gmt_path: str) -> str:
+    """Infer a concise library name from a GMT file path."""
+    base = Path(gmt_path).stem
+    if base in ENRICHR_LIBRARIES:
+        return ENRICHR_LIBRARIES[base]
+    return base
+
+
+def load_multiple_gmt_with_sources(gmt_paths: list) -> tuple:
+    """
+    Load and merge GMT files while tracking each gene set's source library.
+
+    Returns
+    -------
+    merged_gene_sets : dict[str, dict]
+    geneset_to_library : dict[str, str]
+        Maps GeneSet names to a human-readable GMT/library source label.
+    library_manifest : pd.DataFrame
+        One row per GMT/library with source path and set counts.
+    """
+    merged = {}
+    geneset_to_library = {}
+    lib_rows = []
+
+    for path in gmt_paths:
+        lib_name = _library_name_from_gmt_path(path)
+        gs = load_gmt(path)
+        lib_rows.append({
+            "library": lib_name,
+            "library_slug": _sanitize_library_name(lib_name),
+            "gmt_path": str(path),
+            "gene_set_count": len(gs),
+        })
+        for gs_name, gs_info in gs.items():
+            merged[gs_name] = gs_info
+            geneset_to_library[gs_name] = lib_name
+
+    library_manifest = pd.DataFrame(lib_rows)
+    return merged, geneset_to_library, library_manifest
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -437,3 +486,85 @@ def save_annotations(
     summary_path = os.path.join(output_dir, "module_annotation_summary.tsv")
     summary_df.to_csv(summary_path, sep="\t", index=False)
     print(f"[SAVED] {summary_path}")
+
+
+def save_annotations_by_source(
+    annotation_df: pd.DataFrame,
+    output_dir: str,
+    source_col: str = "GeneSetLibrary",
+    root_dirname: str = "enrichments_gmt",
+    library_manifest: pd.DataFrame = None,
+) -> None:
+    """
+    Save per-library enrichment tables in dedicated folders.
+
+    Expected input includes a source column (for example "GO", "KEGG").
+    For each source this writes:
+      - module_annotations.tsv
+      - module_annotation_summary.tsv
+    """
+    if annotation_df.empty:
+        print("[INFO] No annotations available for per-GMT split output.")
+        return
+    if source_col not in annotation_df.columns:
+        print(f"[WARN] Column '{source_col}' not found; skipping per-GMT outputs.")
+        return
+
+    root = Path(output_dir) / root_dirname
+    root.mkdir(parents=True, exist_ok=True)
+
+    by_source_counts = []
+    for src_name, group in annotation_df.groupby(source_col):
+        folder = root / _sanitize_library_name(src_name)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        group_sorted = group.sort_values("pAdjusted").copy()
+        out_main = folder / "module_annotations.tsv"
+        group_sorted.to_csv(out_main, sep="\t", index=False)
+
+        # Explicit full-table export with all available columns.
+        out_full = folder / "module_annotations_full.tsv"
+        group_sorted.to_csv(out_full, sep="\t", index=False)
+
+        # Column inventory for traceability.
+        col_file = folder / "columns_used.txt"
+        with open(col_file, "w", encoding="utf-8") as f:
+            for col in group_sorted.columns:
+                f.write(f"{col}\n")
+
+        summary_rows = []
+        for module_id, mod_group in group_sorted.groupby("Module"):
+            top5 = mod_group.nsmallest(5, "pAdjusted")
+            for _, row in top5.iterrows():
+                rec = row.to_dict()
+                rec["Module"] = module_id
+                summary_rows.append(rec)
+        out_summary = folder / "module_annotation_summary.tsv"
+        pd.DataFrame(summary_rows).to_csv(out_summary, sep="\t", index=False)
+        print(f"[SAVED] {out_main}")
+        print(f"[SAVED] {out_full}")
+        print(f"[SAVED] {col_file}")
+        print(f"[SAVED] {out_summary}")
+
+        by_source_counts.append({
+            "library": src_name,
+            "library_slug": _sanitize_library_name(src_name),
+            "significant_rows": int(len(group_sorted)),
+            "n_modules_with_hits": int(group_sorted["Module"].nunique()),
+        })
+
+    counts_df = pd.DataFrame(by_source_counts)
+    if library_manifest is not None and len(library_manifest) > 0:
+        merged_manifest = library_manifest.merge(
+            counts_df,
+            on=["library", "library_slug"],
+            how="left",
+        )
+        merged_manifest["significant_rows"] = merged_manifest["significant_rows"].fillna(0).astype(int)
+        merged_manifest["n_modules_with_hits"] = merged_manifest["n_modules_with_hits"].fillna(0).astype(int)
+    else:
+        merged_manifest = counts_df
+
+    manifest_path = root / "enrichment_methods_used.tsv"
+    merged_manifest.to_csv(manifest_path, sep="\t", index=False)
+    print(f"[SAVED] {manifest_path}")
