@@ -129,3 +129,203 @@ STUDY: PRJNA1107598  (32,763 genes, 136 samples)
   MINE progress: 9765/97657 batches (10%) | last_loss=-2.5261 | MI_mean=1.5575
   MINE progress: 19530/97657 batches (20%) | last_loss=-2.5666 | MI_mean=1.5994
   MINE progress: 29295/97657 batches (30%) | last_loss=-2.5378 | MI_mean=1.5812
+  MINE progress: 39060/97657 batches (40%) | last_loss=-2.5289 | MI_mean=1.5733
+  MINE progress: 48825/97657 batches (50%) | last_loss=-2.9922 | MI_mean=1.9246
+  MINE progress: 58590/97657 batches (60%) | last_loss=-2.9323 | MI_mean=1.8928
+  MINE progress: 68355/97657 batches (70%) | last_loss=-2.9635 | MI_mean=1.8968
+  MINE progress: 78120/97657 batches (80%) | last_loss=-3.1870 | MI_mean=2.0511
+  MINE progress: 87885/97657 batches (90%) | last_loss=-3.1572 | MI_mean=2.0433
+  MINE progress: 97650/97657 batches (100%) | last_loss=-3.1674 | MI_mean=2.0473
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output/mine_diagnostics/mine_batch_summary_PRJNA1107598.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output/mine_diagnostics/mine_loss_curve_PRJNA1107598.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output/mine_diagnostics/mine_raw_diagnostics_PRJNA1107598.json
+--------------------------------------------------------------------------------
+[2026-03-14 03:44:34] Completed: PRJNA1107598: MINE MI estimation (50,000,000 pairs)
+[TIMING] Duration: 18.01 hours (0.8m)
+
+[2026-03-14 03:44:34] Starting: PRJNA1107598: permutation null (global, 10000 perms)
+--------------------------------------------------------------------------------
+  Building global MINE null: 10000 permutations in 20 batches...
+  Null progress: 4/20 batches
+  Null progress: 8/20 batches
+  Null progress: 12/20 batches
+  Null progress: 16/20 batches
+  Null progress: 20/20 batches
+  Null MI: mean=0.0135, std=0.0104, 99.9th=0.0706
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output/null_distribution_PRJNA1107598.txt
+--------------------------------------------------------------------------------
+[2026-03-14 03:44:47] Completed: PRJNA1107598: permutation null (global, 10000 perms)
+[TIMING] Duration: 13.63 seconds
+
+[2026-03-14 03:44:47] Starting: PRJNA1107598: edge filtering
+--------------------------------------------------------------------------------
+[INFO] Significant edges (p < 0.001): 49,999,999
+--------------------------------------------------------------------------------
+[2026-03-14 03:44:50] Completed: PRJNA1107598: edge filtering
+[TIMING] Duration: 3.28 seconds
+
+[2026-03-14 03:48:25] Starting: PRJNA1107598: saving
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for: PRJNA1107598
+[SAVED] Study PRJNA1107598: edges, adjacency, GraphML
+--------------------------------------------------------------------------------
+[2026-03-14 03:51:40] Completed: PRJNA1107598: saving
+[TIMING] Duration: 3.25 minutes (195.1s)
+
+================================================================================
+STUDY: PRJNA1163897  (32,763 genes, 6 samples)
+================================================================================
+
+[2026-03-14 03:51:41] Starting: PRJNA1163897: Z-score + candidate selection
+--------------------------------------------------------------------------------
+  Pre-screening 32,763 genes (spearman, |r| > 0.3, 536,690,703 total pairs)...
+    chunk 0/32,763 (0%) — 21,760,018 pairs so far
+    chunk 10,000/32,763 (31%) — 204,205,061 pairs so far
+    chunk 20,000/32,763 (61%) — 317,833,943 pairs so far
+    chunk 30,000/32,763 (92%) — 363,843,209 pairs so far
+  Pre-screen: 364,901,838 pairs above |r| > 0.3 in 4.8s
+  Capped to 50,000,000 pairs (raised threshold to |r| > 1.000)
+--------------------------------------------------------------------------------
+[2026-03-14 03:51:54] Completed: PRJNA1163897: Z-score + candidate selection
+[TIMING] Duration: 13.11 seconds
+
+[2026-03-14 03:51:54] Starting: PRJNA1163897: MINE MI estimation (50,000,000 pairs)
+--------------------------------------------------------------------------------
+  MINE progress: 9765/97657 batches (10%) | last_loss=-2.4586 | MI_mean=1.2681
+  MINE progress: 19530/97657 batches (20%) | last_loss=-2.3791 | MI_mean=1.2303
+  MINE progress: 29295/97657 batches (30%) | last_loss=-2.4091 | MI_mean=1.2558
+  MINE progress: 39060/97657 batches (40%) | last_loss=-2.1941 | MI_mean=1.1342
+  MINE progress: 48825/97657 batches (50%) | last_loss=-2.3823 | MI_mean=1.2891
+  MINE progress: 58590/97657 batches (60%) | last_loss=-2.2517 | MI_mean=1.2018
+  MINE progress: 68355/97657 batches (70%) | last_loss=-2.3468 | MI_mean=1.2871
+  MINE progress: 78120/97657 batches (80%) | last_loss=-2.3484 | MI_mean=1.2382
+  MINE progress: 87885/97657 batches (90%) | last_loss=-2.4493 | MI_mean=1.3032
+  MINE progress: 97650/97657 batches (100%) | last_loss=-2.3262 | MI_mean=1.3109
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output/mine_diagnostics/mine_batch_summary_PRJNA1163897.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output/mine_diagnostics/mine_loss_curve_PRJNA1163897.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output/mine_diagnostics/mine_raw_diagnostics_PRJNA1163897.json
+--------------------------------------------------------------------------------
+[2026-03-14 14:52:03] Completed: PRJNA1163897: MINE MI estimation (50,000,000 pairs)
+[TIMING] Duration: 11.00 hours (0.2m)
+
+[2026-03-14 14:52:03] Starting: PRJNA1163897: permutation null (global, 10000 perms)
+--------------------------------------------------------------------------------
+  Building global MINE null: 10000 permutations in 20 batches...
+  Null progress: 4/20 batches
+  Null progress: 8/20 batches
+  Null progress: 12/20 batches
+  Null progress: 16/20 batches
+  Null progress: 20/20 batches
+  Null MI: mean=0.2571, std=0.2296, 99.9th=1.6448
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output/null_distribution_PRJNA1163897.txt
+--------------------------------------------------------------------------------
+[2026-03-14 14:52:15] Completed: PRJNA1163897: permutation null (global, 10000 perms)
+[TIMING] Duration: 11.55 seconds
+
+[2026-03-14 14:52:15] Starting: PRJNA1163897: edge filtering
+--------------------------------------------------------------------------------
+[INFO] Significant edges (p < 0.001): 11,336,715
+--------------------------------------------------------------------------------
+[2026-03-14 14:52:17] Completed: PRJNA1163897: edge filtering
+[TIMING] Duration: 2.23 seconds
+
+[2026-03-14 14:54:20] Starting: PRJNA1163897: saving
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for: PRJNA1163897
+[SAVED] Study PRJNA1163897: edges, adjacency, GraphML
+--------------------------------------------------------------------------------
+[2026-03-14 14:55:37] Completed: PRJNA1163897: saving
+[TIMING] Duration: 1.29 minutes (77.2s)
+
+================================================================================
+STUDY: PRJNA1200777  (32,763 genes, 18 samples)
+================================================================================
+
+[2026-03-14 14:55:38] Starting: PRJNA1200777: Z-score + candidate selection
+--------------------------------------------------------------------------------
+  Pre-screening 32,763 genes (spearman, |r| > 0.3, 536,690,703 total pairs)...
+    chunk 0/32,763 (0%) — 14,971,245 pairs so far
+    chunk 10,000/32,763 (31%) — 132,934,839 pairs so far
+    chunk 20,000/32,763 (61%) — 205,916,242 pairs so far
+    chunk 30,000/32,763 (92%) — 234,825,085 pairs so far
+  Pre-screen: 235,423,983 pairs above |r| > 0.3 in 4.1s
+  Capped to 50,000,000 pairs (raised threshold to |r| > 0.979)
+--------------------------------------------------------------------------------
+[2026-03-14 14:55:48] Completed: PRJNA1200777: Z-score + candidate selection
+[TIMING] Duration: 10.29 seconds
+
+[2026-03-14 14:55:48] Starting: PRJNA1200777: MINE MI estimation (50,000,000 pairs)
+--------------------------------------------------------------------------------
+  MINE progress: 9765/97657 batches (10%) | last_loss=-2.4899 | MI_mean=1.5934
+  MINE progress: 19530/97657 batches (20%) | last_loss=-2.4572 | MI_mean=1.6032
+  MINE progress: 29295/97657 batches (30%) | last_loss=-2.4870 | MI_mean=1.5956
+  MINE progress: 39060/97657 batches (40%) | last_loss=-2.4670 | MI_mean=1.5997
+  MINE progress: 48825/97657 batches (50%) | last_loss=-2.5068 | MI_mean=1.6070
+  MINE progress: 58590/97657 batches (60%) | last_loss=-2.4622 | MI_mean=1.6027
+  MINE progress: 68355/97657 batches (70%) | last_loss=-2.4557 | MI_mean=1.5980
+  MINE progress: 78120/97657 batches (80%) | last_loss=-2.4980 | MI_mean=1.6082
+  MINE progress: 87885/97657 batches (90%) | last_loss=-2.4913 | MI_mean=1.6029
+  MINE progress: 97650/97657 batches (100%) | last_loss=-2.4683 | MI_mean=1.6038
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output/mine_diagnostics/mine_batch_summary_PRJNA1200777.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output/mine_diagnostics/mine_loss_curve_PRJNA1200777.tsv
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output/mine_diagnostics/mine_raw_diagnostics_PRJNA1200777.json
+--------------------------------------------------------------------------------
+[2026-03-15 02:17:00] Completed: PRJNA1200777: MINE MI estimation (50,000,000 pairs)
+[TIMING] Duration: 11.35 hours (21.2m)
+
+[2026-03-15 02:17:00] Starting: PRJNA1200777: permutation null (global, 10000 perms)
+--------------------------------------------------------------------------------
+  Building global MINE null: 10000 permutations in 20 batches...
+  Null progress: 4/20 batches
+  Null progress: 8/20 batches
+  Null progress: 12/20 batches
+  Null progress: 16/20 batches
+  Null progress: 20/20 batches
+  Null MI: mean=0.0863, std=0.0680, 99.9th=0.4442
+[SAVED] /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output/null_distribution_PRJNA1200777.txt
+--------------------------------------------------------------------------------
+[2026-03-15 02:17:08] Completed: PRJNA1200777: permutation null (global, 10000 perms)
+[TIMING] Duration: 8.76 seconds
+
+[2026-03-15 02:17:08] Starting: PRJNA1200777: edge filtering
+--------------------------------------------------------------------------------
+[INFO] Significant edges (p < 0.001): 49,863,646
+--------------------------------------------------------------------------------
+[2026-03-15 02:17:12] Completed: PRJNA1200777: edge filtering
+[TIMING] Duration: 3.18 seconds
+
+[2026-03-15 02:20:41] Starting: PRJNA1200777: saving
+--------------------------------------------------------------------------------
+
+[INFO] Saving results for: PRJNA1200777
+[SAVED] Study PRJNA1200777: edges, adjacency, GraphML
+--------------------------------------------------------------------------------
+[2026-03-15 02:23:48] Completed: PRJNA1200777: saving
+[TIMING] Duration: 3.13 minutes (187.5s)
+
+================================================================================
+STUDY: PRJNA311061  (32,763 genes, 73 samples)
+================================================================================
+
+[2026-03-15 02:23:48] Starting: PRJNA311061: Z-score + candidate selection
+--------------------------------------------------------------------------------
+  Pre-screening 32,763 genes (spearman, |r| > 0.3, 536,690,703 total pairs)...
+    chunk 0/32,763 (0%) — 15,019,331 pairs so far
+    chunk 10,000/32,763 (31%) — 131,157,687 pairs so far
+    chunk 20,000/32,763 (61%) — 203,725,629 pairs so far
+    chunk 30,000/32,763 (92%) — 232,713,912 pairs so far
+  Pre-screen: 233,317,072 pairs above |r| > 0.3 in 3.8s
+  Capped to 50,000,000 pairs (raised threshold to |r| > 0.958)
+--------------------------------------------------------------------------------
+[2026-03-15 02:23:57] Completed: PRJNA311061: Z-score + candidate selection
+[TIMING] Duration: 9.07 seconds
+
+[2026-03-15 02:23:57] Starting: PRJNA311061: MINE MI estimation (50,000,000 pairs)
+--------------------------------------------------------------------------------
+  MINE progress: 9765/97657 batches (10%) | last_loss=-2.3466 | MI_mean=1.4790
+  MINE progress: 19530/97657 batches (20%) | last_loss=-2.3024 | MI_mean=1.4539
+  MINE progress: 29295/97657 batches (30%) | last_loss=-2.6444 | MI_mean=1.7212
+  MINE progress: 39060/97657 batches (40%) | last_loss=-2.5736 | MI_mean=1.6460
+  MINE progress: 48825/97657 batches (50%) | last_loss=-2.6448 | MI_mean=1.7452
