@@ -64,10 +64,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from contextlib import nullcontext
-from typing import Optional
 
 
-def _make_torch_generator(device: torch.device, seed: Optional[int]) -> Optional[torch.Generator]:
+def _make_torch_generator(device: torch.device, seed: int | None) -> torch.Generator | None:
     """Create a per-device RNG generator for reproducible torch.rand calls."""
     if seed is None:
         return None
@@ -163,7 +162,7 @@ def estimate_mi_batch(
     grad_clip: float = 1.0,
     n_eval_shuffles: int = 5,
     mixed_precision: bool = False,
-    rand_generator: Optional[torch.Generator] = None,
+    rand_generator: torch.Generator | None = None,
 ) -> np.ndarray:
     """
     Train B MINE networks and estimate MI for B gene pairs simultaneously.
@@ -294,7 +293,7 @@ def estimate_mi_for_pairs(
     mine_cfg,
     device: torch.device,
     verbose: bool = True,
-    seed: Optional[int] = None,
+    seed: int | None = None,
 ) -> np.ndarray:
     """
     Estimate MI for all candidate gene pairs using batched MINE.

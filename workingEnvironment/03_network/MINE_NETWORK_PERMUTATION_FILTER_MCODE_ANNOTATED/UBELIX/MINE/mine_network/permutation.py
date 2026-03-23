@@ -43,12 +43,11 @@ increase n_permutations accordingly (e.g. 10 000 for p < 1e-4).
 
 import numpy as np
 import torch
-from typing import Optional
 
 from .mine_estimator import estimate_mi_batch
 
 
-def _make_torch_generator(device: torch.device, seed: Optional[int]) -> Optional[torch.Generator]:
+def _make_torch_generator(device: torch.device, seed: int | None) -> torch.Generator | None:
     """Create a per-device torch RNG for deterministic shuffles."""
     if seed is None:
         return None

@@ -1,23 +1,5 @@
 # MINE Network — Permutation Filter — MCODE — Annotated
 
-## What This Project Is (And What You Are Running Now)
-
-This repository runs a full multi-study network pipeline:
-
-1. Load expression counts + metadata
-2. Process each BioProject study independently
-3. Estimate gene-pair dependence with MINE
-4. Apply permutation-based significance filtering
-5. Build a replicated master network across studies
-6. Cluster with Leiden and refine with MCODE
-7. Annotate modules biologically
-
-Your current production workflow uses the wrapper script with study-level
-parallelism on two GPUs, a max candidate cap of 300000000 per study,
-and resume/cache enabled so reruns continue completed work.
-
-See quick start and flow diagram in [quick_start.md](quick_start.md).
-
 **MINE-based gene co-expression network inference with permutation
 significance testing, multi-study consensus, MCODE module detection,
 and biological annotation.**
@@ -26,16 +8,15 @@ and biological annotation.**
 
 ## Table of Contents
 
-1. [Quick Start](quick_start.md)
-2. [Similarities & Differences vs. Prior Implementations](#similarities--differences)
-3. [Pipeline Overview](#pipeline-overview)
-4. [Package Structure](#package-structure)
-5. [Installation](#installation)
-6. [Usage](#usage)
-7. [Configuration](#configuration)
-8. [Output Files](#output-files)
-9. [Improvements Over Initial Release](#improvements-over-initial-release)
-10. [References](#references)
+1. [Similarities & Differences vs. Prior Implementations](#similarities--differences)
+2. [Pipeline Overview](#pipeline-overview)
+3. [Package Structure](#package-structure)
+4. [Installation](#installation)
+5. [Usage](#usage)
+6. [Configuration](#configuration)
+7. [Output Files](#output-files)
+8. [Improvements Over Initial Release](#improvements-over-initial-release)
+9. [References](#references)
 
 ---
 
@@ -492,103 +473,124 @@ If only one usable GPU is visible, the pipeline will warn and run sequentially.
 
 cd /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED && source /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/bin/activate && module load PyTorch && export VENV_SITE=/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/lib/python3.9/site-packages && export TORCH_SITE=${EBROOTPYTORCH}/lib/python3.9/site-packages && export PYTHONPATH=${VENV_SITE}:${TORCH_SITE} && export NUMEXPR_DISABLED=1 && python run_pipeline.py --output ./output/wholde_dataset_in_gpu_2 --device cuda --study-gpu-workers 2 --perms 30000 --mode global --pval 0.05 --epochs 150 --batch-pairs 512 --prescreen-threshold 0.3 --max-pairs 500000000 --prescreen-method spearman --mad-top-genes 32763 --qc-preplot --qc-postplot --min-studies 2 --module-method leiden --module-leiden-resolution 1.2 --module-min-size 10 --master-edge-weight mean_neglog10p --normalize-weights --submodule-method mcode --submodule-size-threshold 200 --submodule-min-size 10 --submodule-mcode-score-threshold 0.2 --submodule-mcode-min-density 0.3 --ortholog-map ../gene_id_mapping.tsv --ortholog-source-col ensembl_gene_id --ortholog-target-col external_gene_name --download-gmt --module-export-map ../gene_id_mapping.tsv --module-export-key-col ensembl_gene_id --module-export-cols external_gene_name entrezgene_id --save-per-gmt-enrichments --include-network-visualization
 
-Results in output of whole_dataset_in_gpu_2 --> made two networks ready for the studies: adj_mine_PRJNA1107598.mtx and adj_mine_PRJNA1163897.mtx
 
-# runs on two studies the gene pairs.
-# Use now after improvement to check the time in UBELIX is not giving slots easy, but the pipeline with the bash wrap for running the whole dataset in the gpus of IBU.
-Wraper is here: /data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/run_whole_dataset_in_gpu_2.sh
+# UBELIX 
+(radian_env_2025) [mb23h197@gnode28 2026_02_16_BTM_PIGS_+]$ pip install torch --index-url https://download.pytorch.org/whl/cu124
+Looking in indexes: https://download.pytorch.org/whl/cu124
+Collecting torch
+  Using cached https://download.pytorch.org/whl/cu124/torch-2.6.0%2Bcu124-cp39-cp39-linux_x86_64.whl (768.4 MB)
+Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.4.127 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (12.4.127)
+Requirement already satisfied: nvidia-cufft-cu12==11.2.1.3 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (11.2.1.3)
+Requirement already satisfied: nvidia-cusolver-cu12==11.6.1.9 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (11.6.1.9)
+Requirement already satisfied: networkx in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (3.2.1)
+Requirement already satisfied: nvidia-cuda-runtime-cu12==12.4.127 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (12.4.127)
+Requirement already satisfied: nvidia-cublas-cu12==12.4.5.8 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (12.4.5.8)
+Requirement already satisfied: nvidia-nvtx-cu12==12.4.127 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (12.4.127)
+Requirement already satisfied: nvidia-cusparse-cu12==12.3.1.170 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (12.3.1.170)
+Requirement already satisfied: filelock in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (3.19.1)
+Requirement already satisfied: nvidia-nvjitlink-cu12==12.4.127 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (12.4.127)
+Requirement already satisfied: jinja2 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (3.1.6)
+Requirement already satisfied: nvidia-cusparselt-cu12==0.6.2 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (0.6.2)
+Requirement already satisfied: typing-extensions>=4.10.0 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (4.15.0)
+Requirement already satisfied: nvidia-cudnn-cu12==9.1.0.70 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (9.1.0.70)
+Requirement already satisfied: fsspec in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (2025.10.0)
+Requirement already satisfied: nvidia-curand-cu12==10.3.5.147 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (10.3.5.147)
+Requirement already satisfied: nvidia-cuda-cupti-cu12==12.4.127 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (12.4.127)
+Requirement already satisfied: nvidia-nccl-cu12==2.21.5 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (2.21.5)
+Requirement already satisfied: sympy==1.13.1 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (1.13.1)
+Requirement already satisfied: triton==3.2.0 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from torch) (3.2.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from sympy==1.13.1->torch) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in /storage/homefs/mb23h197/Environments/radian_env_2025/lib/python3.9/site-packages (from jinja2->torch) (3.0.2)
+Installing collected packages: torch
+Successfully installed torch-2.6.0+cu124
+(radian_env_2025) [mb23h197@gnode28 2026_02_16_BTM_PIGS_+]$ 
+source /storage/homefs/mb23h197/Environments/radian_env_2025/bin/activate && pip install numpy pandas scipy joblib python-igraph matplotlib scikit-learn networkx leidenalg 2>&1 | tail -40
 
-## Continue or start a production run on both GPUs
-MAX_PAIRS=300000000 STUDY_GPU_WORKERS=2 STUDY_GPU_DEVICES="cuda:0 cuda:1" BATCH_PAIRS=auto PVAL=0.001 PERMS=30000 NO_RESUME_STUDIES=0 NO_REUSE_MINE_SCORES=0 ./run_whole_dataset_in_gpu_2.sh
+## Preserved Full-Feature Run + Quick Test Knob
 
-## If you want to continue an existing interrupted run, force same output folder
+Use this when you want to keep the same feature set as your historical run:
+- Leiden main module search
+- MCODE submodule search
+- network visualizations
+- GMT download + annotation
+- module export columns
+- multi-study filtering
 
-OUTPUT_DIR=/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+/workingEnvironment/03_network/MINE_NETWORK_PERMUTATION_FILTER_MCODE_ANNOTATED/output/wholde_dataset_in_gpu_2_300000000 MAX_PAIRS=300000000 STUDY_GPU_WORKERS=2 STUDY_GPU_DEVICES="cuda:0 cuda:1" NO_RESUME_STUDIES=0 NO_REUSE_MINE_SCORES=0 ./run_whole_dataset_in_gpu_2.sh
+Only change `--max-pairs` for speed.
 
+### Full-feature quick test (single command)
 
+```bash
+cd /storage/homefs/mb23h197/Environments/2026_02_16_BTM_PIGS_+/workingEnvironment/03_network/MINE && \
+source /storage/homefs/mb23h197/Environments/radian_env_2025/bin/activate && \
+python run_pipeline.py \
+   --counts /storage/homefs/mb23h197/Environments/2026_02_16_BTM_PIGS_+/workingEnvironment/02_counts/logCPM_matrix_filtered_samples.csv \
+   --meta /storage/homefs/mb23h197/Environments/2026_02_16_BTM_PIGS_+/workingEnvironment/02_counts/metadata_with_sample_annotations.csv \
+   --output ./output/quick_full_features \
+   --device cuda \
+   --study-gpu-workers 2 \
+   --study-gpu-devices cuda:0 cuda:1 \
+   --perms 30000 \
+   --mode global \
+   --pval 0.05 \
+   --epochs 150 \
+   --batch-pairs auto \
+   --mixed-precision \
+   --prescreen-threshold 0.3 \
+   --max-pairs 1000000 \
+   --prescreen-method spearman \
+   --mad-top-genes 32763 \
+   --qc-preplot \
+   --qc-postplot \
+   --min-studies 2 \
+   --module-method leiden \
+   --module-leiden-resolution 1.2 \
+   --module-min-size 10 \
+   --master-edge-weight mean_neglog10p \
+   --normalize-weights \
+   --submodule-method mcode \
+   --submodule-size-threshold 200 \
+   --submodule-min-size 10 \
+   --submodule-mcode-score-threshold 0.2 \
+   --submodule-mcode-min-density 0.3 \
+   --ortholog-map ../gene_id_mapping.tsv \
+   --ortholog-source-col ensembl_gene_id \
+   --ortholog-target-col external_gene_name \
+   --download-gmt \
+   --module-export-map ../gene_id_mapping.tsv \
+   --module-export-key-col ensembl_gene_id \
+   --module-export-cols external_gene_name entrezgene_id \
+   --save-per-gmt-enrichments \
+   --include-network-visualization
+```
 
+### Recommended quick/full presets (same features, only max-pairs changes)
 
+```bash
+# Fast smoke-like pass
+MAX_PAIRS=1000000 ./run_quick_full_feature_test.sh
 
+# Medium test
+MAX_PAIRS=5000000 ./run_quick_full_feature_test.sh
 
+# Near-full test
+MAX_PAIRS=50000000 ./run_quick_full_feature_test.sh
 
+# Full historical scale (very heavy)
+MAX_PAIRS=500000000 ./run_quick_full_feature_test.sh
+```
 
+### Dual-H200 batch job with preserved arguments
 
+```bash
+# Quick on cluster
+MAX_PAIRS=5000000 sbatch submit_network_job_h200_dual.sh
 
+# Full heavy run on cluster
+MAX_PAIRS=500000000 sbatch submit_network_job_h200_dual.sh
+```
+ NOT POSSIIBE TO USE FOR FREE H200
 
-
-
-
-
-
-
-
-
-
-# TODO Apply pruning plus TF-prior filtering before claiming regulatory biology.
-
-graph TD
-    A["32,763 genes × 32,763<br/>536M possible pairs"] --> B["Spearman |r| &gt; 0.3<br/>Prescreen"]
-    B -->|"~245M pairs<br/>~46% of all pairs"| C["MINE MI Estimation<br/>480k-712k batches"]
-    C -->|"MI scores per pair"| D["Permutation Null<br/>30k permutations<br/>Global null"]
-    D -->|"p-values computed"| E["Significance Filter<br/>p &lt; 0.05"]
-    E -->|"~245M edges<br/>~100% of screened pairs"| F["❌ PERMISSIVE<br/>Nearly all pre-screened<br/>pairs pass significance"]
-    
-    style E fill:#ff9999
-    style F fill:#ff6666
-    
-    B1["⚡ PRUNE Here<br/>threshold: 0.3→0.5<br/>Reduces to 45-50M pairs"] -.-> B
-    E1["⚡ PRUNE Here<br/>threshold: 0.05→0.001<br/>Instant, no recompute"] -.-> E
-    G["Master Network<br/>min_studies ≥ 3"] --> H["245M undirected edges"]
-    F -->|"Study-level results"| G
-    
-    style B1 fill:#99ff99
-    style E1 fill:#99ff99
-
-
-graph TD
-    A["Undirected Edge<br/>A — B<br/>MI symmetric"] -->|"Current State"| B["Network is co-expression<br/>Not regulatory"]
-    
-    A -->|"Option 1:<br/>Add TF Motifs"| C["TF Database<br/>+ Promoter Motifs"]
-    C -->|"A→B if<br/>A=TF &amp;<br/>motif at B"| C1["245M → 5-50M<br/>Directed edges<br/>Regulatory"]
-    
-    A -->|"Option 2:<br/>Causal Heuristic"| D["MI Asymmetry<br/>or Time-series"]
-    D -->|"Keep asymmetric<br/>pairs only"| D1["245M → 80M<br/>Directed edges<br/>Partial info"]
-    
-    A -->|"Option 3:<br/>PPIs + Partial Corr"| E["PPI Database<br/>+ Conditional"]
-    E -->|"Keep direct<br/>interactions"| E1["245M → 2-5M<br/>Physical<br/>High confidence"]
-    
-    style B fill:#ffcccc
-    style C1 fill:#ccffcc
-    style D1 fill:#ffffcc
-    style E1 fill:#ccffff
-
-graph TD
-    START["Start: 17 Studies<br/>245M edges each<br/>Too permissive"] 
-    
-    START -->|"Phase 1<br/>Quick wins"| S1["Change p-value<br/>0.05 → 0.001<br/>(No recompute)"]
-    S1 -->|"Instant filter<br/>per each study"| S1R["Study-level:<br/>245M → 10-30M edges"]
-    
-    S1R -->|"If good?"| DECIDE1{"Selective<br/>enough?"}
-    DECIDE1 -->|"Yes"| COMPLETE["✓ Done<br/>~30M master edges<br/>Small modules"]
-    DECIDE1 -->|"No, need more pruning"| S2["Phase 2: Rerun pipeline<br/>Change prescreen<br/>0.3 → 0.5"]
-    
-    S2 -->|"Recompute MINE<br/>on 45-50M pairs<br/>~2x faster"| S2R["Study-level:<br/>50M pairs → 10-30M edges"]
-    S2R --> DECIDE2{"Better?"}
-    DECIDE2 -->|"Yes"| COMPLETE
-    DECIDE2 -->|"Need regulatory interpretation"| S3["Phase 3: Directionality<br/>Acquire TF database<br/>Add TF motifs"]
-    
-    S3 --> S3R["Master-level:<br/>30M → 5-50M<br/>Directed edges<br/>A→B if A=TF"]
-    S3R --> S4["Phase 4: PPI Validation<br/>Filter by PPIs<br/>Code optional module quality"]
-    S4 --> FINAL["✓ Final Network<br/>Directed, TF-backed<br/>PPI-validated<br/>2-10M edges"]
-    
-    COMPLETE --> END["Decision Point:<br/>Publish or Iterate?"]
-    FINAL --> END
-    
-    style S1 fill:#e1f5ff
-    style S2 fill:#fff9c4
-    style S3 fill:#f3e5f5
-    style S4 fill:#e8f5e9
-    style START fill:#ffebee
-    style END fill:#f3e5f5
-    style COMPLETE fill:#e8f5e9
-    style FINAL fill:#c8e6c9
+# RUN IN UBELIX
+cd /storage/homefs/mb23h197/Environments/2026_02_16_BTM_PIGS_+/workingEnvironment/03_network/MINE
+MAX_PAIRS=300000000 STUDY_GPU_WORKERS=1 STUDY_GPU_DEVICES="cuda:0" BATCH_PAIRS=auto USE_MIXED_PRECISION=1 ./run_quick_full_feature_test.sh
