@@ -279,6 +279,9 @@ def main():
     parser.add_argument("--network-viz-edge-alpha", type=float, default=0.08,
                         help="Edge transparency in minimap PNGs (default: 0.08).")
 
+    parser.add_argument("--verbose", action="store_true",
+                        help="Enable verbose output for debugging and progress tracking.")
+
     args = parser.parse_args()
 
     # ── Build config ──
@@ -303,6 +306,7 @@ def main():
         Path(__file__).resolve().parent / "output"
     )
     cfg.device = args.device
+    cfg.verbose = args.verbose
     cfg.study_gpu_workers = max(1, int(args.study_gpu_workers))
     cfg.study_gpu_devices = [d.strip() for d in args.study_gpu_devices if d.strip()]
     cfg.resume_completed_studies = not args.no_resume_studies

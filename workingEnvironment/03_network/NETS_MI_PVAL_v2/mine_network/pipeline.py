@@ -42,7 +42,6 @@ import time
 import json
 import numpy as np
 import pandas as pd
-import torch
 from typing import Optional
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -87,77 +86,6 @@ from .io_utils import (
     ensure_mine_diagnostics_plot,
 )
 from .qc_plots import save_sample_qc_figure
-
-
-def _cuda_device_is_usable(device_str: str) -> bool:
-    """Return True if a CUDA device can run a tiny allocation + sync."""
-    try:
-        d = torch.device(device_str)
-        x = torch.zeros(1, device=d)
-        # Force a real kernel launch to surface lazy CUDA errors early.
-        x = x + 1
-        if d.index is not None:
-            torch.cuda.synchronize(d.index)
-        else:
-            torch.cuda.synchronize()
-        return True
-    except Exception:
-        return False
-
-
-def _first_usable_cuda_device() -> Optional[torch.device]:
-    """Find the first visible CUDA device that is usable by this process."""
-    if not torch.cuda.is_available():
-        return None
-
-    n = torch.cuda.device_count()
-    for i in range(n):
-        cand = f"cuda:{i}"
-        if _cuda_device_is_usable(cand):
-            return torch.device(cand)
-    return None
-
-
-def _usable_cuda_devices() -> list[torch.device]:
-    """Return all visible CUDA devices that pass a tiny allocation test."""
-    if not torch.cuda.is_available():
-        return []
-    out = []
-    for i in range(torch.cuda.device_count()):
-        cand = f"cuda:{i}"
-        if _cuda_device_is_usable(cand):
-            out.append(torch.device(cand))
-    return out
-
-
-def _resolve_device(cfg: PipelineConfig) -> torch.device:
-    """Resolve requested device with CUDA probing and safe fallback behavior."""
-    requested = (cfg.device or "auto").strip().lower()
-
-    if requested == "auto":
-        usable = _first_usable_cuda_device()
-        if usable is not None:
-            return usable
-        return torch.device("cpu")
-
-    if requested == "cpu":
-        return torch.device("cpu")
-
-    if requested == "cuda":
-        usable = _first_usable_cuda_device()
-        if usable is not None:
-            return usable
-        print("[WARN] CUDA requested but no usable visible GPU found; falling back to CPU.")
-        return torch.device("cpu")
-
-    if requested.startswith("cuda:"):
-        if _cuda_device_is_usable(requested):
-            return torch.device(requested)
-        print(f"[WARN] Requested device '{requested}' is not usable; falling back to CPU.")
-        return torch.device("cpu")
-
-    # Allow future torch backends while preserving old behavior.
-    return torch.device(requested)
 
 
 def _reindex_pairs_to_subset(
@@ -320,28 +248,7 @@ def _load_completed_study_payload(
     }
 
 
-def _resolve_study_devices(cfg: PipelineConfig, primary_device: torch.device) -> list[torch.device]:
-    """Resolve worker devices for study-level parallel execution."""
-    n_workers = max(1, int(getattr(cfg, "study_gpu_workers", 1)))
-    if n_workers <= 1:
-        return [primary_device]
-
-    requested = [d.lower() for d in getattr(cfg, "study_gpu_devices", [])]
-    if requested:
-        devices = []
-        for d in requested:
-            if d.startswith("cuda") and _cuda_device_is_usable(d):
-                devices.append(torch.device(d))
-        if devices:
-            return devices[:n_workers]
-
-    auto_devices = _usable_cuda_devices()
-    if not auto_devices:
-        return [primary_device]
-    return auto_devices[:n_workers]
-
-
-def _process_single_study(study_idx: int, study: dict, cfg: PipelineConfig, device: torch.device) -> dict:
+def _process_single_study(study_idx: int, study: dict, cfg: PipelineConfig, device: str) -> dict:
     """Run one full study pipeline and return data required for master merge."""
     study_name = study["name"]
     expr_data = study["expr"]
@@ -354,10 +261,7 @@ def _process_single_study(study_idx: int, study: dict, cfg: PipelineConfig, devi
         f"{study_name}: samples": str(n_samples),
     }
     local_seed = int(cfg.permutation.seed) + int(study_idx)
-    torch.manual_seed(local_seed)
     np.random.seed(local_seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(local_seed)
     local_timings = {}
     paths = _study_artifact_paths(cfg.output_dir, study_name)
 
@@ -600,14 +504,9 @@ def run_pipeline(cfg: PipelineConfig) -> dict:
 
     timings = {}
     info = {}
-    device = _resolve_device(cfg)
+    device = "cpu"  # Classical MI runs on CPU only
 
-    # Auto-size batch_pairs if configured as "auto"
-    from .gpu_utils import compute_optimal_batch_size
-    if isinstance(cfg.mine.batch_pairs, str) and cfg.mine.batch_pairs.lower() == "auto":
-        original_batch = cfg.mine.batch_pairs
-        cfg.mine.batch_pairs = compute_optimal_batch_size(str(device), verbose=True)
-        print(f"[INFO] Auto-sized batch_pairs: '{original_batch}' → {cfg.mine.batch_pairs} pairs")
+    # For classical MI, batch_pairs is handled in config defaults (no auto-sizing needed)
 
     print("=" * 80)
     print("MINE-BASED GENE NETWORK INFERENCE")
@@ -719,30 +618,11 @@ def run_pipeline(cfg: PipelineConfig) -> dict:
 
     # ── Step 1: Process each study ──
     study_payloads = []
-    worker_devices = _resolve_study_devices(cfg, device)
-    if cfg.study_gpu_workers > 1 and len(worker_devices) > 1:
-        print(f"[INFO] Study-level GPU parallel mode enabled: "
-              f"{len(worker_devices)} workers on "
-              f"{', '.join(str(d) for d in worker_devices)}")
-        with ThreadPoolExecutor(max_workers=len(worker_devices)) as ex:
-            futures = {}
-            for i, study in enumerate(studies):
-                d = worker_devices[i % len(worker_devices)]
-                fut = ex.submit(_process_single_study, i, study, cfg, d)
-                futures[fut] = (i, study["name"], d)
-            for fut in as_completed(futures):
-                i, sname, d = futures[fut]
-                try:
-                    study_payloads.append(fut.result())
-                except Exception as e:
-                    print(f"[ERROR] Study worker failed for {sname} on {d}: {e}")
-                    raise
-    else:
-        if cfg.study_gpu_workers > 1:
-            print("[WARN] Requested study-level GPU workers > 1 but only one "
-                  "usable device found; running sequentially.")
-        for i, study in enumerate(studies):
-            study_payloads.append(_process_single_study(i, study, cfg, device))
+    worker_devices = ["cpu"]  # Classical MI always uses CPU
+    
+    # Sequential study processing (CPU-only, no GPU parallelism)
+    for i, study in enumerate(studies):
+        study_payloads.append(_process_single_study(i, study, cfg, device))
 
     # Merge per-study info and timings into global summary dictionaries.
     study_payloads.sort(key=lambda x: x["idx"])
