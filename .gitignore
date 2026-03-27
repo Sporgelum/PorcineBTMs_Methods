@@ -1,4 +1,5 @@
 # Exclude virtual environment directories (must be first for performance)
+*.npz
 /bin/
 /include/
 /lib/

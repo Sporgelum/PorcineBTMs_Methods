@@ -1,16 +1,19 @@
 """
-Pipeline orchestrator — end-to-end MINE gene network inference.
-================================================================
+Pipeline orchestrator — end-to-end MI gene network inference.
+==============================================================
 
-This is the core logic that ties all modules together.  It implements the
-complete workflow described in the user's conceptual pipeline (Sections 1–8):
+This is the core logic that ties all modules together. It currently runs
+classical histogram-based MI estimation while preserving some legacy
+MINE-era filenames and labels for compatibility.
+
+Workflow:
 
     1. Load logCPM expression + metadata
     2. Discover studies from BioProject column
     3. Per study:
        a. Z-score expression (continuous, no binning)
        b. (Optional) Pre-screen gene pairs by Pearson |r|
-       c. Estimate MI for candidates via batched MINE (GPU)
+    c. Estimate MI for candidates via histogram MI
        d. Build permutation null (global or per-pair)
        e. Filter edges by empirical p-value < 0.001
        f. Save per-study network
@@ -509,17 +512,17 @@ def run_pipeline(cfg: PipelineConfig) -> dict:
     # For classical MI, batch_pairs is handled in config defaults (no auto-sizing needed)
 
     print("=" * 80)
-    print("MINE-BASED GENE NETWORK INFERENCE")
-    print("Neural MI estimation · Permutation significance · Multi-study consensus")
+    print("MI GENE NETWORK INFERENCE (HISTOGRAM ESTIMATOR)")
+    print("Classical MI · Permutation significance · Multi-study consensus")
     print("=" * 80)
     print(f"Timestamp        : {ts}")
     print(f"Device           : {device}")
-    print(f"MINE hidden_dim  : {cfg.mine.hidden_dim}")
-    print(f"MINE epochs      : {cfg.mine.n_epochs}")
+    print(f"MI hidden_dim    : {cfg.mine.hidden_dim} (legacy config field)")
+    print(f"MI epochs        : {cfg.mine.n_epochs} (legacy config field)")
     print(f"Batch pairs      : {cfg.mine.batch_pairs}")
     print(f"Mixed precision  : {'ON (float16)' if cfg.mine.mixed_precision else 'OFF (float32)'}")
     print(f"Resume studies   : {'ON' if cfg.resume_completed_studies else 'OFF'}")
-    print(f"Reuse MINE cache : {'ON' if cfg.reuse_mine_scores else 'OFF'}")
+    print(f"Reuse MI cache   : {'ON' if cfg.reuse_mine_scores else 'OFF'}")
     print(f"Pre-screen       : {'ON (' + cfg.prescreen.method + ' |r| > ' + str(cfg.prescreen.threshold) + ')' if cfg.prescreen.enabled else 'OFF (all pairs)'}")
     print(f"Null mode        : {cfg.permutation.mode}")
     print(f"Null permutations: {cfg.permutation.n_permutations}")
