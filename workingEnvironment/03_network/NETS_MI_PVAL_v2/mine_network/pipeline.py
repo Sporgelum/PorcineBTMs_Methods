@@ -350,6 +350,7 @@ def _process_single_study(study_idx: int, study: dict, cfg: PipelineConfig, devi
             device,
             verbose=True,
             seed=local_seed,
+            n_jobs=cfg.n_jobs,
         )
         save_mine_diagnostics(mine_diag, study_name, cfg.output_dir)
         if cfg.save_mine_score_cache:
@@ -380,6 +381,7 @@ def _process_single_study(study_idx: int, study: dict, cfg: PipelineConfig, devi
             n_permutations=cfg.permutation.n_permutations,
             seed=local_seed,
             device=device,
+            n_jobs=cfg.n_jobs,
         )
         mi_thr = save_null_qc(
             null_mi, study_name,
@@ -395,6 +397,7 @@ def _process_single_study(study_idx: int, study: dict, cfg: PipelineConfig, devi
             n_permutations=cfg.permutation.n_permutations,
             seed=local_seed,
             device=device,
+            n_jobs=cfg.n_jobs,
         )
         p_values = compute_pvalues_per_pair(mi_values, null_mi_pp)
         del null_mi_pp

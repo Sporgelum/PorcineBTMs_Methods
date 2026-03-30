@@ -57,6 +57,7 @@ def build_global_null(
     n_permutations: int = 1_000,
     seed: int = 42,
     device: str = "cpu",
+    n_jobs: int = 1,
     verbose: bool = True,
 ) -> np.ndarray:
     """
@@ -111,7 +112,10 @@ def build_global_null(
     n_batches = (n_permutations + batch_size - 1) // batch_size
 
     if verbose:
-        print(f"  Building global MI null: {n_permutations} permutations in {n_batches} batches...")
+        print(
+            f"  Building global MI null: {n_permutations} permutations in {n_batches} batches "
+            f"(n_jobs={n_jobs})..."
+        )
 
     for b in range(n_batches):
         s = b * batch_size
@@ -136,7 +140,7 @@ def build_global_null(
             device=device,
             verbose=False,
             seed=seed,
-            n_jobs=1,
+            n_jobs=n_jobs,
         )
         null_mi[s:e] = mi_batch[:B]
 
@@ -161,6 +165,7 @@ def build_per_pair_null(
     n_permutations: int = 100,
     seed: int = 42,
     device: str = "cpu",
+    n_jobs: int = -1,
     verbose: bool = True,
 ) -> np.ndarray:
     """
@@ -221,7 +226,7 @@ def build_per_pair_null(
             device=device,
             verbose=False,
             seed=seed,
-            n_jobs=-1,
+            n_jobs=n_jobs,
         )
         null_mi[:, p_idx] = mi_batch
 

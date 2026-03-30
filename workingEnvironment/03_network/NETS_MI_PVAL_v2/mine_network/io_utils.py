@@ -57,46 +57,90 @@ def _save_mine_diag_plot(
     """Save the two-pane MINE diagnostic plot and return output path."""
     fig, axes = plt.subplots(1, 2, figsize=(14, 5), constrained_layout=True)
 
-    # Left pane: per-batch summary
+    # Left pane: per-batch MI summary with smoothed trend.
     ax0 = axes[0]
-    ax0.plot(batch_df["batch_id"], batch_df["final_mi_mean"], marker="o", linewidth=1.2,
-             markersize=3, label="final MI mean")
-    ax0.plot(batch_df["batch_id"], batch_df["final_loss"], marker=".", linewidth=1.0,
-             alpha=0.8, label="final loss")
+    x = batch_df["batch_id"].to_numpy()
+    y = batch_df["final_mi_mean"].to_numpy()
+    ax0.scatter(x, y, s=8, alpha=0.35, label="batch MI mean")
+
+    # Use rolling median so high-volume runs stay readable.
+    win = max(5, min(401, len(batch_df) // 50))
+    if win % 2 == 0:
+        win += 1
+    y_med = batch_df["final_mi_mean"].rolling(window=win, center=True, min_periods=max(3, win // 5)).median()
+    y_q10 = batch_df["final_mi_mean"].rolling(window=win, center=True, min_periods=max(3, win // 5)).quantile(0.10)
+    y_q90 = batch_df["final_mi_mean"].rolling(window=win, center=True, min_periods=max(3, win // 5)).quantile(0.90)
+    ax0.plot(x, y_med.to_numpy(), color="tab:blue", linewidth=2.0, label=f"rolling median (w={win})")
+    ax0.fill_between(x, y_q10.to_numpy(), y_q90.to_numpy(), color="tab:blue", alpha=0.15,
+                     label="rolling 10-90%")
+
     ax0b = ax0.twinx()
-    ax0b.plot(batch_df["batch_id"], batch_df["n_pairs"], color="tab:gray",
-              linewidth=1.0, linestyle=":", alpha=0.8, label="batch size")
-    ax0.set_title(f"{study_name} — Batch Summary")
+    if "runtime_seconds" in batch_df.columns and batch_df["runtime_seconds"].notna().any():
+        ax0b.plot(x, batch_df["runtime_seconds"].to_numpy(), color="tab:orange",
+                  linewidth=1.0, alpha=0.85, label="batch runtime (s)")
+        ax0b.set_ylabel("Runtime (s)", color="tab:orange")
+    else:
+        ax0b.plot(x, batch_df["n_pairs"], color="tab:gray", linewidth=1.0,
+                  linestyle=":", alpha=0.8, label="batch size")
+        ax0b.set_ylabel("Batch size", color="tab:gray")
+
+    ax0.set_title(f"{study_name} — Batch MI Trend")
     ax0.set_xlabel("Batch ID")
-    ax0.set_ylabel("Value")
-    ax0b.set_ylabel("Batch size", color="tab:gray")
+    ax0.set_ylabel("MI")
     ax0.grid(True, alpha=0.25)
     h0, l0 = ax0.get_legend_handles_labels()
     h0b, l0b = ax0b.get_legend_handles_labels()
     ax0.legend(h0 + h0b, l0 + l0b, loc="best", fontsize=8)
 
-    # Right pane: mean loss with std band + derived MI
+    # Right pane: epoch curve if available, otherwise informative fallback.
     ax1 = axes[1]
-    ax1.plot(loss_df["epoch"], loss_df["mean_loss"], color="tab:blue", linewidth=1.8,
-             label="mean loss")
-    ax1.fill_between(
-        loss_df["epoch"].to_numpy(),
-        (loss_df["mean_loss"] - loss_df["std_loss"]).to_numpy(),
-        (loss_df["mean_loss"] + loss_df["std_loss"]).to_numpy(),
-        color="tab:blue", alpha=0.2, label="loss ±1 std"
+    valid_epoch = loss_df.replace([np.inf, -np.inf], np.nan).dropna(subset=["mean_loss", "mean_train_mi"])
+    has_epoch_signal = (
+        len(valid_epoch) >= 2 and
+        ((valid_epoch["mean_loss"].std() > 1e-12) or (valid_epoch["mean_train_mi"].std() > 1e-12))
     )
-    ax1b = ax1.twinx()
-    ax1b.plot(loss_df["epoch"], loss_df["mean_train_mi"], color="tab:orange", linewidth=1.4,
-              linestyle="--", label="mean train MI objective")
-    ax1.set_title(f"{study_name} — Epoch Curve")
-    ax1.set_xlabel("Epoch")
-    ax1.set_ylabel("Loss", color="tab:blue")
-    ax1b.set_ylabel("Train MI objective", color="tab:orange")
-    ax1.grid(True, alpha=0.25)
 
-    h1, l1 = ax1.get_legend_handles_labels()
-    h2, l2 = ax1b.get_legend_handles_labels()
-    ax1.legend(h1 + h2, l1 + l2, loc="best", fontsize=8)
+    if has_epoch_signal:
+        ax1.plot(valid_epoch["epoch"], valid_epoch["mean_loss"], color="tab:blue", linewidth=1.8,
+                 label="mean loss")
+        ax1.fill_between(
+            valid_epoch["epoch"].to_numpy(),
+            (valid_epoch["mean_loss"] - valid_epoch["std_loss"]).to_numpy(),
+            (valid_epoch["mean_loss"] + valid_epoch["std_loss"]).to_numpy(),
+            color="tab:blue", alpha=0.2, label="loss ±1 std"
+        )
+        ax1b = ax1.twinx()
+        ax1b.plot(valid_epoch["epoch"], valid_epoch["mean_train_mi"], color="tab:orange", linewidth=1.4,
+                  linestyle="--", label="mean train MI objective")
+        ax1.set_title(f"{study_name} — Epoch Curve")
+        ax1.set_xlabel("Epoch")
+        ax1.set_ylabel("Loss", color="tab:blue")
+        ax1b.set_ylabel("Train MI objective", color="tab:orange")
+        ax1.grid(True, alpha=0.25)
+
+        h1, l1 = ax1.get_legend_handles_labels()
+        h2, l2 = ax1b.get_legend_handles_labels()
+        ax1.legend(h1 + h2, l1 + l2, loc="best", fontsize=8)
+    else:
+        # Classical histogram MI has no training epochs; summarize MI distribution instead.
+        mi = batch_df["final_mi_mean"].to_numpy(dtype=float)
+        mi = mi[np.isfinite(mi)]
+        if mi.size:
+            q10, q50, q90 = np.percentile(mi, [10, 50, 90])
+            ax1.hist(mi, bins=min(80, max(20, int(np.sqrt(mi.size)))), color="tab:blue", alpha=0.75)
+            ax1.axvline(q50, color="tab:orange", linewidth=1.8, label=f"median={q50:.4f}")
+            ax1.axvline(q10, color="tab:gray", linewidth=1.2, linestyle="--", label=f"p10={q10:.4f}")
+            ax1.axvline(q90, color="tab:gray", linewidth=1.2, linestyle="--", label=f"p90={q90:.4f}")
+            ax1.set_title(f"{study_name} — MI Distribution (No Epoch Training)")
+            ax1.set_xlabel("Batch MI mean")
+            ax1.set_ylabel("Frequency")
+            ax1.grid(True, alpha=0.25)
+            ax1.legend(loc="best", fontsize=8)
+        else:
+            ax1.text(0.5, 0.5, "No usable epoch or batch MI data", ha="center", va="center",
+                     transform=ax1.transAxes, fontsize=10)
+            ax1.set_title(f"{study_name} — Diagnostics")
+            ax1.set_axis_off()
 
     plot_path = os.path.join(diag_dir, f"mine_diagnostics_plot_{study_name}.png")
     fig.savefig(plot_path, dpi=180)
@@ -258,6 +302,7 @@ def save_mine_diagnostics(
         rows.append({
             "batch_id": d["batch_id"],
             "n_pairs": d["n_pairs"],
+            "runtime_seconds": d.get("runtime_seconds", float("nan")),
             "initial_loss": lc[0] if lc else float("nan"),
             "final_loss": lc[-1] if lc else float("nan"),
             "loss_reduction": (lc[0] - lc[-1]) if lc else float("nan"),

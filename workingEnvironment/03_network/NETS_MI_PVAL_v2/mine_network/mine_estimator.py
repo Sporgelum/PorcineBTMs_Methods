@@ -79,50 +79,72 @@ def estimate_mi_for_pairs(
     mi_all = np.zeros(n_pairs, dtype=np.float32)
     diagnostics = []
 
-    for b in range(n_batches):
-        start = b * batch_size
-        end = min(start + batch_size, n_pairs)
-        batch_pairs = pair_indices[start:end]
+    def _run_batch(batch_id: int, batch_pairs: np.ndarray, run_parallel=None):
         t0 = time.time()
-
-        if n_jobs == 1:
-            mi_vals = [
+        if run_parallel is None:
+            mi_vals_local = [
                 _mi_for_pair(expr_discrete, int(i), int(j), n_bins)
                 for i, j in batch_pairs
             ]
         else:
-            mi_vals = Parallel(n_jobs=n_jobs, prefer="processes")(
+            mi_vals_local = run_parallel(
                 delayed(_mi_for_pair)(expr_discrete, int(i), int(j), n_bins)
                 for i, j in batch_pairs
             )
 
-        mi_vals = np.asarray(mi_vals, dtype=np.float32)
-        mi_all[start:end] = mi_vals
-        elapsed = time.time() - t0
+        mi_vals_local = np.asarray(mi_vals_local, dtype=np.float32)
+        elapsed_local = time.time() - t0
 
         diagnostics.append({
-            "batch_id": b,
-            "n_pairs": int(end - start),
+            "batch_id": batch_id,
+            "n_pairs": int(len(batch_pairs)),
             "initial_loss": 0.0,
             "final_loss": 0.0,
             "loss_reduction": 0.0,
-            "initial_train_mi": float(mi_vals.mean()) if len(mi_vals) else 0.0,
-            "final_train_mi": float(mi_vals.mean()) if len(mi_vals) else 0.0,
-            "final_mi_mean": float(mi_vals.mean()) if len(mi_vals) else 0.0,
-            "final_mi_std": float(mi_vals.std()) if len(mi_vals) else 0.0,
-            "final_mi_max": float(mi_vals.max()) if len(mi_vals) else 0.0,
+            "initial_train_mi": float(mi_vals_local.mean()) if len(mi_vals_local) else 0.0,
+            "final_train_mi": float(mi_vals_local.mean()) if len(mi_vals_local) else 0.0,
+            "final_mi_mean": float(mi_vals_local.mean()) if len(mi_vals_local) else 0.0,
+            "final_mi_std": float(mi_vals_local.std()) if len(mi_vals_local) else 0.0,
+            "final_mi_max": float(mi_vals_local.max()) if len(mi_vals_local) else 0.0,
             "loss_curve": [0.0],
-            "mi_curve_train": [float(mi_vals.mean()) if len(mi_vals) else 0.0],
-            "runtime_seconds": float(elapsed),
+            "mi_curve_train": [float(mi_vals_local.mean()) if len(mi_vals_local) else 0.0],
+            "runtime_seconds": float(elapsed_local),
         })
+        return mi_vals_local
 
-        if verbose and (b + 1) % max(1, n_batches // 20) == 0:
-            pct = (b + 1) / n_batches * 100.0
-            print(
-                f"  MI progress: {b + 1}/{n_batches} batches ({pct:.0f}%) "
-                f"| MI_mean={float(mi_vals.mean()):.4f}"
-            )
-            sys.stdout.flush()
+    if n_jobs == 1:
+        for b in range(n_batches):
+            start = b * batch_size
+            end = min(start + batch_size, n_pairs)
+            batch_pairs = pair_indices[start:end]
+            mi_vals = _run_batch(b, batch_pairs, run_parallel=None)
+            mi_all[start:end] = mi_vals
+
+            if verbose and (b + 1) % max(1, n_batches // 20) == 0:
+                pct = (b + 1) / n_batches * 100.0
+                print(
+                    f"  MI progress: {b + 1}/{n_batches} batches ({pct:.0f}%) "
+                    f"| MI_mean={float(mi_vals.mean()):.4f}"
+                )
+                sys.stdout.flush()
+    else:
+        # Reuse a single worker pool for all batches and keep computation in
+        # shared memory to avoid per-batch loky temp-folder churn.
+        with Parallel(n_jobs=n_jobs, prefer="threads", require="sharedmem") as parallel:
+            for b in range(n_batches):
+                start = b * batch_size
+                end = min(start + batch_size, n_pairs)
+                batch_pairs = pair_indices[start:end]
+                mi_vals = _run_batch(b, batch_pairs, run_parallel=parallel)
+                mi_all[start:end] = mi_vals
+
+                if verbose and (b + 1) % max(1, n_batches // 20) == 0:
+                    pct = (b + 1) / n_batches * 100.0
+                    print(
+                        f"  MI progress: {b + 1}/{n_batches} batches ({pct:.0f}%) "
+                        f"| MI_mean={float(mi_vals.mean()):.4f}"
+                    )
+                    sys.stdout.flush()
 
     if verbose:
         print(

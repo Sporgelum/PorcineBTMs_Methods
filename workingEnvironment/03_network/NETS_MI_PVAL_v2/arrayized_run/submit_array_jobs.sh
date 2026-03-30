@@ -13,6 +13,14 @@
 
 set -euo pipefail
 
+# Function to sanitize values by stripping comments and whitespace after them (e.g. "98#8" -> "98")
+sanitize_value() {
+  local raw="$1"
+  raw="${raw%%#*}"
+  raw="$(printf '%s' "$raw" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
+  printf '%s' "$raw"
+}
+
 # Paths
 PROJECT_DIR="/data/users/mbotos/Environments/2026_2_25_PIGS_BTMS+"
 VENV_DIR="${PROJECT_DIR}"
@@ -22,11 +30,12 @@ COUNTS_FILE="${PROJECT_DIR}/workingEnvironment/02_counts/logCPM_matrix_filtered_
 META_FILE="${PROJECT_DIR}/workingEnvironment/02_counts/metadata_with_sample_annotations.csv"
 
 # Parameters from arguments or environment
-MAX_PAIRS="${1:-${MAX_PAIRS:-3000}}"
+MAX_PAIRS="${1:-${MAX_PAIRS:-300000000}}"#3000
 PERMS="${2:-${PERMS:-30000}}"
 OUTPUT_TAG="${3:-${OUTPUT_TAG:-array_run_$(date +%s)}}"
 
 # Pre-screening (correlation-based candidate filtering)
+PRESCREEN_ENABLED="${PRESCREEN_ENABLED:-1}"
 PRESCREEN_THRESHOLD="${PRESCREEN_THRESHOLD:-0.3}"
 PRESCREEN_METHOD="${PRESCREEN_METHOD:-spearman}"
 MAD_TOP_GENES="${MAD_TOP_GENES:-32763}"
@@ -38,12 +47,16 @@ EPOCHS="${EPOCHS:-200}"
 BATCH_PAIRS="${BATCH_PAIRS:-512}"
 LEARNING_RATE="${LEARNING_RATE:-0.001}"
 MIXED_PRECISION="${MIXED_PRECISION:-0}"
-N_JOBS="${N_JOBS:--1}"
+N_JOBS="${N_JOBS:-}"
 
 # Output and resume behavior
 NO_RESUME_STUDIES="${NO_RESUME_STUDIES:-0}"
-NO_REUSE_MI_SCORES="${NO_REUSE_MI_SCORES:-0}"
-NO_SAVE_MI_CACHE="${NO_SAVE_MI_CACHE:-0}"
+# Support both old (MI) and requested/new (MINE) variable names.
+NO_REUSE_MINE_SCORES="${NO_REUSE_MINE_SCORES:-${NO_REUSE_MI_SCORES:-0}}"
+NO_SAVE_MINE_CACHE="${NO_SAVE_MINE_CACHE:-${NO_SAVE_MI_CACHE:-0}}"
+# Backward-compatible aliases used elsewhere in the script output.
+NO_REUSE_MI_SCORES="${NO_REUSE_MI_SCORES:-${NO_REUSE_MINE_SCORES}}"
+NO_SAVE_MI_CACHE="${NO_SAVE_MI_CACHE:-${NO_SAVE_MINE_CACHE}}"
 VERBOSE="${VERBOSE:-0}"
 
 # Permutation testing
@@ -65,7 +78,13 @@ SUBMODULE_MCODE_SCORE_THRESHOLD="${SUBMODULE_MCODE_SCORE_THRESHOLD:-0.2}"
 SUBMODULE_MCODE_MIN_DENSITY="${SUBMODULE_MCODE_MIN_DENSITY:-0.3}"
 
 # Gene ID mapping (pig to human)
-ORTHOLOG_MAP="${ORTHOLOG_MAP:-${PROJECT_DIR}/workingEnvironment/03_network/gene_id_mapping.tsv}"
+if [ -z "${ORTHOLOG_MAP:-}" ]; then
+  if [ -f "${PROJECT_DIR}/UBELIX/MINE/gene_id_mapping.tsv" ]; then
+    ORTHOLOG_MAP="${PROJECT_DIR}/UBELIX/MINE/gene_id_mapping.tsv"
+  else
+    ORTHOLOG_MAP="${PROJECT_DIR}/workingEnvironment/03_network/gene_id_mapping.tsv"
+  fi
+fi
 ORTHOLOG_SOURCE_COL="${ORTHOLOG_SOURCE_COL:-ensembl_gene_id}"
 ORTHOLOG_TARGET_COL="${ORTHOLOG_TARGET_COL:-external_gene_name}"
 MODULE_EXPORT_MAP="${MODULE_EXPORT_MAP:-${ORTHOLOG_MAP}}"
@@ -81,11 +100,39 @@ INCLUDE_NETWORK_VISUALIZATION="${INCLUDE_NETWORK_VISUALIZATION:-1}"
 MIN_STUDIES="${MIN_STUDIES:-2}"
 
 # SLURM settings
-PARTITION="${PARTITION:-pibu_el8}"
+PARTITION="${PARTITION:-pibu_el8}"#pshort_el8
 SLURM_ARRAY_LIMIT="${SLURM_ARRAY_LIMIT:-50}"
-CPUS_PER_TASK="${CPUS_PER_TASK:-64}"
-MEM_PER_TASK="${MEM_PER_TASK:-64G}"
-TIME_LIMIT="${TIME_LIMIT:-48:00:00}"
+CPUS_PER_TASK="${CPUS_PER_TASK:-99}"#8
+MEM_PER_TASK="${MEM_PER_TASK:-512G}"#64G
+TIME_LIMIT="${TIME_LIMIT:-72:00:00}"#01:00:00
+
+# Defensive cleanup: if values were exported with inline comments (e.g. "98#8"),
+# strip the trailing comment suffix before they are consumed by Python/SLURM.
+MAX_PAIRS="$(sanitize_value "${MAX_PAIRS}")"
+PERMS="$(sanitize_value "${PERMS}")"
+PRESCREEN_ENABLED="$(sanitize_value "${PRESCREEN_ENABLED}")"
+PRESCREEN_THRESHOLD="$(sanitize_value "${PRESCREEN_THRESHOLD}")"
+PRESCREEN_METHOD="$(sanitize_value "${PRESCREEN_METHOD}")"
+HIDDEN_DIM="$(sanitize_value "${HIDDEN_DIM}")"
+EPOCHS="$(sanitize_value "${EPOCHS}")"
+BATCH_PAIRS="$(sanitize_value "${BATCH_PAIRS}")"
+LEARNING_RATE="$(sanitize_value "${LEARNING_RATE}")"
+MIXED_PRECISION="$(sanitize_value "${MIXED_PRECISION}")"
+PVAL="$(sanitize_value "${PVAL}")"
+MIN_STUDIES="$(sanitize_value "${MIN_STUDIES}")"
+PARTITION="$(sanitize_value "${PARTITION}")"
+SLURM_ARRAY_LIMIT="$(sanitize_value "${SLURM_ARRAY_LIMIT}")"
+CPUS_PER_TASK="$(sanitize_value "${CPUS_PER_TASK}")"
+MEM_PER_TASK="$(sanitize_value "${MEM_PER_TASK}")"
+TIME_LIMIT="$(sanitize_value "${TIME_LIMIT}")"
+if [ -n "${N_JOBS}" ]; then
+  N_JOBS="$(sanitize_value "${N_JOBS}")"
+fi
+
+# If N_JOBS is not explicitly provided, default to the allocated CPUs/task.
+if [ -z "${N_JOBS}" ]; then
+  N_JOBS="${CPUS_PER_TASK}"
+fi
 
 # Paths for this run
 OUTPUT_DIR="${ARRAYIZED_DIR}/output/${OUTPUT_TAG}"
@@ -107,6 +154,7 @@ Configuration:
   Metadata file    : ${META_FILE}
 
 Pre-screening:
+  PRESCREEN ENABLED: ${PRESCREEN_ENABLED}
   PRESCREEN METHOD : ${PRESCREEN_METHOD} (threshold=${PRESCREEN_THRESHOLD})
   MAX_PAIRS        : ${MAX_PAIRS}
   MAD_TOP_GENES    : ${MAD_TOP_GENES}
@@ -187,6 +235,7 @@ cfg.mine.batch_pairs = (
 cfg.mine.learning_rate = float(${LEARNING_RATE})
 cfg.mine.mixed_precision = as_bool("${MIXED_PRECISION}")
 
+cfg.prescreen.enabled = as_bool("${PRESCREEN_ENABLED}")
 cfg.prescreen.threshold = ${PRESCREEN_THRESHOLD}
 cfg.prescreen.method = "${PRESCREEN_METHOD}"
 cfg.prescreen.max_pairs = ${MAX_PAIRS}
@@ -223,8 +272,8 @@ cfg.annotation.save_per_gmt_results = as_bool("${SAVE_PER_GMT_ENRICHMENTS}")
 cfg.visualization.enabled = as_bool("${INCLUDE_NETWORK_VISUALIZATION}")
 
 cfg.resume_completed_studies = not as_bool("${NO_RESUME_STUDIES}")
-cfg.reuse_mine_scores = not as_bool("${NO_REUSE_MI_SCORES}")
-cfg.save_mine_score_cache = not as_bool("${NO_SAVE_MI_CACHE}")
+cfg.reuse_mine_scores = not as_bool("${NO_REUSE_MINE_SCORES}")
+cfg.save_mine_score_cache = not as_bool("${NO_SAVE_MINE_CACHE}")
 
 # Export as JSON
 import dataclasses

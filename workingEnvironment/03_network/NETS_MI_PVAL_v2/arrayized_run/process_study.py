@@ -27,7 +27,17 @@ from mine_network.data_loader import (
 )
 from mine_network.pipeline import run_pipeline as run_full_pipeline
 from mine_network.config import PipelineConfig
-from mine_network.network import build_master_network
+from mine_network.network import build_master_network, aggregate_master_weights
+from mine_network.mcode import mcode, leiden_modules, refine_large_modules
+from mine_network.annotation import (
+    load_multiple_gmt_with_sources,
+    annotate_modules,
+    save_annotations,
+    save_annotations_by_source,
+    download_enrichr_libraries,
+)
+from mine_network.ortholog import load_ortholog_map, map_modules, map_gene_set
+from mine_network.io_utils import save_master_results
 
 
 def _update_dataclass_from_dict(obj, values):
@@ -115,20 +125,26 @@ def process_single_study(study_idx, study_info, cfg, output_dir, full_metadata=N
         cfg_study.metadata_path = study_meta_file
         cfg_study.output_dir = study_output_dir
 
-        # Keep per-study workers bounded to avoid OOM from oversubscription.
+        # If n_jobs is not explicitly set, honor the scheduler allocation.
+        # This avoids accidentally underusing large CPU allocations.
         if int(getattr(cfg_study, "n_jobs", -1)) <= 0:
-            cfg_study.n_jobs = min(8, os.cpu_count() or 8)
+            slurm_cpus = int(os.getenv("SLURM_CPUS_PER_TASK", "0") or 0)
+            host_cpus = int(os.cpu_count() or 1)
+            cfg_study.n_jobs = max(1, min(host_cpus, slurm_cpus if slurm_cpus > 0 else host_cpus))
         os.environ["OMP_NUM_THREADS"] = str(max(1, int(cfg_study.n_jobs)))
         os.environ["MKL_NUM_THREADS"] = str(max(1, int(cfg_study.n_jobs)))
         os.environ["OPENBLAS_NUM_THREADS"] = str(max(1, int(cfg_study.n_jobs)))
 
-        # Per-study enrichment/visualization is expensive and not required for consolidation.
-        cfg_study.annotation.download_enrichr = False
-        cfg_study.annotation.save_per_gmt_results = False
-        cfg_study.visualization.enabled = False
+        # Keep annotation/visualization settings from config so study-level
+        # pathway enrichment and minimaps are produced when requested.
         
         # Run pipeline for this study
-        log_msg(f"Running MI pipeline (n_jobs={cfg_study.n_jobs})...")
+        log_msg(
+            f"Running MI pipeline (n_jobs={cfg_study.n_jobs}, "
+            f"download_gmt={cfg_study.annotation.download_enrichr}, "
+            f"save_per_gmt={cfg_study.annotation.save_per_gmt_results}, "
+            f"network_viz={cfg_study.visualization.enabled})..."
+        )
         results = run_full_pipeline(cfg_study)
         
         # Copy canonical per-study artifacts to stable index-based names.
@@ -202,7 +218,8 @@ def consolidate_studies(studies_dir, output_dir, counts_file, meta_file, config_
         # Load configuration
         with open(config_file, 'r') as f:
             cfg_dict = json.load(f)
-        min_studies = cfg_dict.get('network', {}).get('min_study_count', 3)
+        cfg = PipelineConfig()
+        _update_dataclass_from_dict(cfg, cfg_dict)
         
         # Discover per-study results
         studies_path = Path(studies_dir)
@@ -224,6 +241,7 @@ def consolidate_studies(studies_dir, output_dir, counts_file, meta_file, config_
             study_num = study_dir.name.replace('study_', '')
             adj_file = study_dir / f"adj_mine_{study_num}.mtx"
             genes_file = study_dir / f"genes_{study_num}.txt"
+            edges_file = study_dir / f"edges_mine_{study_num}.tsv"
             
             if not adj_file.exists():
                 log_msg(f"  Skipping {study_num} (no adj matrix)")
@@ -239,7 +257,19 @@ def consolidate_studies(studies_dir, output_dir, counts_file, meta_file, config_
                 genes = [f"Gene_{i}" for i in range(adj.shape[0])]
             gene_names_list.append(genes)
 
-            study_results.append({"name": f"study_{study_num}", "adj": adj})
+            edge_df = None
+            if edges_file.exists():
+                try:
+                    edge_df = pd.read_csv(edges_file, sep="\t")
+                except Exception as e:
+                    log_msg(f"  [WARN] Could not read {edges_file.name}: {e}")
+
+            study_results.append({
+                "name": f"study_{study_num}",
+                "adj": adj,
+                "genes": genes,
+                "edge_df": edge_df,
+            })
             
             n_edges = int(np.triu(adj, k=1).sum())
             log_msg(f"  Study {study_num}: {adj.shape[0]} genes, {n_edges} edges")
@@ -265,44 +295,239 @@ def consolidate_studies(studies_dir, output_dir, counts_file, meta_file, config_
         # Reindex and build master
         log_msg("Building master network...")
         adj_common = []
+        common_gene_to_idx = {g: i for i, g in enumerate(common_genes)}
+        common_gene_set = set(common_genes)
+        study_weight_records = []
+
         for i, res in enumerate(study_results):
             adj = res["adj"]
             genes = gene_names_list[i]
-            idx = [genes.index(g) for g in common_genes]
+            gene_to_idx = {g: j for j, g in enumerate(genes)}
+            idx = [gene_to_idx[g] for g in common_genes]
             adj_sub = adj[np.ix_(idx, idx)]
             adj_common.append({"name": res["name"], "adj": adj_sub})
-        
+
+            rec_df = res.get("edge_df")
+            if rec_df is None or rec_df.empty:
+                study_weight_records.append({
+                    "pairs": np.empty((0, 2), dtype=np.int32),
+                    "weights": np.empty((0,), dtype=np.float32),
+                })
+                continue
+
+            if "gene_A" not in rec_df.columns or "gene_B" not in rec_df.columns:
+                study_weight_records.append({
+                    "pairs": np.empty((0, 2), dtype=np.int32),
+                    "weights": np.empty((0,), dtype=np.float32),
+                })
+                continue
+
+            weight_mode = str(cfg.module.master_edge_weight)
+            if weight_mode == "mean_neglog10p" and "p_value" in rec_df.columns:
+                weights = -np.log10(rec_df["p_value"].to_numpy(np.float32) + float(cfg.module.weight_eps))
+            elif weight_mode == "mean_mi" and "MI_MINE" in rec_df.columns:
+                weights = rec_df["MI_MINE"].to_numpy(np.float32)
+            elif "edge_weight" in rec_df.columns:
+                weights = rec_df["edge_weight"].to_numpy(np.float32)
+            else:
+                weights = np.ones(len(rec_df), dtype=np.float32)
+
+            if len(weights) > 0:
+                if cfg.module.weight_clip_min is not None:
+                    weights = np.maximum(weights, float(cfg.module.weight_clip_min))
+                if cfg.module.weight_clip_max is not None:
+                    weights = np.minimum(weights, float(cfg.module.weight_clip_max))
+                if cfg.module.normalize_weights:
+                    w_min = float(weights.min())
+                    w_max = float(weights.max())
+                    if w_max > w_min:
+                        weights = (weights - w_min) / (w_max - w_min)
+
+            keep = rec_df["gene_A"].isin(common_gene_set) & rec_df["gene_B"].isin(common_gene_set)
+            if not keep.any():
+                study_weight_records.append({
+                    "pairs": np.empty((0, 2), dtype=np.int32),
+                    "weights": np.empty((0,), dtype=np.float32),
+                })
+                continue
+
+            rec_f = rec_df.loc[keep, ["gene_A", "gene_B"]].copy()
+            w_f = np.asarray(weights, dtype=np.float32)[keep.to_numpy()]
+
+            pair_arr = np.column_stack([
+                rec_f["gene_A"].map(common_gene_to_idx).to_numpy(np.int32),
+                rec_f["gene_B"].map(common_gene_to_idx).to_numpy(np.int32),
+            ])
+            pair_arr = np.sort(pair_arr, axis=1)
+
+            study_weight_records.append({
+                "pairs": pair_arr,
+                "weights": w_f,
+            })
+
+        n_loaded_studies = len(adj_common)
+        if n_loaded_studies == 0:
+            log_msg("[ERROR] No valid studies loaded for consolidation")
+            return False
+
+        if cfg.network.min_study_fraction is not None:
+            min_studies = max(1, round(float(cfg.network.min_study_fraction) * n_loaded_studies))
+            log_msg(
+                f"Using min_study_fraction={cfg.network.min_study_fraction} -> "
+                f"effective min_studies={min_studies}"
+            )
+        elif n_loaded_studies < int(cfg.network.min_study_count):
+            min_studies = 1
+            log_msg(
+                f"[WARN] Only {n_loaded_studies} studies loaded; using min_studies=1 "
+                f"(config requested {cfg.network.min_study_count})"
+            )
+        else:
+            min_studies = int(cfg.network.min_study_count)
+
         adj_master, study_counts = build_master_network(
             adj_common,
             common_genes,
             min_count=min_studies,
+        )
+
+        master_edge_weight = aggregate_master_weights(
+            n_genes=len(common_genes),
+            study_weight_records=study_weight_records,
+            master_adj=adj_master,
+            mode=cfg.module.master_edge_weight,
+            edge_count=study_counts,
         )
         
         n_master_edges = int(np.triu(adj_master, k=1).sum())
         log_msg(f"Master network: {adj_master.shape[0]} nodes, {n_master_edges} edges")
         log_msg()
         
-        # Save master network files
-        log_msg("Saving master network...")
-        
-        # Adjacency matrix
-        adj_sparse = csr_matrix(adj_master)
-        adj_out = os.path.join(output_dir, "master_network_adjacency.mtx")
-        mmwrite(adj_out, adj_sparse)
-        log_msg(f"  ✓ {adj_out}")
-        
-        # Edge list
-        rows, cols = np.where(np.triu(adj_master, k=1) == 1)
-        edges_df = pd.DataFrame({
-            "gene_A": np.array(common_genes)[rows],
-            "gene_B": np.array(common_genes)[cols],
-            "n_studies": study_counts[rows, cols],
-        }).sort_values("n_studies", ascending=False)
-        edges_out = os.path.join(output_dir, "master_network_edgelist.tsv")
-        edges_df.to_csv(edges_out, sep="\t", index=False)
-        log_msg(f"  ✓ {edges_out} ({len(edges_df)} edges)")
-        
-        # Gene names
+        # Master module detection
+        log_msg("Running master module detection...")
+        module_min_size = int(cfg.module.module_min_size)
+        if cfg.module.method == "leiden":
+            modules, membership = leiden_modules(
+                adj_master,
+                common_genes,
+                edge_weights=master_edge_weight,
+                resolution=float(cfg.module.module_leiden_resolution),
+                n_iterations=int(cfg.module.module_leiden_iterations),
+                min_size=module_min_size,
+            )
+        else:
+            modules, membership = mcode(
+                adj_master,
+                common_genes,
+                score_threshold=float(cfg.module.module_mcode_score_threshold),
+                min_size=module_min_size,
+                min_density=float(cfg.module.module_mcode_min_density),
+            )
+
+        if cfg.module.submodule_size_threshold is not None and cfg.module.submodule_method != "none":
+            modules, membership, parent_child_rows = refine_large_modules(
+                modules,
+                adj_master,
+                common_genes,
+                size_threshold=int(cfg.module.submodule_size_threshold),
+                method=str(cfg.module.submodule_method),
+                leiden_resolution=float(cfg.module.submodule_leiden_resolution),
+                leiden_iterations=int(cfg.module.submodule_leiden_iterations),
+                score_threshold=float(cfg.module.submodule_mcode_score_threshold),
+                min_size=int(cfg.module.submodule_min_size),
+                min_density=float(cfg.module.submodule_mcode_min_density),
+            )
+        else:
+            parent_child_rows = []
+
+        # Master annotation
+        if cfg.annotation.download_enrichr:
+            log_msg("Downloading GMT libraries for master annotation...")
+            gmt_dir = os.path.join(output_dir, "gmt_cache")
+            downloaded = download_enrichr_libraries(
+                cfg.annotation.enrichr_libraries or None,
+                cache_dir=gmt_dir,
+            )
+            cfg.annotation.gmt_paths = list(set((cfg.annotation.gmt_paths or []) + downloaded))
+
+        if cfg.annotation.gmt_paths:
+            log_msg("Annotating master modules...")
+            gene_sets, geneset_to_library, library_manifest = load_multiple_gmt_with_sources(
+                cfg.annotation.gmt_paths
+            )
+
+            modules_for_annotation = modules
+            if cfg.annotation.background_genes:
+                with open(cfg.annotation.background_genes, "r") as f:
+                    bg_for_annotation = set(line.strip() for line in f if line.strip())
+            else:
+                bg_for_annotation = set(common_genes)
+
+            if cfg.annotation.ortholog_map_path:
+                log_msg("Applying ortholog mapping for master annotation...")
+                orth_map = load_ortholog_map(
+                    cfg.annotation.ortholog_map_path,
+                    cfg.annotation.ortholog_source_col,
+                    cfg.annotation.ortholog_target_col,
+                )
+                modules_for_annotation, map_stats = map_modules(modules, orth_map)
+                bg_for_annotation, bg_mapped = map_gene_set(bg_for_annotation, orth_map)
+                log_msg(
+                    "  Ortholog map: "
+                    f"source={map_stats['source_unique_genes']:,}, "
+                    f"mapped={map_stats['source_genes_mapped']:,}, "
+                    f"target={map_stats['mapped_unique_genes']:,}, "
+                    f"background={bg_mapped:,}->{len(bg_for_annotation):,}"
+                )
+
+            annotation_df = annotate_modules(
+                modules_for_annotation,
+                gene_sets,
+                bg_for_annotation,
+                fdr_threshold=float(cfg.annotation.fdr_threshold),
+                min_overlap=int(cfg.annotation.min_overlap),
+            )
+            if not annotation_df.empty:
+                annotation_df["GeneSetLibrary"] = annotation_df["GeneSet"].map(
+                    geneset_to_library
+                ).fillna("unknown")
+            save_annotations(annotation_df, output_dir)
+            if cfg.annotation.save_per_gmt_results:
+                save_annotations_by_source(
+                    annotation_df,
+                    output_dir,
+                    library_manifest=library_manifest,
+                )
+        else:
+            log_msg(
+                "No GMT gene-set files provided for master annotation; "
+                "skipping enrichment."
+            )
+
+        # Save master network + module outputs
+        log_msg("Saving master network outputs...")
+        save_master_results(
+            master_adj=adj_master,
+            edge_count=study_counts,
+            master_edge_weight=master_edge_weight,
+            gene_names=common_genes,
+            modules=modules,
+            membership=membership,
+            parent_child_rows=parent_child_rows,
+            min_count=min_studies,
+            n_studies=n_loaded_studies,
+            output_dir=output_dir,
+            module_export_map_path=cfg.annotation.module_export_map_path,
+            module_export_key_col=cfg.annotation.module_export_key_col,
+            module_export_cols=cfg.annotation.module_export_cols,
+            make_minimap=bool(cfg.visualization.enabled),
+            minimap_base_dir=os.path.join(output_dir, "minimap_networks"),
+            minimap_max_nodes=int(cfg.visualization.max_nodes),
+            minimap_dpi=int(cfg.visualization.dpi),
+            minimap_edge_alpha=float(cfg.visualization.edge_alpha),
+        )
+
+        # Save gene names for traceability
         genes_out = os.path.join(output_dir, "master_network_genes.txt")
         with open(genes_out, 'w') as f:
             for gene in common_genes:

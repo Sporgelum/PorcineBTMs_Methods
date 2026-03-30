@@ -245,3 +245,5 @@ python3 arrayized_run/process_study.py --consolidate \
 
 # Run, and crashed after 48h running, some oom and some time limit...
 bash arrayized_run/submit_array_jobs.sh
+
+# Run minitests all seem fine, re run whole pipeline now with 128 GB RAM, 94 Threads per noode, and 72h
