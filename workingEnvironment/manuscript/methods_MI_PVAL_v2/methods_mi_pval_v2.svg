@@ -1,0 +1,135 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900"
+     xmlns="http://www.w3.org/2000/svg"
+     font-family="Helvetica, Arial, sans-serif">
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1600" height="900" fill="white"/>
+
+  <!-- Title -->
+  <text x="800" y="40" text-anchor="middle" font-size="26" font-weight="bold">
+    Mutual Information Network Pipeline — Computation, Flow, and Parameters
+  </text>
+
+  <!-- ===================== PANEL A: MI COMPUTATION ===================== -->
+  <text x="200" y="90" text-anchor="middle" font-size="18" font-weight="bold">
+    A. MI Computation
+  </text>
+
+  <!-- Boxes -->
+  <rect x="100" y="120" width="200" height="60" rx="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
+  <text x="200" y="155" text-anchor="middle" font-size="13" font-weight="bold">Gene Expression</text>
+
+  <line x1="200" y1="180" x2="200" y2="200" stroke="#1565C0" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <rect x="100" y="200" width="200" height="60" rx="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
+  <text x="200" y="235" text-anchor="middle" font-size="13" font-weight="bold">Z-score normalization</text>
+
+  <line x1="200" y1="260" x2="200" y2="280" stroke="#1565C0" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <rect x="100" y="280" width="200" height="60" rx="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
+  <text x="200" y="315" text-anchor="middle" font-size="13" font-weight="bold">Discretization</text>
+
+  <line x1="200" y1="340" x2="200" y2="360" stroke="#1565C0" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <rect x="100" y="360" width="200" height="70" rx="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
+  <text x="200" y="395" text-anchor="middle" font-size="13" font-weight="bold">Joint histogram p(x,y)</text>
+
+  <line x1="200" y1="430" x2="200" y2="450" stroke="#1565C0" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <rect x="100" y="450" width="200" height="90" rx="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
+  <text x="200" y="485" text-anchor="middle" font-size="13" font-weight="bold">Mutual Information</text>
+  <text x="200" y="505" text-anchor="middle" font-size="11">I(X;Y) = Σ p(x,y) log[p(x,y)/(p(x)p(y))]</text>
+
+  <!-- ===================== PANEL B: PIPELINE FLOW ===================== -->
+  <text x="800" y="90" text-anchor="middle" font-size="18" font-weight="bold">
+    B. Pipeline Flow
+  </text>
+
+  <rect x="600" y="120" width="400" height="60" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+  <text x="800" y="155" text-anchor="middle" font-size="13" font-weight="bold">Load expression + metadata</text>
+
+  <line x1="800" y1="180" x2="800" y2="200" stroke="#2E7D32" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+  <rect x="600" y="200" width="400" height="60" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+  <text x="800" y="235" text-anchor="middle" font-size="13" font-weight="bold">Preprocess (z-score, MAD filter)</text>
+
+  <line x1="800" y1="260" x2="800" y2="280" stroke="#2E7D32" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+  <rect x="600" y="280" width="400" height="70" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+  <text x="800" y="315" text-anchor="middle" font-size="13" font-weight="bold">Candidate pair selection</text>
+  <text x="800" y="335" text-anchor="middle" font-size="11">correlation threshold, max_pairs</text>
+
+  <line x1="800" y1="350" x2="800" y2="370" stroke="#2E7D32" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+  <rect x="600" y="370" width="400" height="60" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+  <text x="800" y="405" text-anchor="middle" font-size="13" font-weight="bold">MI estimation</text>
+
+  <line x1="800" y1="430" x2="800" y2="450" stroke="#2E7D32" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+  <rect x="600" y="450" width="400" height="70" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+  <text x="800" y="485" text-anchor="middle" font-size="13" font-weight="bold">Permutation-based significance</text>
+
+  <line x1="800" y1="520" x2="800" y2="540" stroke="#2E7D32" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+  <rect x="600" y="540" width="400" height="60" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+  <text x="800" y="575" text-anchor="middle" font-size="13" font-weight="bold">Study → consensus network</text>
+
+  <line x1="800" y1="600" x2="800" y2="620" stroke="#2E7D32" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+  <rect x="600" y="620" width="400" height="60" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+  <text x="800" y="655" text-anchor="middle" font-size="13" font-weight="bold">Modules, refinement, enrichment</text>
+
+  <!-- ===================== PANEL C: PARAMETER IMPACT ===================== -->
+  <text x="1350" y="90" text-anchor="middle" font-size="18" font-weight="bold">
+    C. Parameter Impact
+  </text>
+
+  <rect x="1150" y="120" width="350" height="220" rx="8" fill="#FFF3E0" stroke="#EF6C00" stroke-width="1.5"/>
+  <text x="1325" y="145" text-anchor="middle" font-size="14" font-weight="bold">Biology-changing parameters</text>
+
+  <text x="1165" y="170" font-size="11">• prescreen (threshold, max_pairs)</text>
+  <text x="1165" y="188" font-size="11">• permutations</text>
+  <text x="1165" y="206" font-size="11">• p_value_threshold</text>
+  <text x="1165" y="224" font-size="11">• min_studies / fraction</text>
+  <text x="1165" y="242" font-size="11">• master_edge_weight</text>
+  <text x="1165" y="260" font-size="11">• module_method, resolution</text>
+  <text x="1165" y="278" font-size="11">• submodule_* (MCODE)</text>
+
+  <rect x="1150" y="360" width="350" height="170" rx="8" fill="#FFF3E0" stroke="#EF6C00" stroke-width="1.5"/>
+  <text x="1325" y="385" text-anchor="middle" font-size="14" font-weight="bold">Speed/memory parameters</text>
+
+  <text x="1165" y="410" font-size="11">• n_jobs</text>
+  <text x="1165" y="428" font-size="11">• batch_pairs</text>
+  <text x="1165" y="446" font-size="11">• mixed_precision</text>
+  <text x="1165" y="464" font-size="11">• hidden_dim, epochs, lr (legacy)</text>
+
+  <!-- ===================== PANEL D: BIOLOGY vs COMPUTE TABLE ===================== -->
+  <text x="1350" y="580" text-anchor="middle" font-size="18" font-weight="bold">
+    D. Biology vs Compute Summary
+  </text>
+
+  <rect x="1150" y="610" width="350" height="220" rx="8" fill="#F3E5F5" stroke="#6A1B9A" stroke-width="1.5"/>
+
+  <text x="1170" y="640" font-size="12" font-weight="bold">Biology-driven:</text>
+  <text x="1170" y="660" font-size="11">• Network topology</text>
+  <text x="1170" y="678" font-size="11">• Edge significance</text>
+  <text x="1170" y="696" font-size="11">• Module structure</text>
+  <text x="1170" y="714" font-size="11">• Cross-study reproducibility</text>
+
+  <text x="1350" y="640" font-size="12" font-weight="bold">Compute-driven:</text>
+  <text x="1350" y="660" font-size="11">• Runtime</text>
+  <text x="1350" y="678" font-size="11">• Memory footprint</text>
+  <text x="1350" y="696" font-size="11">• Parallel efficiency</text>
+  <text x="1350" y="714" font-size="11">• I/O and caching</text>
+
+  <!-- Arrow definitions -->
+  <defs>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#1565C0"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#2E7D32"/>
+    </marker>
+  </defs>
+
+</svg>
